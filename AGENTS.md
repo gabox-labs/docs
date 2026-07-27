@@ -21,6 +21,7 @@
 
 {/* Add any project-specific style rules below */}
 
+- Never use em dashes (or en dashes). Use commas, colons, or periods instead
 - Use active voice and second person ("you")
 - Keep sentences concise — one idea per sentence
 - Use sentence case for headings

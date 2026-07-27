@@ -1,0 +1,32 @@
+---
+title: "Safety"
+description: "Risks, mitigations, and what is eliminated by construction"
+icon: "shield-check"
+---
+
+The v3 design's headline safety property is what it removes: there is no protocol vault, no float, and no oracle, so the two failure modes that dominate vault-based designs cannot occur at all.
+
+## Eliminated by construction
+
+| Risk | Why it cannot happen |
+|---|---|
+| Risk-of-ruin (house insolvency) | Every buyback is the depositor's own escrowed backing. The protocol holds no float, so there is nothing to drain |
+| Oracle manipulation | No floor oracle exists in the price path. Pricing derives only from collateralized, self-set backings |
+| Draw manipulation | FIFO settlement fixes the pool snapshot at request time; MagicBlock VRF makes the randomness verifiable. Neither deposit timing nor callback timing can alter a pending draw |
+
+## Managed risks
+
+| Risk | Mitigation |
+|---|---|
+| Underbacking snipe: back a good item too low, buyers pull it cheap | Self-correcting, the loss lands on the mispricing depositor; asset illiquidity blunts instant arbitrage; eligibility gating and sanity bounds on backing |
+| Crown monopoly and crown flipping | 10% overtake margin plus payout-on-exit dampens flipping; a whale camping the crown (rich-get-richer) is a watched dynamic |
+| Wash trading and self-dealing | Base economics self-limit it: pulling your own position still pays the surcharge. Only dangerous if token emissions reward volume, in which case: per-wallet position and volume caps, sybil resistance |
+| Regulatory (gambling) | Geo-blocking from day one; verifiable VRF odds published per pool; cards framing, since physical booster packs are a century-old, well-understood randomized product |
+
+## Why fungible tokens are excluded
+
+Scope is a safety feature. A liquid token has a hard, known DEX price, so an underbacked token position would be arbitraged mechanically and the pool drained. NFTs and tokenized assets have fuzzy floors, which makes self-set backing self-correcting instead of exploitable. See [Overview](/#scope).
+
+## The buyer's real risk
+
+None of this makes pulling tickets a good investment. The ticket costs EV plus a 15% surcharge, so the expected value of a pull is negative by exactly the surcharge, and that is disclosed. What the design guarantees is narrower and honest: the odds are verifiable, the prize is real, and the instant sell-back will always pay, because the money is already there.

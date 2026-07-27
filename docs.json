@@ -1,72 +1,93 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Gabox",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#C7F43A",
+    "light": "#DBFF6B",
+    "dark": "#95C000"
   },
-  "favicon": "/favicon.svg",
+  "appearance": {
+    "default": "dark",
+    "strict": true
+  },
+  "background": {
+    "color": {
+      "dark": "#0C0E0C"
+    }
+  },
+  "favicon": "/favicon.png",
   "navigation": {
     "pages": [
       {
-        "group": "Getting Started",
+        "group": "Start here",
         "pages": [
           "index",
-          "quickstart"
+          "how-it-works",
+          "design-evolution"
+        ]
+      },
+      {
+        "group": "Core mechanics",
+        "pages": [
+          "backed-positions",
+          "pricing",
+          "the-draw",
+          "keep-or-sell-back"
+        ]
+      },
+      {
+        "group": "Economics",
+        "pages": [
+          "fees",
+          "depositor-economics",
+          "the-crown"
+        ]
+      },
+      {
+        "group": "Pools",
+        "pages": [
+          "pools-and-tiers"
+        ]
+      },
+      {
+        "group": "Safety and roadmap",
+        "pages": [
+          "safety",
+          "roadmap"
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/gabox-mark.png",
+    "dark": "/logo/gabox-mark.png"
   },
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "Contact",
+        "href": "mailto:hello@hubra.app"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "Launch app",
+      "href": "https://gabox.fun"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/Gabox_fun",
+      "website": "https://gabox.fun"
     }
   },
   "contextual": {
     "options": [
       "copy",
       "view",
-      "chatgpt",
       "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
+      "mcp"
     ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
   }
 }

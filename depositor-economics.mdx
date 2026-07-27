@@ -1,0 +1,45 @@
+---
+title: "Depositor economics"
+description: "Earning fees, choosing a backing, and what risk actually means"
+icon: "coins"
+---
+
+Depositors are the supply side. They earn from the pool for as long as their position is live, and the size of their backing is the one strategic decision they make.
+
+## Income streams
+
+| Stream | Who earns it | Mechanic |
+|---|---|---|
+| Surcharge share | Every live position | A cut of every pull's surcharge, default **value-weighted**: share proportional to backing |
+| Crown tithe | Only the single top-backed position | 5% of every pull's surcharge, pool-wide. See [The crown](/the-crown) |
+| Exit proceeds | A position that gets kept | The backing returned, minus ~1% settlement fee |
+
+Value-weighted fee sharing rewards size without needing a token. (The alternative is an equal split paired with token incentives; which model Gabox ships is an open decision, see [Roadmap](/roadmap).)
+
+## The backing decision
+
+Choosing `B` is the core strategy, and it replaced vault risk as the thing a depositor reasons about:
+
+| | Back low | Back high |
+|---|---|---|
+| Draw frequency | Drawn fast | Rarely drawn |
+| Capital | Freed quickly | Locked a long time |
+| Fee income | Little accrues | Accrues for a long tenure |
+| Crown | Out of reach | Possibly yours |
+| Danger | Item pulled cheap, you underpriced it | Low yield on locked capital |
+
+There is an optimum between the extremes, and the deposit flow surfaces it: when a depositor sets a backing, the UI shows in real time the implied draw odds, expected tenure, projected fee APY, and whether the amount takes the crown. Nobody should misprice blindly.
+
+## What risk means here
+
+**Risk is opportunity cost, not principal loss.** A rational depositor backs at the asset's honest value, so whichever way a draw goes they are whole:
+
+- **Kept**: they receive their backing, which was their own price for the item, plus accrued fees.
+- **Sold back**: they keep the asset and the fees keep accruing.
+- **Never drawn**: they can withdraw (exit rules are being finalized).
+
+The only true downside is a low return: being drawn and kept early, before much fee income accrued, returns the backing with little on top. There is no lockup and this trade-off is disclosed up front.
+
+<Warning>
+The exception is deliberate underbacking. Back a $500 card at $50 and someone will draw it and keep it for $50. The mechanism does not protect a depositor from underpricing their own item; that cost falling on the mispricer is what keeps pool pricing honest.
+</Warning>

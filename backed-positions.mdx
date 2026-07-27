@@ -1,0 +1,63 @@
+---
+title: "Backed positions"
+description: "The single primitive: an asset paired with backing"
+icon: "layer-group"
+---
+
+A **position** is an asset plus backing:
+
+```
+position = asset + backing B    (B in SOL or USDC)
+```
+
+The depositor chooses `B` when they deposit. It is the only economic parameter they set, and it does three jobs at once.
+
+## The three jobs of backing
+
+| Job | Mechanic | Effect |
+|---|---|---|
+| Buyback bid | The depositor stands ready to reacquire the asset for roughly `B` if it is drawn and the buyer sells back | Every drawn item has a guaranteed instant exit price |
+| Draw weight | `weight = 1 / B` | Cheap positions are drawn constantly; richly backed grails are drawn rarely and sit a long time |
+| Stake | `B` is locked while the position is live | Skin in the game; mispricing hurts the depositor, not the pool |
+
+Because all three derive from one number, they cannot drift out of sync. An item's odds of being drawn, its sell-back value, and its owner's exposure are always the same figure viewed from three angles.
+
+## Why this eliminates insolvency
+
+The buyback money is the depositor's own, escrowed at deposit time. There is no shared vault, so:
+
+- No draw can ever create a liability the protocol has not already collected.
+- A whale cashing out a grail pays out that grail's own backing, nothing else. Other positions and the protocol are untouched.
+- The worst case for the system is a depositor getting exactly what they signed up for.
+
+<Info>
+Compare this with vault designs, where payouts come from a common pot and a streak of expensive draws is ruin. In Gabox every possible payout is already funded before the ticket is sold.
+</Info>
+
+## Backing is a self-set price
+
+There is no floor oracle. The depositor prices their own item by choosing `B`, and the incentives police it:
+
+- **Back too low** and buyers pull the item cheap. The loss is the depositor's, so underpricing is self-punishing.
+- **Back too high** and the position is almost never drawn, earning slow fees while the capital sits locked.
+
+The rational move is to back near the item's honest value, which is exactly what makes the pool's pricing trustworthy. This only works because the eligible assets (NFTs, tokenized assets) have fuzzy floors; a liquid token with a hard DEX price would invite mechanical arbitrage, which is why fungible tokens are out of scope.
+
+## Position lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> Staged: deposit (asset + B locked)
+    Staged --> Live: enters pool after pending draws settle
+    Live --> Drawn: VRF selects it
+    Drawn --> Exited: buyer keeps (B returned, minus ~1% fee)
+    Drawn --> Live: buyer sells back (asset recycles)
+    Live --> Exited: depositor withdraws
+    Exited --> [*]
+```
+
+New deposits wait in a staging line until pending draws settle, so a deposit can never alter a draw already in flight. See [The draw](/the-draw) for why.
+
+<Note>
+Whether withdrawal of an un-drawn position is instant or has a cooldown is an open design question. See [Roadmap](/roadmap).
+</Note>
