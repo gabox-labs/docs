@@ -16,7 +16,7 @@
       "dark": "#0C0E0C"
     }
   },
-  "favicon": "/favicon.png",
+  "favicon": "/favicon.svg",
   "navigation": {
     "pages": [
       {
@@ -66,8 +66,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/gabox-mark.png",
-    "dark": "/logo/gabox-mark.png"
+    "light": "/logo/gabox-mark.svg",
+    "dark": "/logo/gabox-mark.svg"
   },
   "navbar": {
     "links": [
