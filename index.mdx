@@ -6,10 +6,10 @@ icon: "dice"
 
 Gabox is an onchain gacha for NFTs and tokenized assets. Depositors list real assets in shared pools, buyers pay a fixed ticket price for a verifiably random draw, and every item drawn comes with a guaranteed instant buyback offer.
 
-The whole protocol rests on a single primitive. When a depositor lists an item, they pair it with **backing**: an amount of capital they lock alongside the asset. That one number is simultaneously the item's buyback bid, its draw weight, and the depositor's stake. Everything else, from ticket pricing to draw odds to buyback liquidity, is derived from it.
+The whole protocol rests on a single primitive. When a depositor lists an item, they pair it with **backing**: an amount of USDC they lock alongside the asset. That one number is simultaneously the item's buyback bid, its draw weight, and the depositor's stake. Everything else, from ticket pricing to draw odds to buyback liquidity, is derived from it.
 
 <Note>
-Gabox is a working title. The protocol is in design. This documentation describes the v3 mechanism, the unified backed-position pool.
+Gabox is a working title. The protocol is built: the Solana program is complete and live on devnet, with real draws running against the MagicBlock VRF oracle. Mainnet follows external code review and a multisig upgrade authority. This documentation describes the mechanism as implemented.
 </Note>
 
 ## Why this design matters
@@ -21,11 +21,12 @@ Most gacha and lootbox mechanics have a house that can lose. If the protocol pro
 | No insolvency risk | Every possible payout is collateralized by depositor backing before the draw |
 | No oracle risk | Prices derive from self-set backing, not floor price feeds |
 | Verifiable fairness | Draws use onchain VRF with published odds |
-| Guaranteed exit | Every drawn item can be sold back instantly for roughly its backing |
+| Guaranteed exit | Every drawn item can be sold back instantly for 90% of its backing |
 
 ## Scope
 
 - **Assets**: NFTs and tokenized assets only (Collector Crypt cards and similar). No fungible tokens, because a liquid token has a known DEX price that breaks self-set backing. Illiquid uniques have fuzzy floors, so self-backing self-corrects.
+- **Denomination**: USDC throughout. Backing, bids, tickets, and fees are all USD-denominated, so a SOL price move never reprices a standing bid.
 - **Chain**: Solana.
 - **Randomness**: MagicBlock VRF.
 
@@ -42,7 +43,7 @@ Most gacha and lootbox mechanics have a house that can lose. If the protocol pro
     Harmonic-mean pricing and a worked example.
   </Card>
   <Card title="The crown" icon="crown" href="/the-crown">
-    The self-funding bounty that pulls grails into pools.
+    The five-rank tithe board that pulls grails into pools.
   </Card>
 </Columns>
 

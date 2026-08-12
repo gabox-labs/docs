@@ -15,17 +15,17 @@ At launch the platform seeds two category pools, then opens them to public depos
 | Tokenized assets | Tokenized trading cards and other tokenized collectibles (Collector Crypt and similar) |
 | NFTs | Solana NFT collections |
 
-Curation does three things the v1 permissionless design could not: it concentrates supply instead of fragmenting it across a thousand micro-machines, keeps discovery legible (a buyer knows what each pool contains), and quality-gates what enters.
+Every pool is whitelisted by collection: only curated, verified assets can enter. Curation does three things the v1 permissionless design could not: it concentrates supply instead of fragmenting it across a thousand micro-machines, keeps discovery legible (a buyer knows what each pool contains), and quality-gates what enters.
 
 ## Value tiers: the whale lane
 
-Within a category, pools can be banded by value, so a roughly $12 commons pool and a roughly $2,000 grails pool coexist:
+Within a category, pools can be banded by value, so a roughly $30 commons pool and a multi-thousand-dollar grails pool coexist:
 
 | Tier | Ticket ballpark | Audience |
 |---|---|---|
-| Commons | ~$12 | High-frequency, chain-opening buyers |
+| Commons | ~$30 | High-frequency, chain-opening buyers |
 | Mid | ~$100s | Collectors |
-| Grails | ~$2,000 | Whales |
+| Grails | ~$2,000+ | Whales |
 
 The whale lane is only safe because of the backing model: in a vault design, a whale tier is dangerous, since one big cash-out can drain the shared buyback fund. Here every buyback in the whale tier is collateralized by its own depositor's backing, so **the thing that made big packs dangerous in v2 simply does not exist**.
 
@@ -36,10 +36,10 @@ Verifiability is the aesthetic; the number is always exposed:
 - Live EV, ticket price, position count, and TVL.
 - The honest odds table: value tier to draw probability.
 - The grail, visible, with its 1-in-N odds shown plainly.
-- The current [crown](/the-crown) holder and the tithe it is earning.
+- The [crown board](/the-crown): who holds each of the five ranks and what each rank is earning.
 
-No casino kitsch. The energy comes from real onchain state, the grail is still in the pool, the crown is contested, not manufactured hype.
+No casino kitsch. The energy comes from real onchain state, the grail is still in the pool, the board is contested, not manufactured hype.
 
 <Note>
-Whether NFT and tokenized-asset pools can mix, and whether crown parameters vary per pool, are open questions. See [Roadmap](/roadmap).
+Whether NFT and tokenized-asset pools can mix is an open product question. Fee rates and windows are per-pool parameters, so tiers can differ where it makes sense; the board's rank shares are protocol constants.
 </Note>

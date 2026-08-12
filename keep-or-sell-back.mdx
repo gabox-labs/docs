@@ -4,42 +4,39 @@ description: "Every draw ends with one clean decision"
 icon: "arrows-split-up-and-left"
 ---
 
-After the draw settles, the buyer owns the outcome and makes one decision with exact numbers on screen: the item's backing versus instant cash.
+The drawn card is delivered to the buyer first. Then, holding it, the buyer makes one decision with exact numbers on screen: the item itself versus instant cash at 90% of its backing. The window is about five minutes; if it expires, the buyer simply keeps the card they already hold.
 
 ## The two branches
 
 | | Keep | Sell back |
 |---|---|---|
-| Buyer gets | The asset | Roughly the item's backing, in cash, instantly |
-| Depositor gets | Backing returned (minus ~1% settlement fee) | Keeps the asset, keeps earning fees |
-| The position | Exits the pool | Recycles into the pool |
-| Who funds it | Nobody: the asset simply transfers | The depositor's own escrowed backing |
+| Buyer gets | The asset | 90% of the item's backing, in cash, instantly |
+| Depositor gets | Backing returned, minus a 1% settlement cut | The asset back (or the buffer relists it automatically) |
+| The position | Exits the pool | Closes, or refills from the buffer and stays live |
+| Who funds it | Nobody: the asset simply transfers | The depositor's own escrowed backing: 90% to the buyer, 10% to the protocol |
 
 ## Keep
 
-The buyer liked what they drew. The asset transfers to the buyer, the depositor's backing is released back to them minus a settlement fee of about 1%, and the depositor exits. From the depositor's perspective this is a sale at their self-set price, plus whatever fee income accrued while the position was live.
+The buyer liked what they drew. The asset stays with the buyer, the depositor's backing is released back to them minus the 1% settlement cut, and the depositor exits with whatever fee income accrued while the position was live.
 
 ## Sell back
 
-The buyer wanted the grail, drew a common, and takes the cash. The buyer receives approximately the item's backing, the asset stays with the depositor, and the position goes right back into the pool. The depositor keeps earning fee income as if nothing happened.
+The buyer wanted the grail, drew a common, and takes the cash. The buyer receives 90% of the item's backing, the remaining 10% goes to the protocol, and the card returns to its depositor.
 
-This is the **recycling loop**: one deposited asset can be drawn and sold back many times, generating surcharge fees for its depositor on every cycle.
+If the depositor posted a **buffer**, the position refills from it automatically instead: the card stays in the pool, the weight is unchanged, and fee accrual never pauses. This is the **recycling loop**: one deposited asset can be drawn and sold back many times, generating fees for its depositor on every cycle. See [Depositor economics](/depositor-economics#the-buffer-prepaid-re-listing).
 
 ```mermaid
 flowchart LR
-    P[Position live in pool] --> D[Drawn by buyer]
+    P[Position live in pool] --> D[Drawn by buyer<br/>card delivered]
     D -->|Keep| X[Depositor exits with backing]
-    D -->|Sell back| P
+    D -->|Sell back, buffered| P
+    D -->|Sell back, no buffer| C[Card returns to depositor]
 ```
 
 ## Why this is safe to promise
 
-The sell-back price is not a market quote that can vanish; it is the depositor's backing, escrowed since deposit. The buyer's exit is guaranteed by construction, and paying it out costs the protocol nothing. See [Backed positions](/backed-positions).
-
-<Note>
-The exact settlement accounting for the depositor's backing across keep and sell-back is still being finalized. See [Roadmap](/roadmap).
-</Note>
+The sell-back price is not a market quote that can vanish; it is the depositor's backing, escrowed since deposit. The buyer's exit is guaranteed by construction, and paying it out costs the protocol nothing. Every number the decision depends on (the 90% rate, the window length) is stamped on the draw at purchase time, so no parameter change can shrink an option the buyer already paid for. See [Backed positions](/backed-positions).
 
 ## UX commitment
 
-The keep-or-sell-back screen shows the real numbers, asset backing versus instant cash, with no countdown timers, no pre-selected option, and no dark patterns. The draw is the spectacle; the decision is clean.
+The decision screen shows the real numbers, asset backing versus instant cash, with the window counted down visibly and the timeout default (keep) stated plainly. No pre-selected option, no dark patterns. The draw is the spectacle; the decision is clean.

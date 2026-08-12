@@ -10,11 +10,13 @@ Depositors are the supply side. They earn from the pool for as long as their pos
 
 | Stream | Who earns it | Mechanic |
 |---|---|---|
-| Surcharge share | Every live position | A cut of every pull's surcharge, default **value-weighted**: share proportional to backing |
-| Crown tithe | Only the single top-backed position | 5% of every pull's surcharge, pool-wide. See [The crown](/the-crown) |
-| Exit proceeds | A position that gets kept | The backing returned, minus ~1% settlement fee |
+| Ticket share | Every live position, equally | 94% of every ticket, split equally per position. A $25 common earns the same base share as an $8,000 grail |
+| Crown tithe | The five top-backed positions | 5% of every ticket, split 40/25/15/12/8 across the board's ranks. See [The crown](/the-crown) |
+| Exit proceeds | A position that gets kept | The backing returned, minus a 1% settlement cut |
 
-Value-weighted fee sharing rewards size without needing a token. (The alternative is an equal split paired with token incentives; which model Gabox ships is an open decision, see [Roadmap](/roadmap).)
+The equal split rewards *being in the pool*; the crown board rewards *size*. Together they keep the long tail of commons listed while still bribing grails in, and neither needs a token.
+
+Fee income accrues onchain and is claimable at any time, paid straight to your USDC account. Gabox's own pools charge no performance fee on it.
 
 ## The backing decision
 
@@ -24,19 +26,25 @@ Choosing `B` is the core strategy, and it replaced vault risk as the thing a dep
 |---|---|---|
 | Draw frequency | Drawn fast | Rarely drawn |
 | Capital | Freed quickly | Locked a long time |
-| Fee income | Little accrues | Accrues for a long tenure |
-| Crown | Out of reach | Possibly yours |
+| Fee income | The same equal split as everyone, over a short tenure | The same equal split, over a long tenure |
+| Crown board | Out of reach | Possibly a rank, up to 40% of the tithe |
 | Danger | Item pulled cheap, you underpriced it | Low yield on locked capital |
 
-There is an optimum between the extremes, and the deposit flow surfaces it: when a depositor sets a backing, the UI shows in real time the implied draw odds, expected tenure, projected fee APY, and whether the amount takes the crown. Nobody should misprice blindly.
+There is an optimum between the extremes, and the deposit flow surfaces it: when a depositor sets a backing, the UI shows in real time the implied draw odds, expected tenure, projected fee APY, and whether the amount takes a board rank. Nobody should misprice blindly. The minimum backing is $25.
+
+## The buffer: prepaid re-listing
+
+A depositor can post a **buffer** alongside the backing: a prepaid reserve in the same units. When a buyer draws the item and sells it back, the sell-back is paid from the backing as usual, and the buffer automatically refills the position, which stays live with the same weight and uninterrupted fee accrual. `$100 backing + $400 buffer` is five lives.
+
+The buffer is not a discount and costs exactly what re-depositing would: it is automatic re-listing that saves the depositor from noticing, paying gas, and re-listing a card that will be rejected a dozen times before someone wants it.
 
 ## What risk means here
 
 **Risk is opportunity cost, not principal loss.** A rational depositor backs at the asset's honest value, so whichever way a draw goes they are whole:
 
-- **Kept**: they receive their backing, which was their own price for the item, plus accrued fees.
-- **Sold back**: they keep the asset and the fees keep accruing.
-- **Never drawn**: they can withdraw (exit rules are being finalized).
+- **Kept**: they receive their backing back, minus the 1% settlement cut, plus accrued fees.
+- **Sold back**: they pay the backing (that is the buyback they signed up for), and they hold the card again, or the buffer relists it automatically and the fees keep accruing.
+- **Never drawn**: they can withdraw at any time, unless the position is mid-draw at that moment.
 
 The only true downside is a low return: being drawn and kept early, before much fee income accrued, returns the backing with little on top. There is no lockup and this trade-off is disclosed up front.
 

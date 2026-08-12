@@ -1,6 +1,6 @@
 ---
 title: "The crown"
-description: "A self-funding bounty that pulls a marquee grail into every pool"
+description: "A five-rank tithe board that pulls grails into every pool"
 icon: "crown"
 ---
 
@@ -8,35 +8,50 @@ A gacha pool is only exciting if there is something worth chasing. The crown is 
 
 ## The mechanic
 
-The single **top-backed position** in a pool holds the crown, and the crown earns a **tithe: 5% of every pull's surcharge, pool-wide**, for as long as it holds the title.
+Every pool has a **board of five slots**, ranked by backing. The board earns a **tithe: 5% of every ticket, pool-wide**, split across the ranks. Rank 1 is the crown.
 
-| Rule | Value |
+| Rank | Share of the 5% tithe |
 |---|---|
-| Who holds it | The one position with the highest backing in the pool |
-| What it earns | 5% of the surcharge on every pull in the pool |
-| How to take it | Beat the current holder's backing by at least 10% |
-| When the pot pays | When the holder is overtaken, or when the position exits |
+| 1 (the crown) | 40% |
+| 2 | 25% |
+| 3 | 15% |
+| 4 | 12% |
+| 5 | 8% |
+
+| Rule | How it works |
+|---|---|
+| Who holds a rank | The five positions with the highest backing in the pool |
+| What a rank earns | Its share of 5% of every ticket, paid instantly on every pull |
+| How to take a rank | Back more than the current occupant. Losing a challenge is harmless: your deposit lands either way, you just do not take the slot |
+| When a new rank starts earning | After the **commitment window**: the slot must be held through 32 fee recognitions before it pays. Until then its share routes to the pool default |
+| When earnings pay | Immediately, every pull, into the occupant's claimable balance. There is no pot to forfeit and nothing to vest |
 
 ## Why it works
 
-The crown is a bribe, and it funds itself. A whale considering whether to deposit an $8,000 grail is being offered a yield stream skimmed from every $12 ticket the commons traffic generates. The busier the pool, the bigger the bribe, the stronger the pull on marquee items, and a visible grail in the pool is exactly what makes buyers pull tickets. The loop closes:
+The crown is a bribe, and it funds itself. A whale considering whether to deposit an $8,000 grail is being offered 40% of a tithe skimmed from every ticket the commons traffic generates. The busier the pool, the bigger the bribe, the stronger the pull on marquee items, and a visible grail in the pool is exactly what makes buyers pull tickets. The loop closes:
 
 ```mermaid
 flowchart LR
     G[Grail enters pool<br/>takes the crown] --> F[Buyers see the grail<br/>and its honest 1-in-N odds]
     F --> P[More pulls]
     P --> T[Bigger tithe stream]
-    T --> G2[Next grail competes<br/>+10% backing to overtake]
+    T --> G2[Next grails compete<br/>for the five ranks]
     G2 --> G
 ```
 
-Recall that a heavily backed position is drawn extremely rarely (`weight = 1 / B`), so a crown holder mostly just sits there, earning the tithe, being visible. That visibility is itself the product: the pool page shows who holds the crown and what it is earning, both a trust signal (a real grail is in the pool) and a FOMO driver.
+Recall that a heavily backed position is drawn extremely rarely (`weight = 1 / B`), so a board occupant mostly just sits there, earning the tithe, being visible. That visibility is itself the product: the pool page shows the board, who holds each rank, and what each rank is earning, both a trust signal (real grails are in the pool) and a FOMO driver.
 
-## Anti-flipping design
+Five ranks instead of one winner also means the contest is never over: losing the crown drops you to rank 2, it does not zero you, and the next whale always has a rung to enter on.
 
-Two rules dampen crown games:
+## Anti-gaming design
 
-- The **10% overtake margin** means flipping the crown back and forth requires real escalating capital, not one-dollar increments.
-- **Payout on overtake or exit** means the accrued pot rewards tenure; camping briefly and leaving forfeits nothing to you but ends your accrual.
+Two rules close the obvious games:
 
-The residual concern is a rich whale camping the crown indefinitely, a rich-get-richer dynamic that is watched but not currently mitigated. See [Safety](/safety).
+- **The commitment window.** Rank is taken by backing, and backing can move in a single transaction. Without a window, an attacker could raise their backing, capture a pull's tithe, and withdraw the raise, all atomically, holding rank for zero real time. A slot therefore earns only after its occupant has held it through 32 fee recognitions; until it matures, that slot's share routes to the pool's default destination, the same as an empty slot. Rank costs committed capital, not flash capital.
+- **Instant payout, no pot.** Each rank is paid its share at the moment of every pull. There is no accrued pot to snipe, and an evicted occupant keeps everything they earned while seated.
+
+A rich whale camping the crown indefinitely is structurally bounded: rank 1 earns 40% of the tithe and no arrangement of capital earns more. See [Safety](/safety).
+
+<Note>
+A pool with fewer than five qualifying positions has empty slots, and an occupant who shrinks their backing keeps a stale slot until someone challenges it. Anyone can call the permissionless board refresh to seat the rightful occupant; the refresh always seats the position's owner, never the caller.
+</Note>

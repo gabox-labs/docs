@@ -56,6 +56,12 @@
           "safety",
           "roadmap"
         ]
+      },
+      {
+        "group": "Legal",
+        "pages": [
+          "terms-of-use"
+        ]
       }
     ]
   },
@@ -67,7 +73,7 @@
     "links": [
       {
         "label": "Contact",
-        "href": "mailto:hello@hubra.app"
+        "href": "mailto:hello@gabox.fun"
       }
     ],
     "primary": {

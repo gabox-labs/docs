@@ -1,6 +1,6 @@
 ---
 title: "The draw"
-description: "Verifiable randomness with FIFO settlement"
+description: "Verifiable randomness against a frozen snapshot"
 icon: "shuffle"
 ---
 
@@ -19,37 +19,42 @@ The consequences of inverse weighting:
 
 | Position | Backing | Behavior in the pool |
 |---|---|---|
-| Common card | $8 | Drawn constantly, capital turns over fast |
-| Mid item | $120 | Drawn occasionally |
+| Common card | $25 | Drawn constantly, capital turns over fast |
+| Mid item | $250 | Drawn occasionally |
 | Grail | $8,000 | Drawn rarely, sits a long time collecting fees |
 
 This is the same `B` that sets the buyback bid and the ticket price, so odds shown to buyers are always consistent with what the pool charges. See [Pricing](/pricing).
 
-## FIFO settlement
+## The frozen snapshot
 
-Draw requests settle strictly in creation order. New deposits do not enter the live pool immediately; they wait in a **staging line** until every pending draw has settled.
+When a buyer pays, the draw request stamps a **snapshot of the pool as of that moment**: the set of positions the draw ranges over, the price, and every rate the buyer is exposed to. The VRF callback selects strictly within that snapshot.
 
 ```mermaid
 sequenceDiagram
     participant Buyer
     participant Pool
-    participant Staging
     participant VRF as MagicBlock VRF
     Buyer->>Pool: request draw (ticket paid)
-    Note over Pool: pool snapshot fixed for this request
-    Staging-->>Pool: new deposits wait here
-    VRF->>Pool: randomness callback
-    Pool->>Buyer: position selected, settle in FIFO order
-    Note over Staging,Pool: staged deposits enter only after pending draws settle
+    Note over Pool: snapshot stamped: eligible positions, price, rates
+    VRF->>Pool: randomness callback (~2 slots)
+    Pool->>Buyer: position selected within the snapshot, card delivered
 ```
 
-This closes two manipulation windows:
+This closes the manipulation windows:
 
-- **Deposit timing**: nobody can inject or remove a position to reshape the odds of a draw that has already been paid for.
-- **Callback timing**: the order VRF callbacks land in cannot reorder outcomes, because settlement order is fixed at request time.
+- **Deposit timing**: deposits stay open while draws are in flight, but a new position lands outside every pending snapshot, so nobody can inject a position to reshape the odds of a draw that has already been paid for.
+- **Withdrawal timing**: a position that has been selected by a pending draw cannot be withdrawn out from under it.
+- **Parameter timing**: the price and rates are stamped at payment, so no later change can reprice a draw already bought.
+
+## If the oracle goes quiet
+
+The buyer's money is never stuck behind a silent oracle:
+
+- **Re-arm**: if no callback lands within a couple of minutes, anyone can re-arm the request, funded from the SOL reserve the buyer escrowed (up to three attempts).
+- **Abandon**: if the draw is still unanswered a day after the last attempt, the buyer can abandon it for a full refund of the ticket.
 
 ## What the buyer is quoted
 
-The buyer pays the pool ticket plus the VRF service fee, with optional slippage bounds since the ticket moves as positions enter and exit. The exact odds table for the pool, including the grail's 1-in-N chance, is displayed before purchase; verifiability is the aesthetic.
+The buyer pays the pool ticket plus the VRF fee, with a slippage bound since the ticket moves as positions enter and exit. The exact odds table for the pool, including the grail's 1-in-N chance, is displayed before purchase; verifiability is the aesthetic.
 
-After settlement the buyer immediately faces one choice: [keep or sell back](/keep-or-sell-back).
+The card is delivered first, then the buyer faces one choice: [keep or sell back](/keep-or-sell-back).

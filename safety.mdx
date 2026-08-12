@@ -4,7 +4,7 @@ description: "Risks, mitigations, and what is eliminated by construction"
 icon: "shield-check"
 ---
 
-The v3 design's headline safety property is what it removes: there is no protocol vault, no float, and no oracle, so the two failure modes that dominate vault-based designs cannot occur at all.
+The design's headline safety property is what it removes: there is no protocol vault, no float, and no oracle, so the two failure modes that dominate vault-based designs cannot occur at all.
 
 ## Eliminated by construction
 
@@ -12,16 +12,28 @@ The v3 design's headline safety property is what it removes: there is no protoco
 |---|---|
 | Risk-of-ruin (house insolvency) | Every buyback is the depositor's own escrowed backing. The protocol holds no float, so there is nothing to drain |
 | Oracle manipulation | No floor oracle exists in the price path. Pricing derives only from collateralized, self-set backings |
-| Draw manipulation | FIFO settlement fixes the pool snapshot at request time; MagicBlock VRF makes the randomness verifiable. Neither deposit timing nor callback timing can alter a pending draw |
+| Draw manipulation | Every draw runs against a snapshot of the pool frozen at payment, with its price and rates stamped; MagicBlock VRF makes the randomness verifiable. Neither deposit timing, withdrawal timing, nor a parameter change can alter a draw already bought |
+| Retroactive repricing | Every rate a buyer or depositor is exposed to is stamped on their draw or position when they pay, so no admin parameter change can touch money already committed |
 
 ## Managed risks
 
 | Risk | Mitigation |
 |---|---|
-| Underbacking snipe: back a good item too low, buyers pull it cheap | Self-correcting, the loss lands on the mispricing depositor; asset illiquidity blunts instant arbitrage; eligibility gating and sanity bounds on backing |
-| Crown monopoly and crown flipping | 10% overtake margin plus payout-on-exit dampens flipping; a whale camping the crown (rich-get-richer) is a watched dynamic |
-| Wash trading and self-dealing | Base economics self-limit it: pulling your own position still pays the surcharge. Only dangerous if token emissions reward volume, in which case: per-wallet position and volume caps, sybil resistance |
+| Underbacking snipe: back a good item too low, buyers pull it cheap | Self-correcting, the loss lands on the mispricing depositor; asset illiquidity blunts instant arbitrage; whitelisting and the $25 backing floor bound what enters |
+| Crown-board games: flash capital taking a rank for a single pull | The commitment window: a rank earns only after being held through 32 fee recognitions, so rank costs committed capital. A whale camping rank 1 is structurally capped at 40% of the tithe. See [The crown](/the-crown) |
+| Wash trading and self-dealing | Base economics self-limit it: pulling your own position still pays the ticket, and 94% of it goes to the whole pool. Only dangerous if token emissions ever reward volume, in which case: per-wallet position and volume caps, sybil resistance |
 | Regulatory (gambling) | Geo-blocking from day one; verifiable VRF odds published per pool; cards framing, since physical booster packs are a century-old, well-understood randomized product |
+| Oracle outage | A draw that gets no answer can be re-armed by anyone after ~2 minutes and abandoned for a full ticket refund after a day. The buyer's money cannot be stranded behind a silent oracle |
+
+## How the program is verified
+
+The Solana program is complete and live on devnet, where it has settled real draws against the real MagicBlock VRF oracle. Beyond conventional unit tests, the suite:
+
+- checks **19 pool-wide invariants** (conservation, solvency, per-party credit ledgers) after generated sequences of instructions, compared against an independent reference model of the design,
+- verifies its own tests by **mutation**: known defects are reintroduced and must be caught by a named assertion, and
+- has been through an internal security review that specifically hunted fund-loss paths; everything found was fixed and pinned with regression tests before any mainnet plan.
+
+The upgrade authority moves to a Squads multisig before mainnet, and it is the trust root worth scrutinizing: the program is upgradeable, so the multisig, not the code, is the final safety boundary. It will be published.
 
 ## Why fungible tokens are excluded
 
@@ -29,4 +41,4 @@ Scope is a safety feature. A liquid token has a hard, known DEX price, so an und
 
 ## The buyer's real risk
 
-None of this makes pulling tickets a good investment. The ticket costs EV plus a 15% surcharge, so the expected value of a pull is negative by exactly the surcharge, and that is disclosed. What the design guarantees is narrower and honest: the odds are verifiable, the prize is real, and the instant sell-back will always pay, because the money is already there.
+None of this makes pulling tickets a good investment. The ticket costs EV plus a 10% surcharge, and a sell-back returns 90% of the drawn item's backing, so the expected value of a pull is negative, and that is disclosed. What the design guarantees is narrower and honest: the odds are verifiable, the prize is real, and the instant sell-back will always pay, because the money is already there.

@@ -7,20 +7,22 @@ icon: "layer-group"
 A **position** is an asset plus backing:
 
 ```
-position = asset + backing B    (B in SOL or USDC)
+position = asset + backing B    (B in USDC, minimum $25)
 ```
 
-The depositor chooses `B` when they deposit. It is the only economic parameter they set, and it does three jobs at once.
+The depositor chooses `B` when they deposit. It is the only economic parameter they must set, and it does three jobs at once.
 
 ## The three jobs of backing
 
 | Job | Mechanic | Effect |
 |---|---|---|
-| Buyback bid | The depositor stands ready to reacquire the asset for roughly `B` if it is drawn and the buyer sells back | Every drawn item has a guaranteed instant exit price |
+| Buyback bid | The depositor stands ready to reacquire the asset for `B` if it is drawn and the buyer sells back (the buyer receives 90% of it) | Every drawn item has a guaranteed instant exit price |
 | Draw weight | `weight = 1 / B` | Cheap positions are drawn constantly; richly backed grails are drawn rarely and sit a long time |
 | Stake | `B` is locked while the position is live | Skin in the game; mispricing hurts the depositor, not the pool |
 
 Because all three derive from one number, they cannot drift out of sync. An item's odds of being drawn, its sell-back value, and its owner's exposure are always the same figure viewed from three angles.
+
+A depositor can also add a **buffer**: a prepaid reserve that automatically refills the position after a sell-back, keeping the card in the pool without a manual re-deposit. See [Depositor economics](/depositor-economics#the-buffer-prepaid-re-listing).
 
 ## Why this eliminates insolvency
 
@@ -47,17 +49,17 @@ The rational move is to back near the item's honest value, which is exactly what
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Staged: deposit (asset + B locked)
-    Staged --> Live: enters pool after pending draws settle
+    [*] --> Live: deposit (asset + B locked)
     Live --> Drawn: VRF selects it
-    Drawn --> Exited: buyer keeps (B returned, minus ~1% fee)
-    Drawn --> Live: buyer sells back (asset recycles)
+    Drawn --> Exited: buyer keeps (B returned, minus 1% cut)
+    Drawn --> Live: buyer sells back, buffer refills
+    Drawn --> Exited: buyer sells back, no buffer (card returns home)
     Live --> Exited: depositor withdraws
     Exited --> [*]
 ```
 
-New deposits wait in a staging line until pending draws settle, so a deposit can never alter a draw already in flight. See [The draw](/the-draw) for why.
+A position is live and drawable the moment it is deposited. It cannot alter a draw already in flight, because every draw operates on a snapshot of the pool frozen at request time. See [The draw](/the-draw).
 
 <Note>
-Whether withdrawal of an un-drawn position is instant or has a cooldown is an open design question. See [Roadmap](/roadmap).
+A depositor can withdraw an un-drawn position at any time, with one exception: a position that a pending draw has already selected is locked until that draw settles.
 </Note>

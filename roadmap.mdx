@@ -1,37 +1,46 @@
 ---
 title: "Roadmap and open questions"
-description: "What ships when, and what is still undecided"
+description: "What is built, what ships when, and what is still undecided"
 icon: "map"
 ---
+
+## Where the build stands
+
+The program is **code-complete and live on devnet**: backed positions with buffers, harmonic-mean pricing, MagicBlock VRF draws, keep or sell back, the five-rank crown board, and the full failure-path machinery (re-arm, abandon, failed-delivery claims). It has settled real draws against the real oracle on devnet.
 
 ## Rollout
 
 | Phase | Ships |
 |---|---|
-| **v0** | Platform-seeded Tokenized assets and NFTs pools · backed positions · harmonic-mean pricing · MagicBlock VRF draws · keep or sell back · crown tithe |
-| **v1** | Public deposits at scale · value-tiered pools (the whale lane) · pull feed and crown leaderboard · fee-split tuning |
-| **v2+** | Permissionless pool creation on top of the unified engine · optional token |
+| **Now (devnet)** | The complete mechanism, exercised end to end against the real VRF oracle |
+| **Mainnet v0** | External code review · Squads multisig upgrade authority · platform-seeded Tokenized assets and NFTs pools · public deposits |
+| **v1** | Value-tiered pools (the whale lane) · pull feed and crown-board leaderboard · parameter tuning from live data |
+| **v2+** | Permissionless pool creation on top of the unified engine (the per-pool fee parameters already exist for this) · optional token |
 
-## The token question
+## Decided since the first draft of these docs
 
-One option is a token (LP seed, short emissions, fee buyback and burn) to bootstrap both sides of the market. The other is monetizing purely on the surcharge. A token adds mercenary liquidity but also regulatory surface, and the default value-weighted fee split already rewards deposit size without one. **Undecided.**
+| Question | The call |
+|---|---|
+| Backing denomination | **USDC**, everywhere. A SOL move must never silently reprice standing bids |
+| Equal split vs value-weighted depositor fees | **Equal split** for the 94% ticket share; size is rewarded through the crown board instead. No token needed for either |
+| Crown design | The single crown became a **five-rank board** at 40/25/15/12/8, paid instantly per pull, with a commitment window instead of an overtake margin |
+| Settlement accounting | Sell-back pays the buyer 90% of backing with 10% to the protocol; a keep returns the backing minus a 1% cut |
+| Withdrawal of an un-drawn position | **Anytime**, unless a pending draw has selected it at that moment |
+| Launch rates | 10% surcharge, 1% protocol acquisition cut, 5% tithe, 0% performance fee on Gabox pools |
 
 ## Open questions
 
 | Question | The tension |
 |---|---|
-| Surcharge % and its exact split | Crown vs protocol vs depositor shares are tunable; defaults are 15% surcharge, 5% crown, ~35/65 protocol/depositors |
-| Value-weighted vs equal-split depositor fees | Value-weighted needs no token; equal-split needs a token to reward size. This choice largely decides the token question |
-| Token: yes or no | Bootstrap speed vs regulatory surface |
-| Backing denomination | SOL or USDC |
-| Keep vs sell-back settlement accounting | Exact handling of the depositor's backing at settlement |
-| Depositor exit of an un-drawn position | Withdraw anytime, or a cooldown |
-| Pool composition | Do NFT and tokenized-asset pools mix; are crown parameters per-pool |
+| Token: yes or no | Bootstrap speed vs regulatory surface. Nothing in the fee design requires one; a reward sink is wired but dormant |
+| The protocol's acquisition cut at mainnet | 1% now; raising it toward 5% is under economic review, weighed against depositor yield |
+| Where unfilled board shares route at launch | A young pool has empty board slots; their tithe share can go to the protocol or back to the pool, and the launch default is being finalized |
+| Pool composition | Do NFT and tokenized-asset pools mix |
 
 ## The one metric
 
-**Repeat-pull rate per wallet in week one.** Same as every version of this design: if buyers chain-open, the flywheel exists. Deep backed supply and the crown-tithe grail bait are optimization on top of that, not a substitute for it.
+**Repeat-pull rate per wallet in week one.** Same as every version of this design: if buyers chain-open, the flywheel exists. Deep backed supply and the crown-board grail bait are optimization on top of that, not a substitute for it.
 
 ---
 
-Questions or feedback: [hello@hubra.app](mailto:hello@hubra.app)
+Questions or feedback: [hello@gabox.fun](mailto:hello@gabox.fun)

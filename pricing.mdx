@@ -7,17 +7,17 @@ icon: "calculator"
 Every pool has one ticket price, recomputed from the positions inside it:
 
 ```
-ticket = EV x (1 + surcharge)
+ticket = EV x (1 + surcharge)        surcharge = 10% at launch
 EV     = N / sum(1 / B_i)
 ```
 
-`EV` is the harmonic mean of all backings, which is exactly the draw-weighted expected value of one pull: each item's value times its probability of being the one drawn.
+`EV` is the harmonic mean of all backings, which is exactly the draw-weighted expected value of one pull: each item's value times its probability of being the one drawn. Everything is denominated in USDC, and the minimum backing is $25.
 
 ## Why the harmonic mean
 
 Draw weight is `1 / B`, so cheap items dominate the odds. The harmonic mean is dominated by the same cheap items, so price and odds always agree.
 
-The wrong way to price a pool is the arithmetic average of values. One $8,000 grail in a pool of $10 commons would blow the average up to something nobody would pay, even though a buyer almost never draws the grail. The harmonic mean gets this right: **a few expensive grails barely move the ticket**, because you almost never draw them.
+The wrong way to price a pool is the arithmetic average of values. One $8,000 grail in a pool of $25 commons would blow the average up to something nobody would pay, even though a buyer almost never draws the grail. The harmonic mean gets this right: **a few expensive grails barely move the ticket**, because you almost never draw them.
 
 | Pricing rule | One grail added to a commons pool | Correct? |
 |---|---|---|
@@ -30,29 +30,29 @@ A tokenized-assets pool of cards holding 286 positions:
 
 | Tier | Count | Backing each | Draw odds per pull |
 |---|---|---|---|
-| Common | 200 | $8 | ~92% combined |
-| Uncommon | 60 | $30 | ~6.5% combined |
-| Rare | 20 | $120 | ~0.5% combined |
-| Epic | 5 | $600 | ~1 in 4,000 each |
-| Grail | 1 | $8,000 | **~1 in 217,000** |
+| Common | 200 | $25 | ~88% combined |
+| Uncommon | 60 | $60 | ~11% combined |
+| Rare | 20 | $250 | ~0.9% combined |
+| Epic | 5 | $1,000 | ~1 in 9,100 each |
+| Grail | 1 | $8,000 | **~1 in 72,700** |
 
 The math:
 
 ```
-EV     = 286 / (200/8 + 60/30 + 20/120 + 5/600 + 1/8000)
-       = $10.52
-ticket = $10.52 x 1.15 = $12.10
+EV     = 286 / (200/25 + 60/60 + 20/250 + 5/1000 + 1/8000)
+       = $31.48
+ticket = $31.48 x 1.10 = $34.63
 ```
 
-A roughly $12 ticket buys a near-certain small card and a real, verifiable shot at the $8,000 grail. The odds table above is exactly what the pool page shows buyers, including the grail's 1-in-N number, plainly.
+A roughly $35 ticket buys a near-certain small card and a real, verifiable shot at the $8,000 grail. The odds table above is exactly what the pool page shows buyers, including the grail's 1-in-N number, plainly.
 
 ## What the buyer pays
 
 At draw time the buyer is quoted:
 
-- the current pool ticket (EV plus the 15% surcharge), plus
-- the VRF service fee, with
-- optional slippage bounds, since deposits and draws move EV between quote and settlement.
+- the current pool ticket (EV plus the 10% surcharge), plus
+- the VRF fee in SOL (0.0008 SOL per draw attempt, escrowed up front for as many as three attempts), with
+- a slippage bound, since deposits and draws move EV between quote and settlement. The price is stamped on the draw at payment, so nothing can reprice it afterward.
 
 ## No oracle anywhere
 
