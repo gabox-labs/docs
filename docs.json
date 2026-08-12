@@ -66,8 +66,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/gabox-mark.svg",
-    "dark": "/logo/gabox-mark.svg"
+    "light": "/logo/gabox-logo-light.svg",
+    "dark": "/logo/gabox-logo-dark.svg"
   },
   "navbar": {
     "links": [
