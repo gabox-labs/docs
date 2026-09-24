@@ -8,8 +8,7 @@ A machine can only open for a brand new Gabox coin. The creator launches a Token
 
 ## What you choose
 
-- **Prize table:** up to eight rows, each with a multiplier and ticket count. It is immutable.
-- **Extra seed:** optional tokens added to the mandatory seed. This is an irrevocable donation.
+- **Starting liquidity:** the app uses a fixed prize table with a 10× top row. You choose how many extra seed tokens to buy for the vault. This is an irrevocable donation. SDK clients may supply other valid tables, up to the program's 20× limit.
 - **Quote limits:** `max_seed_quote_in` and `max_seed_native_debit`, signed caps for the seed purchase.
 
 The pack size is always 1,000,000 tokens. The creator does not set a fixed pack price. DBC sets the launch price, then DAMM v2 sets the price after graduation.
@@ -24,7 +23,7 @@ flowchart LR
 
 ## Launch checks
 
-The program checks the registered DBC configuration, creator signer, fresh untraded DBC pool, Token-2022 mint rules, prize table, and seed limits. Existing coins and pools that already traded are refused. The transfer hook is part of the source launch design; deployment status is on [Status and addresses](/status-and-addresses).
+The program checks the registered DBC configuration, creator signer, fresh untraded DBC pool, Token-2022 mint rules, prize table, and seed limits. Existing coins and pools that already traded are refused. The transfer hook is verified on devnet; see [deployment status](/status-and-addresses) for other networks.
 
 ## After launch
 

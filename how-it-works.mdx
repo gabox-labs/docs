@@ -19,7 +19,7 @@ flowchart LR
 
 ## The flow
 
-1. **Launch.** A creator opens a machine only for a new coin created with the registered Meteora DBC configuration. The creator fixes the prize table and pays the seed.
+1. **Launch.** A creator opens a machine only for a new coin created with the registered Meteora DBC configuration. The app uses its fixed 10× prize table, and the creator pays the seed.
 2. **Price.** The coin trades on DBC, the bonding curve. A pack costs whatever the venue charges for 1,000,000 tokens. After graduation, DAMM v2 sets the live price.
 3. **Purchase.** The buyer opens 1 to 5 packs in one trade. The coin goes to the vault. Gabox adds a 0.75% pack fee based on the measured venue charge.
 4. **Reservation.** Gabox snapshots the table and inventory, then reserves the batch maximum. Each purchase has its own draw and nonce, so purchases can overlap.
@@ -31,7 +31,7 @@ flowchart LR
 
 When the DBC curve completes, Meteora migrates the coin to DAMM v2. Gabox binds that pool for later buys and sells. The pack amount, table, vault, reservations, and 0.75% pack fee stay the same.
 
-The transfer hook is part of the source launch design while a coin is on DBC. It restricts curve transfers to the machine flow and is removed at graduation. Deployment status is tracked on [Status and addresses](/status-and-addresses).
+On devnet, the transfer hook restricts DBC curve buys to the machine vault and DBC removes it at graduation. See [deployment status](/status-and-addresses) before using another network.
 
 ## The accounting rule
 

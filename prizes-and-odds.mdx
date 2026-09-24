@@ -4,11 +4,11 @@ description: "Read the fixed prize table"
 icon: "table-list"
 ---
 
-Every machine has one immutable prize table with up to eight rows. Each row has a multiplier and a ticket count.
+Every machine has one immutable prize table with up to eight rows. The Gabox app creates a fixed four-row table whose top row is 10×. The program also accepts other valid tables with a top row up to 20×, so a machine created through the SDK may show different prizes.
 
 | Field | Meaning |
 | --- | --- |
-| Multiplier | Packs paid by that row. `10,000` basis points is 1×. Maximum 20×. |
+| Multiplier | Packs named by that row. `10,000` basis points is 1×. The app's top row is 10×; the program limit is 20×. |
 | Tickets | Equal chances assigned to the row. All rows total 65,536. |
 | Amount | `floor(1,000,000 × multiplier_bps / 10,000)` tokens. |
 | Chance | `tickets / 65,536`. |
@@ -17,7 +17,7 @@ MagicBlock VRF supplies randomness. Each pack gets a domain-separated SHA-256 de
 
 ## Expected payout
 
-The program rejects a table whose uncapped expected payout is above one pack. This is token accounting, not a promise of price, profit, or cash return.
+The app's table has four rows: Common 0.5126× (about 80%), Rare 2× (about 15%), Epic 3.5× (about 4%), and Mythic 10× (about 1%). The program rejects any table whose uncapped expected payout is above one pack. This is token accounting, not a promise of price, profit, or cash return.
 
 ## Caps and reservations
 
@@ -25,8 +25,6 @@ At purchase, Gabox snapshots the table and free vault inventory. The first pack'
 
 A jackpot can be capped temporarily after large wins. New purchases and donations can rebuild free inventory. A cap cannot change the table or make a pending draw depend on a later deposit.
 
-## Example
-
-A row of 1.5× pays 1,500,000 tokens. A row with 6,554 tickets has a chance of 6,554 out of 65,536, about 10%. The exact table and capped amounts shown by the app are the values to review before signing.
+For example, the app's 10× row names 10,000,000 tokens, but on a new machine with no extra seed it can initially pay only 3,000,000. Its roughly 1% chance stays the same. Review the exact table and **payable** amounts shown for a machine before signing.
 
 Read [Opening a pack](/opening-a-pack) and [Seed and jackpot](/seed-and-jackpot).

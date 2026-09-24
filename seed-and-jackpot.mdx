@@ -1,33 +1,29 @@
 ---
 title: "Seed and jackpot"
-description: "How launch inventory is sized"
+description: "What the creator funds and what the first pack can pay"
 icon: "sprout"
 ---
 
-The seed is the creator's first donation of prize tokens. It is bought on the DBC bonding curve and placed directly in the vault.
+The Gabox app launches machines with a fixed prize table. Its top row is **10×**, or 10,000,000 coin tokens for one pack. The program accepts other valid tables with a top row up to **20×**, including machines created through the SDK. The prize a buyer can actually receive is limited by free tokens in the vault.
 
-## The rule
+## The seed at launch
 
-The mandatory seed supports a 3× top prize on the first pack, or the full top prize when the largest multiplier is below 3×:
+The creator buys the seed on the coin's DBC curve, straight into the prize vault. For the app's 10× table, the **mandatory seed is two packs**: 2,000,000 tokens. The first pack adds another 1,000,000 tokens, so its top row can initially pay **3×**. The 10× row keeps its fixed odds, but its payable amount is capped until more tokens are free.
 
-```text
-mandatory seed = min(jackpot amount, 3 packs) − 1 pack
-```
+The app's **Starting liquidity** choices add *backup seed* on top of those two mandatory packs:
 
-For a 1,000,000 token pack:
+| App choice | Extra seed | Total seed at launch | First pack's payable top prize |
+| --- | ---: | ---: | ---: |
+| No seed | 0 packs | 2 packs | 3× |
+| Seed 1 jackpot | 7 packs | 9 packs | 10× |
+| Seed 2 jackpots | 16 packs | 18 packs | 10×, with enough inventory for two consecutive 10× wins |
 
-| Top prize | Mandatory seed |
-| --- | --- |
-| 1× | 0 packs |
-| 2× | 1 pack |
-| 3× | 2 packs |
-| 5× | 2 packs |
-| 20× | 2 packs |
+“No seed” means **no extra seed**. The creator still buys the mandatory two packs. All seed is irrevocable prize inventory; the creator cannot withdraw it. Later purchases and donations can increase free inventory, while large wins and pending reservations can reduce it. The app shows the current payable amounts before a buyer signs.
 
-The largest multiplier may be at most 20× and at least 1×. A creator may add `extra_seed_tokens` in the same launch trade. Extra seed is visible capacity, not withdrawable balance.
+## The program rule
 
-The first buyer contributes one pack to the vault. The mandatory seed adds enough for the first 3× top prize, or the smaller full top prize. Later packs and donations refill inventory. Gabox reserves each pending maximum before selling the next pack.
+For any valid prize table, the program computes `mandatory seed = min(full top prize, 3 packs) − 1 pack`, then adds the creator's chosen extra seed. The first pack brings the remaining one pack. A custom 20× machine therefore also starts with a 3× payable top row if it has only the mandatory seed. To make 20× payable on its first pack, it needs 17 extra packs beyond the two mandatory packs.
 
-The displayed top prize can be capped after large wins. The buyer signs a floor for the first pack's maximum. A capped result still settles from the frozen table and available inventory.
+The app can list a valid 20× machine created outside its launch form. Its marketplace card shows the **currently payable** top prize, which may be 3× while the vault is thin, rather than the table's 20× headline.
 
-The creator signs quote and native debit caps for the seed buy. The seed buy pays no 0.75% pack fee. See [Launch a machine](/launch-a-machine) and [Always funded](/always-funded).
+The creator signs a quote asset cost cap and a native SOL debit cap for the launch seed buy. That buy pays no Gabox pack fee. See [Launch a machine](/launch-a-machine) and [Prizes and odds](/prizes-and-odds).
