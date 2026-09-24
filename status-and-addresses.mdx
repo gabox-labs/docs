@@ -9,12 +9,12 @@ This site explains the **current source tree**. A feature in source is not live 
 | Network | Last verified record | What that record covers |
 | --- | --- | --- |
 | Devnet | 24 September 2026, Gabox slot `503610380` and hook slot `503610147` | Meteora DBC to DAMM v2, quote registry, batch packs, 0.75% pack fee, referrals, earnings and the transfer hook. Both deployed binaries were read back and matched to their build artifacts. |
-| Mainnet | 22 September 2026, slot `449440339` | An earlier build. The Meteora and hook behavior described in this site is **not confirmed live on mainnet**. |
+| Mainnet | 24 September 2026, Gabox slot `450133593` and hook slot `450131931` | Meteora DBC to DAMM v2 and the transfer hook. Both deployed binaries were read back and matched to their build artifacts. A finalized read at slot `450136264` found 22 enabled quote registry entries. |
 
 | Address | Value |
 | --- | --- |
 | Gabox program | `GaBoxR9nYcK1zeu8EvSJVHV3SrYpCFmvbh2MLgobMcUA` |
-| Gabox hook program on devnet | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
-| Admin and last recorded upgrade authority | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
+| Gabox hook program on devnet and mainnet | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
+| Last recorded upgrade authority for both programs | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
 
-The hook is verified on devnet in the recorded deployment. It is **not** confirmed live on mainnet. Check the network's program builds, quote registry and coin mint before using a machine. Existing machines from incompatible account layouts are not migrated by the current source.
+The programs are deployed on both networks, but the production app has not yet switched to the Meteora build. The four mainnet machines created with the earlier LaunchLab build no longer work in Gabox after the upgrade; their coins still trade on their market. Existing machines from incompatible account layouts are not migrated by the current source. See the [deployment record](https://github.com/gabox-labs/gabox-program/blob/main/DEPLOYMENT.md) for the verified builds and remaining launch work.

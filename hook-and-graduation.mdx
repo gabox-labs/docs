@@ -27,5 +27,5 @@ DBC migrates the coin into a Meteora DAMM v2 automated market maker (AMM) pool a
 When fewer than one whole pack remains on the curve, `buy_packs` cannot buy that remainder. A separate `completeCurve` client operation can buy it into the machine vault so DBC can finish the curve. That operation is outside a pack draw and requires a payer. The program does not automatically advance the curve.
 
 <Note>
-The hook and the Gabox program are verified together in the latest recorded devnet deployment. Mainnet's last recorded build predates this design. See [deployment status](/status-and-addresses).
+The hook and the Gabox program are verified together on devnet and mainnet. The production app has not yet switched to the Meteora build. See [deployment status](/status-and-addresses).
 </Note>
