@@ -1,0 +1,6 @@
+/* Gabox docs menu hover and focus colors. */
+.dark a.nav-anchor:is(:hover, :focus-visible),
+.dark a.nav-anchor:is(:hover, :focus-visible) > div,
+.dark a.nav-tabs-item:is(:hover, :focus-visible) {
+  color: #DBFF6B;
+}
