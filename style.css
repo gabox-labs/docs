@@ -1,14 +1,37 @@
-/* Keep docs menu icons legible on hover and keyboard focus. */
+/* Keep menu labels legible on hover and focus. */
 .dark a.nav-anchor:is(:hover, :focus-visible) {
   color: #DBFF6B;
 }
 
+/* Mintlify paints menu icons white on lime when hovered. Keep the icon and
+   its square in the same dark olive and lime palette as the page links. */
+.dark a.nav-anchor[href="https://gabox.fun"] {
+  --menu-icon: url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/globe.svg");
+}
+
+.dark a.nav-anchor[href="https://gabox.fun/login"] {
+  --menu-icon: url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/duotone/rocket.svg");
+}
+
+.dark a.nav-anchor[href="https://x.com/Gabox_fun"] {
+  --menu-icon: url("https://d3gk2c5xim1je2.cloudfront.net/fontawesome/v7.2.0/brands/x-twitter.svg");
+}
+
 .dark a.nav-anchor:is(:hover, :focus-visible) > div {
-  background-color: #212716;
-  filter: none;
+  background: #212716 !important;
+  filter: none !important;
 }
 
 .dark a.nav-anchor:is(:hover, :focus-visible) > div > svg {
-  background-color: #DBFF6B;
-  fill: #DBFF6B;
+  display: none;
+}
+
+.dark a.nav-anchor:is(:hover, :focus-visible) > div::after {
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  background: #DBFF6B;
+  -webkit-mask: var(--menu-icon) center / contain no-repeat;
+  mask: var(--menu-icon) center / contain no-repeat;
 }
