@@ -32,51 +32,73 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "groups": [
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Website",
+          "icon": "globe",
+          "href": "https://gabox.fun"
+        },
+        {
+          "anchor": "App",
+          "icon": "rocket",
+          "href": "https://gabox.fun/login"
+        },
+        {
+          "anchor": "X",
+          "icon": "x-twitter",
+          "href": "https://x.com/Gabox_fun"
+        }
+      ]
+    },
+    "tabs": [
       {
-        "group": "Start here",
-        "pages": [
-          "index",
-          "how-it-works",
-          "parties-and-rules",
-          "glossary"
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Start here",
+            "pages": [
+              "index",
+              "how-it-works",
+              "parties-and-rules",
+              "glossary"
+            ]
+          },
+          {
+            "group": "Open packs",
+            "pages": [
+              "opening-a-pack",
+              "what-a-pack-costs",
+              "prizes-and-odds",
+              "provable-fairness",
+              "keep-or-sell",
+              "if-the-draw-is-late"
+            ]
+          },
+          {
+            "group": "Create machines",
+            "pages": [
+              "launch-a-machine",
+              "seed-and-jackpot",
+              "hook-and-graduation",
+              "referrals-and-earnings"
+            ]
+          },
+          {
+            "group": "Safety",
+            "pages": [
+              "always-funded",
+              "risks",
+              "trust-boundaries",
+              "status-and-addresses"
+            ]
+          }
         ]
       },
       {
-        "group": "Open packs",
+        "tab": "Developer",
         "pages": [
-          "opening-a-pack",
-          "what-a-pack-costs",
-          "prizes-and-odds",
-          "provable-fairness",
-          "keep-or-sell",
-          "if-the-draw-is-late"
-        ]
-      },
-      {
-        "group": "Create machines",
-        "pages": [
-          "launch-a-machine",
-          "seed-and-jackpot",
-          "hook-and-graduation",
-          "referrals-and-earnings"
-        ]
-      },
-      {
-        "group": "Safety",
-        "pages": [
-          "always-funded",
-          "risks",
-          "trust-boundaries"
-        ]
-      },
-      {
-        "group": "Developers",
-        "pages": [
-          "architecture",
-          "the-math",
-          "build-on-gabox",
-          "status-and-addresses"
+          "developer/overview"
         ]
       }
     ]
@@ -84,19 +106,6 @@
   "logo": {
     "light": "/logo/gabox-logo-light.svg",
     "dark": "/logo/gabox-logo-dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Contact",
-        "href": "mailto:hello@gabox.fun"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Launch app",
-      "href": "https://gabox.fun"
-    }
   },
   "footer": {
     "socials": {

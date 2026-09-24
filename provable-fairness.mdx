@@ -27,7 +27,7 @@ Each row's nominal prize is `floor(1,000,000 tokens × multiplier_bps / 10,000)`
 
 1. Find `PacksBought` for your draw. It records the batch, `seq_start`, free inventory snapshot and first pack's prizes.
 2. Find `DrawResolved` for that draw. It records the 32 bytes, each pack's row and amount, total, `timed_out` and `paid`.
-3. Recompute the tickets and amounts with the SDK's `settle(...)` function, or the formula above and [the math](/the-math). Compare each result and the total.
+3. Recompute the tickets and amounts with the SDK's `settle(...)` function, or the formula above. Compare each result and the total.
 
 If `timed_out` is true, randomness was not used: every pack gets its smallest prize row. If `paid` is false, the outcome is fixed but [still needs a claim](/if-the-draw-is-late).
 
