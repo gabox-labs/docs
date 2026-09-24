@@ -1,0 +1,14 @@
+---
+title: "Risks"
+description: "What a pack can and cannot guarantee"
+icon: "triangle-alert"
+---
+
+- **Token result versus market value.** A pack wins coin tokens, not a fixed value of SOL or another quote asset. The coin can fall in price or lose liquidity.
+- **Average payout.** A valid table's uncapped average is at most one pack of tokens. A single pack can return less than it cost, and the market charge and fees increase that gap.
+- **Inventory cap.** A displayed top row may pay less than its nominal multiplier when free vault inventory is low. Your first pack's signed floor protects the offer you accepted.
+- **Price movement.** The venue sets the execution price. Use the signed quote cap and check the current offer. A quote can become stale before your transaction lands.
+- **Late randomness.** Anyone may fund a retry, but no automatic retry is guaranteed. At the deadline, anyone may settle every pack at its smallest row. A withheld or competing VRF response is a trust risk.
+- **External systems.** Meteora, MagicBlock, Solana, the quote issuer, an RPC and the program's upgrade authority each have failure or control risks. A callback may record a fixed prize as owed if your coin account cannot receive it.
+
+Read [people and rules](/parties-and-rules), [late draws](/if-the-draw-is-late), and [trust boundaries](/trust-boundaries) before buying.

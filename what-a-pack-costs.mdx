@@ -1,0 +1,28 @@
+---
+title: "What a pack costs"
+description: "The market price, venue fee, and Gabox fee"
+icon: "coins"
+---
+
+There is no fixed SOL price. The coin's market sets the cost of 1,000,000 tokens.
+
+| Item | Rule | Paid to |
+| --- | --- | --- |
+| Pack price | Venue charge for 1,000,000 tokens | Meteora market |
+| Venue fee | 1.25%, included in every DBC or DAMM v2 trade | Configured as 0.25% Meteora, 0.50% Gabox, 0.50% creator; Meteora rebates 0.05% of the trade to Gabox's venue referral account |
+| Pack fee | 0.75% of measured venue charge, added on top | Creator, or creator plus referrer |
+| VRF, rent, network | Variable transaction costs | Solana and MagicBlock |
+
+`pack_fee = venue_charge × 75 / 10,000`, rounded down. With a referrer, `referrer_fee = venue_charge × 50 / 10,000`, rounded down. The creator receives the remaining 0.25%. With no referrer, the creator receives all 0.75%.
+
+The buyer's `max_quote_in` covers venue charge and pack fee. A sale pays no pack fee, but still pays the venue's 1.25% trade fee. Meteora holds the venue earnings; `claim_earnings` only pays the separate Gabox pack fee shares.
+
+## Before and after graduation
+
+Before graduation, the venue is Meteora DBC, the bonding curve. After the curve completes, it is Meteora DAMM v2. The pack size and Gabox fee stay the same while the market price changes.
+
+## Referrer rules
+
+The first valid referrer a buyer names becomes permanent. A buyer cannot refer themselves. Later names are ignored. Referrers and creators claim their accumulated earnings from their quote accounts.
+
+The seed buy at launch and `sell_tokens` pay no Gabox pack fee.

@@ -2,6 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "Gabox",
+  "description": "Clear rules for Gabox packs, randomness, fees and graduation on Solana.",
   "colors": {
     "primary": "#C7F43A",
     "light": "#DBFF6B",
@@ -16,51 +17,66 @@
       "dark": "#0C0E0C"
     }
   },
+  "fonts": {
+    "heading": {
+      "family": "Sora",
+      "weight": 600
+    },
+    "body": {
+      "family": "Inter",
+      "weight": 400
+    }
+  },
+  "styling": {
+    "eyebrows": "breadcrumbs"
+  },
   "favicon": "/favicon.svg",
   "navigation": {
-    "pages": [
+    "groups": [
       {
         "group": "Start here",
         "pages": [
           "index",
           "how-it-works",
-          "design-evolution"
+          "parties-and-rules",
+          "glossary"
         ]
       },
       {
-        "group": "Core mechanics",
+        "group": "Open packs",
         "pages": [
-          "backed-positions",
-          "pricing",
-          "the-draw",
-          "keep-or-sell-back"
+          "opening-a-pack",
+          "what-a-pack-costs",
+          "prizes-and-odds",
+          "provable-fairness",
+          "keep-or-sell",
+          "if-the-draw-is-late"
         ]
       },
       {
-        "group": "Economics",
+        "group": "Create machines",
         "pages": [
-          "fees",
-          "depositor-economics",
-          "the-crown"
+          "launch-a-machine",
+          "seed-and-jackpot",
+          "hook-and-graduation",
+          "referrals-and-earnings"
         ]
       },
       {
-        "group": "Pools",
+        "group": "Safety",
         "pages": [
-          "pools-and-tiers"
+          "always-funded",
+          "risks",
+          "trust-boundaries"
         ]
       },
       {
-        "group": "Safety and roadmap",
+        "group": "Developers",
         "pages": [
-          "safety",
-          "roadmap"
-        ]
-      },
-      {
-        "group": "Legal",
-        "pages": [
-          "terms-of-use"
+          "architecture",
+          "the-math",
+          "build-on-gabox",
+          "status-and-addresses"
         ]
       }
     ]
@@ -86,6 +102,11 @@
     "socials": {
       "x": "https://x.com/Gabox_fun",
       "website": "https://gabox.fun"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:site_name": "Gabox docs"
     }
   },
   "contextual": {

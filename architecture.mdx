@@ -1,0 +1,35 @@
+---
+title: "Program reference"
+description: "Accounts and instructions in the current source"
+icon: "network"
+---
+
+## Accounts
+
+| Account | What it stores |
+| --- | --- |
+| `Pool` (`["pool", mint]`) | One machine's creator, coin, quote asset, fixed prize table and DBC config, sequence counter and reserved tokens. |
+| Vault | The machine PDA's Token-2022 coin account, holding prize inventory. |
+| `Draw` (`["draw", pool, buyer, nonce]`) | One purchase of 1 to 5 packs: frozen table, free inventory snapshot, reservation, VRF attempts and any owed amount. |
+| `QuoteConfig` (`["quote", quote_mint]`) | Admin approved quote asset, DBC config and enabled flag for new machines. |
+| `ReferralLink` (`["referral", buyer]`) | The buyer's permanent referrer, if bound. |
+| `Earnings` (`["earnings", wallet, quote_mint]`) | Unclaimed and lifetime pack fee earnings for a creator or referrer. |
+| `WalletActivity` (`["activity", wallet]`) | Packs bought and SOL-quoted spend across machines. |
+
+A **PDA** is an address derived from fixed seeds and the program ID. The fee vault is the fee authority PDA's token account for one quote asset.
+
+## Instructions
+
+| Instruction | Action |
+| --- | --- |
+| `register_quote`, `set_quote_enabled` | Admin manages quote assets for new machines. |
+| `initialize_pool` | Validates a fresh hooked DBC coin and buys the launch seed into its vault. |
+| `fund_prizes` | Donates more coin tokens to the vault. |
+| `buy_packs` | Buys 1 to 5 packs, charges the pack fee, snapshots and reserves the draw, requests VRF. |
+| `deliver_draw` | Authenticated VRF callback fixes outcomes and pays or records owed tokens. |
+| `retry_draw`, `expire_draw` | Permissionless recovery for late randomness. A retry's signer pays its VRF cost. |
+| `claim_prize`, `claim_prize_to` | Pays an owed result to the buyer's standard coin account, or to a buyer owned coin account with buyer signature. |
+| `sell_tokens` | Sells wallet tokens through the coin's current market. |
+| `claim_earnings` | Pays a creator's or referrer's accrued pack fees for one quote asset. |
+
+The program accepts Meteora DBC before graduation and DAMM v2 after it. It pins the venue instruction and account roles. There is no Gabox `graduate` instruction. Read [transfer hook and graduation](/hook-and-graduation) and [build on Gabox](/build-on-gabox).

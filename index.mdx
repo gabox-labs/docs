@@ -1,50 +1,41 @@
 ---
-title: "Overview"
-description: "An onchain gacha built on one primitive: the backed position"
+title: "Gabox"
+description: "Open a token pack, or launch a machine"
 icon: "dice"
 ---
 
-Gabox is an onchain gacha for NFTs and tokenized assets. Depositors list real assets in shared pools, buyers pay a fixed ticket price for a verifiably random draw, and every item drawn comes with a guaranteed instant buyback offer.
+Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin and a machine together. A buyer opens one to five packs. Each pack is 1,000,000 tokens, and MagicBlock VRF chooses the prize from a fixed table.
 
-The whole protocol rests on a single primitive. When a depositor lists an item, they pair it with **backing**: an amount of USDC they lock alongside the asset. That one number is simultaneously the item's buyback bid, its draw weight, and the depositor's stake. Everything else, from ticket pricing to draw odds to buyback liquidity, is derived from it.
+## The short version
 
-<Note>
-Gabox is a working title. The protocol is built: the Solana program is complete and live on devnet, with real draws running against the MagicBlock VRF oracle. Mainnet follows external code review and a multisig upgrade authority. This documentation describes the mechanism as implemented.
-</Note>
+| Question | Answer |
+| --- | --- |
+| What is a pack? | 1,000,000 tokens, or 0.1% of a 1,000,000,000 token supply. |
+| What does it cost? | The coin's market price for one pack, plus a 0.75% Gabox pack fee and normal network, rent, and VRF costs. |
+| Where is the market? | Meteora DBC until graduation, then Meteora DAMM v2. |
+| Who chooses the prize? | MagicBlock VRF, using the creator's immutable prize table. |
+| Can the creator withdraw prizes? | No. Extra funding is a donation. |
+| Is it an investment? | No. Average token payout is capped at one pack, and the coin price can move. |
 
-## Why this design matters
+## Choose a page
 
-Most gacha and lootbox mechanics have a house that can lose. If the protocol promises buybacks from a shared vault, one jackpot cash-out can drain it. Gabox removes that failure mode entirely: every buyback is pre-funded by the depositor's own backing, posted before the item ever enters a pool.
-
-| Property | How Gabox achieves it |
-|---|---|
-| No insolvency risk | Every possible payout is collateralized by depositor backing before the draw |
-| No oracle risk | Prices derive from self-set backing, not floor price feeds |
-| Verifiable fairness | Draws use onchain VRF with published odds |
-| Guaranteed exit | Every drawn item can be sold back instantly for 90% of its backing |
-
-## Scope
-
-- **Assets**: NFTs and tokenized assets only (Collector Crypt cards and similar). No fungible tokens, because a liquid token has a known DEX price that breaks self-set backing. Illiquid uniques have fuzzy floors, so self-backing self-corrects.
-- **Denomination**: USDC throughout. Backing, bids, tickets, and fees are all USD-denominated, so a SOL price move never reprices a standing bid.
-- **Chain**: Solana.
-- **Randomness**: MagicBlock VRF.
-
-## Explore the docs
-
-<Columns cols={2}>
-  <Card title="How it works" icon="route" href="/how-it-works">
-    The full loop: deposit, price, draw, keep or sell back.
-  </Card>
-  <Card title="Backed positions" icon="layer-group" href="/backed-positions">
-    The one primitive everything is built on.
-  </Card>
-  <Card title="Pricing" icon="calculator" href="/pricing">
-    Harmonic-mean pricing and a worked example.
-  </Card>
-  <Card title="The crown" icon="crown" href="/the-crown">
-    The five-rank tithe board that pulls grails into pools.
-  </Card>
+<Columns cols={3}>
+  <Card title="Open a pack" icon="box-open" href="/opening-a-pack">Price, fees, the draw, and late draws.</Card>
+  <Card title="Launch a machine" icon="rocket" href="/launch-a-machine">Creator steps, seed, and graduation.</Card>
+  <Card title="Understand prizes" icon="table-list" href="/prizes-and-odds">Multipliers, tickets, caps, and odds.</Card>
 </Columns>
 
-See [Design evolution](/design-evolution) for how the design arrived at the backed-position mechanism.
+## Who does what
+
+- **Creator:** launches the coin, fixes the prize table, pays the seed, and receives creator earnings.
+- **Buyer:** pays the market price and pack fee, signs cost and prize floors, and receives the draw result.
+- **Referrer:** may earn 0.50% of the measured market charge after a buyer binds them.
+- **Gabox:** holds the vault, checks reservations, requests VRF, and pays or records prizes.
+- **Meteora:** supplies the market and charges its 1.25% venue fee inside each trade.
+- **MagicBlock:** supplies the randomness callback.
+
+## Safety boundaries
+
+The machine is bound to one brand new Token-2022 coin. Its table, pack size, and fee rules are fixed at launch. Every pending draw reserves its maximum possible payment. The table's uncapped expected payout cannot exceed one pack.
+
+Read [What can go wrong](/risks) before you buy. See [Status and addresses](/status-and-addresses) for deployment information.

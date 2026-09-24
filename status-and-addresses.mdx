@@ -1,0 +1,20 @@
+---
+title: "Deployment status"
+description: "Which Gabox rules are confirmed on each network"
+icon: "server"
+---
+
+This site explains the **current source tree**. A feature in source is not live until that build is deployed and verified on the network you use.
+
+| Network | Last verified record | What that record covers |
+| --- | --- | --- |
+| Devnet | 24 September 2026, slot `503524672` | Meteora DBC to DAMM v2, quote registry, batch packs, 0.75% pack fee, referrals and earnings. The recorded build predates the current source's integrated transfer hook. |
+| Mainnet | 22 September 2026, slot `449440339` | An earlier build. The Meteora and hook behavior described in this site is **not confirmed live on mainnet**. |
+
+| Address | Value |
+| --- | --- |
+| Gabox program | `GaBoxR9nYcK1zeu8EvSJVHV3SrYpCFmvbh2MLgobMcUA` |
+| Gabox hook program in current source | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
+| Admin and last recorded upgrade authority | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
+
+The hook address in source is **not proof of a deployed hook**. Check both programs, the current Gabox binary, the quote registry and the coin's mint before using a network. Existing machines from incompatible account layouts are not migrated by the current source.

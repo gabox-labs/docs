@@ -1,0 +1,19 @@
+---
+title: "How prizes stay funded"
+description: "Vault inventory, caps and reservations"
+icon: "vault"
+---
+
+The **vault** holds the machine's coin tokens. The creator's seed, later donations and every bought pack add tokens. Only prize payments remove them through the normal program instructions. There is no creator withdrawal.
+
+```text
+free inventory = vault balance - already reserved tokens
+batch reservation = min(pack count × full top prize,
+                        free inventory + pack count × one pack)
+```
+
+A purchase adds its pack tokens, records its own reservation and requests randomness in one transaction. The invariant is `vault balance ≥ all reservations`. Pending draws reserve their maximum possible payout; settled draws that are still owed reserve the exact owed amount. One draw cannot spend another's reservation.
+
+The first pack's displayed top prize is capped at `free inventory + one pack`. The buyer signs `min_first_maximum`, a floor for that value. Later packs settle in order against the snapshot: each adds one pack to the available amount after the earlier packs' payouts. A top row can therefore pay less than its full multiplier when free inventory is low. The odds of its row do not change.
+
+At launch, the table's **uncapped average token payout** must be no more than one pack. This limits the table; the reservation and cap protect each actual purchase. None of these rules protects the coin's market price or guarantees a cash return.

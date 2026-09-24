@@ -1,0 +1,24 @@
+---
+title: "Keep or sell"
+description: "Your prize after the draw"
+icon: "arrows-split-up-and-left"
+---
+
+Once the draw settles, the prize is yours. Keeping it costs no Gabox fee.
+
+## Keep
+
+Do nothing. Tokens remain in your coin account. If delivery was recorded as owed, use `claim_prize` or `claim_prize_to` first.
+
+## Sell
+
+Sign `sell_tokens` with the amount and your minimum quote output.
+
+1. The app quotes the current DBC or DAMM v2 market.
+2. You sign `min_quote_output`. The venue checks this floor before delivery.
+3. The program sells through the official market.
+4. The venue takes its 1.25% trade fee. Gabox takes no pack fee on a sale.
+
+A sale may be partial. A jackpot can move the market more than a common prize, so its received quote depends on the live market and amount sold. There is no Gabox buyback or guaranteed price.
+
+At graduation, the market changes from DBC to DAMM v2. The tokens remain yours, and the program continues to enforce the market and minimum-output checks.

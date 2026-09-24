@@ -1,0 +1,17 @@
+---
+title: "Trust boundaries"
+description: "What code enforces and which services you rely on"
+icon: "scale"
+---
+
+| Boundary | Rule or dependency |
+| --- | --- |
+| Gabox program | Validates launch config, table, token amounts, fee split, venue accounts, draw reservations and the authenticated callback. It has no instruction to withdraw prize inventory. |
+| Gabox transfer hook | While the coin is on the DBC curve, curve vault transfers may only enter that coin's machine vault. DBC removes the hook at graduation. |
+| MagicBlock VRF | Supplies the random bytes. Gabox checks the scoped callback signer and matching draw sequence, but relies on MagicBlock for fair generation and delivery. A late draw can expire at its minimum prize. |
+| Meteora | Sets execution prices, runs curve and graduated pool trades, collects venue fees and performs migration. Gabox does not compare a trade with an independent price oracle. |
+| Quote issuer | Some registered Token-2022 quote assets can have issuer controls such as pause, freeze or permanent delegate. Gabox rejects transfer fee, live hook and unsupported mint behavior and rechecks a quote at trades, but the issuer can still affect trading or balances. |
+| Admin / upgrade authority | The admin registers quote configurations and may disable new launches on a quote. The last recorded deployments use a single upgrade key. New code could change vault and draw rules. |
+| RPC / indexer | Helps you read offers and events. Check signed transactions and on-chain data when accuracy matters. |
+
+A quote registry change applies only to machines launched afterward. A creator's existing prize table stays fixed under the current program, but an upgrade can replace that code. See [status](/status-and-addresses) for the deployment boundary.

@@ -1,0 +1,33 @@
+---
+title: "Seed and jackpot"
+description: "How launch inventory is sized"
+icon: "sprout"
+---
+
+The seed is the creator's first donation of prize tokens. It is bought on the DBC bonding curve and placed directly in the vault.
+
+## The rule
+
+The mandatory seed supports a 3× top prize on the first pack, or the full top prize when the largest multiplier is below 3×:
+
+```text
+mandatory seed = min(jackpot amount, 3 packs) − 1 pack
+```
+
+For a 1,000,000 token pack:
+
+| Top prize | Mandatory seed |
+| --- | --- |
+| 1× | 0 packs |
+| 2× | 1 pack |
+| 3× | 2 packs |
+| 5× | 2 packs |
+| 20× | 2 packs |
+
+The largest multiplier may be at most 20× and at least 1×. A creator may add `extra_seed_tokens` in the same launch trade. Extra seed is visible capacity, not withdrawable balance.
+
+The first buyer contributes one pack to the vault. The mandatory seed adds enough for the first 3× top prize, or the smaller full top prize. Later packs and donations refill inventory. Gabox reserves each pending maximum before selling the next pack.
+
+The displayed top prize can be capped after large wins. The buyer signs a floor for the first pack's maximum. A capped result still settles from the frozen table and available inventory.
+
+The creator signs quote and native debit caps for the seed buy. The seed buy pays no 0.75% pack fee. See [Launch a machine](/launch-a-machine) and [Always funded](/always-funded).

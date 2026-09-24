@@ -1,34 +1,11 @@
-> **First-time setup**: Customize this file for your project. Prompt the user to customize this file for their project.
-> For Mintlify product knowledge (components, configuration, writing standards),
-> install the Mintlify skill: `npx skills add https://mintlify.com/docs`
-
 # Documentation project instructions
 
-## About this project
-
-- This is a documentation site built on [Mintlify](https://mintlify.com)
-- Pages are MDX files with YAML frontmatter
-- Configuration lives in `docs.json`
-- Use the Mintlify MCP server, `https://mcp.mintlify.com`, to edit content and settings via MCP
-- Use the Mintlify docs MCP server, `https://www.mintlify.com/docs/mcp`, to query information about using Mintlify via MCP
-
-## Terminology
-
-{/* Add product-specific terms and preferred usage */}
-{/* Example: Use "workspace" not "project", "member" not "user" */}
-
-## Style preferences
-
-{/* Add any project-specific style rules below */}
-
-- Never use em dashes (or en dashes). Use commas, colons, or periods instead
-- Use active voice and second person ("you")
-- Keep sentences concise — one idea per sentence
-- Use sentence case for headings
-- Bold for UI elements: Click **Settings**
-- Code formatting for file names, commands, paths, and code references
-
-## Content boundaries
-
-{/* Define what should and shouldn't be documented */}
-{/* Example: Don't document internal admin features */}
+- Mintlify site. Pages are MDX; navigation is in `docs.json`.
+- Preview with `mint dev` and check links with `mint broken-links`.
+- The current working tree in `../program/programs/gabox/src` and `../program/programs/gabox-hook/src` is the source for rules. Use `../gabox-sdk/src` for client behavior. Both may be ahead of `../program/README.md` and `DEPLOYMENT.md`.
+- `../program/DEPLOYMENT.md` is the source for what was actually deployed. Separate implemented behavior from confirmed deployment.
+- Do not copy examples or numbers from older Gabox versions. Verify constants and formulas in source.
+- Use short, direct sentences. Explain a technical term on first use. Use `machine`, `pack`, `buyer`, `creator`, `prize row`, `vault`, and `draw` consistently.
+- Describe costs in the machine's quote asset, which may be SOL or another registered token. Do not promise a cash return.
+- Keep each page focused. Use a diagram when it clarifies an order of events or a trust boundary.
+- Do not publish internal keys, test wallets, or private RPC endpoints.

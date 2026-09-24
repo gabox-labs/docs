@@ -1,0 +1,21 @@
+---
+title: "Referrals and earnings"
+description: "How a buyer's referral is bound and how pack fees are claimed"
+icon: "handshake"
+---
+
+A buyer may name a referrer when opening packs. The first named referrer becomes that buyer's permanent link across machines. If the buyer already has a link, it wins and a new name is ignored. A buyer cannot refer themselves.
+
+| From the venue's quote charge | No referrer | With referrer |
+| --- | ---: | ---: |
+| Pack fee paid by buyer | 0.75% | 0.75% |
+| Creator receives | 0.75% | 0.25% |
+| Referrer receives | 0% | 0.50% |
+
+The program rounds the total fee and referrer part down to whole quote units. The creator receives the remainder, so the two shares always add to the exact fee. A seed buy and a token sale pay no pack fee. The market's separate venue fee still applies.
+
+During `buy_packs`, the fee goes into a quote asset fee vault and credits `Earnings` records for the creator and, when present, the referrer. The buyer pays account rent if the purchase creates a referral link, referrer earnings account or quote fee vault. If the creator is also the referrer, both shares credit the same earnings record.
+
+A creator or referrer calls `claim_earnings` to take **all** unclaimed pack fees for one quote asset. They claim each quote asset separately. Claims do not change the lifetime earned total. The SDK can unwrap a WSOL claim to native SOL in the same transaction.
+
+The creator and Gabox admin also earn parts of Meteora's **venue** fees. Those are held and claimed through Meteora, outside `claim_earnings`. [Price and fees](/what-a-pack-costs) explains both charges.

@@ -1,0 +1,22 @@
+---
+title: "Build on Gabox"
+description: "The client flow and public program interface"
+icon: "code"
+---
+
+The TypeScript package is [`@gabox-labs/sdk`](https://www.npmjs.com/package/@gabox-labs/sdk). Check [deployment status](/status-and-addresses) before choosing a network or SDK build: the current source is ahead of the last recorded deployments.
+
+```sh
+npm install @gabox-labs/sdk @solana/kit
+```
+
+## Client flow
+
+1. Read an enabled `QuoteConfig` and its registered DBC config. A quote is WSOL or another supported SPL / Token-2022 asset.
+2. For launch, build one transaction: DBC creates the new hooked coin and curve, the hook initializes its extra account list, then Gabox `initialize_pool` buys the seed. The creator signs seed quote and native cost caps.
+3. Read the `Pool` and vault together. Quote `count × pack_tokens` on the coin's current venue, add the 0.75% pack fee, and show each pack's possible capped awards.
+4. Send `buy_packs` with `count` from 1 to 5, a fresh nonce, `max_quote_in`, `min_first_maximum`, `max_native_debit` and optional referrer. The returned draw address identifies this purchase.
+5. Follow `DrawResolved`. If `paid` is false, use `claim_prize` or purchaser signed `claim_prize_to`. A stalled draw can use `retry_draw`, then `expire_draw` after its deadline.
+6. Use `sell_tokens` for a separate sale. Creators and referrers use `claim_earnings` once per quote asset. Meteora venue fees are claimed through Meteora's own mechanisms.
+
+The current on-chain instructions and account seeds are listed in [program reference](/architecture). `PacksBought` and `DrawResolved` provide the data for [checking a draw](/provable-fairness). An external client must bind the venue and hook accounts correctly; the SDK provides builders for those paths.

@@ -1,0 +1,33 @@
+---
+title: "Launch a machine"
+description: "Creator steps and launch rules"
+icon: "rocket"
+---
+
+A machine can only open for a brand new Gabox coin. The creator launches a Token-2022 coin through the registered Meteora DBC configuration, then calls `initialize_pool` for that same, still untraded coin.
+
+## What you choose
+
+- **Prize table:** up to eight rows, each with a multiplier and ticket count. It is immutable.
+- **Extra seed:** optional tokens added to the mandatory seed. This is an irrevocable donation.
+- **Quote limits:** `max_seed_quote_in` and `max_seed_native_debit`, signed caps for the seed purchase.
+
+The pack size is always 1,000,000 tokens. The creator does not set a fixed pack price. DBC sets the launch price, then DAMM v2 sets the price after graduation.
+
+```mermaid
+flowchart LR
+ A[Create new hooked Token-2022 coin and DBC curve] --> B[Initialize hook account list]
+ B --> C[initialize_pool validates fresh coin and config]
+ C --> D[Buy mandatory and extra seed]
+ D --> E[Seed enters vault; machine opens]
+```
+
+## Launch checks
+
+The program checks the registered DBC configuration, creator signer, fresh untraded DBC pool, Token-2022 mint rules, prize table, and seed limits. Existing coins and pools that already traded are refused. The transfer hook is part of the source launch design; deployment status is on [Status and addresses](/status-and-addresses).
+
+## After launch
+
+The table, pack size, coin binding, and fee rules cannot change. The creator may call `fund_prizes` to donate more coin tokens. The creator cannot withdraw vault inventory, mint replacement prizes, or borrow from it.
+
+When the DBC curve completes, the coin graduates to Meteora DAMM v2. Gabox binds that pool for future trades. The creator may claim their accumulated 0.75% pack fee share, or 0.25% when a referrer is active.

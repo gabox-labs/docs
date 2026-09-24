@@ -1,0 +1,23 @@
+---
+title: "People and rules"
+description: "Who does what in a Gabox machine"
+icon: "users"
+---
+
+A **machine** belongs to one new coin. These are the parties in its life:
+
+| Party | Can do | Cannot do |
+| --- | --- | --- |
+| Creator | Launch the coin and machine, choose the fixed prize table, pay for the launch seed, add more prize tokens, claim pack fee earnings and market fees. | Change the prize table or take tokens back from the prize vault. |
+| Buyer | Open 1 to 5 packs in one purchase, choose a price cap and a floor for the first pack's top prize, keep or sell received tokens, claim an owed prize. | Change a resolved draw or choose its random result. |
+| Referrer | Earn a share of a bound buyer's pack fees and claim those earnings. | Bind themselves to a buyer or change an existing link. |
+| Gabox admin | Register or disable quote assets for **new** machines and claim Gabox's market fees. | Change an existing machine's quote config, table or draw through the normal instructions. |
+| Anyone | Add prize tokens, pay for a permitted VRF retry, expire an overdue draw, or pay an owed prize to the buyer's standard token account. | Redirect another buyer's prize. |
+| Meteora DBC / DAMM v2 | Price coin trades. DBC runs the launch curve; DAMM v2 runs the market after graduation. | Choose Gabox's prize result. |
+| MagicBlock VRF | Return random bytes through the authenticated callback. | Change the bought table or redirect payment. |
+
+The admin also holds the program upgrade authority in the last recorded deployments. Upgraded code can change these rules, so check [status](/status-and-addresses) and [trust boundaries](/trust-boundaries).
+
+## Two kinds of earnings
+
+The **0.75% pack fee** is charged on top of the venue's quote charge. It goes to the creator, or to the creator and referrer. The **1.25% venue fee** is inside Meteora's trading price and is shared under the market config. These are separate balances and separate claims. See [price and fees](/what-a-pack-costs) and [referrals](/referrals-and-earnings).
