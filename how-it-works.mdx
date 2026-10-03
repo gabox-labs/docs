@@ -4,14 +4,14 @@ description: "From launch to a prize"
 icon: "route"
 ---
 
-Gabox connects a creator, a market, a buyer, a vault, and MagicBlock VRF.
+Gabox connects a creator, a market, a buyer, a prize vault and MagicBlock VRF.
 
 ```mermaid
 flowchart LR
- A[Creator launches] --> B[Seed enters vault]
- B --> C[Buyer opens 1 to 5 packs]
- C --> D[Market sends tokens to vault]
- D --> E[Gabox reserves maximum]
+ A[Creator launches coin and machine] --> B[Seed enters vault]
+ B --> C[Buyer opens a pack]
+ C --> D[Market sends coins to vault]
+ D --> E[Gabox reserves the top prize]
  E --> F[VRF callback]
  F --> G[Prize paid or owed]
  G --> H[Keep or sell]
@@ -19,20 +19,24 @@ flowchart LR
 
 ## The flow
 
-1. **Launch.** A creator opens a machine only for a new coin created with the registered Meteora DBC configuration. The app uses its fixed 10× prize table, and the creator pays the seed.
-2. **Price.** The coin trades on DBC, the bonding curve. A pack costs whatever the venue charges for 1,000,000 tokens. After graduation, DAMM v2 sets the live price.
-3. **Purchase.** The buyer opens 1 to 5 packs in one trade. The coin goes to the vault. Gabox adds a 0.75% pack fee based on the measured venue charge.
-4. **Reservation.** Gabox snapshots the table and inventory, then reserves the batch maximum. Each purchase has its own draw and nonce, so purchases can overlap.
-5. **Randomness.** One VRF request resolves the batch. Each pack gets a domain-separated SHA-256 derived 16-bit ticket from the VRF randomness, pool, sequence, and pack index. It maps uniformly to one of 65,536 tickets.
-6. **Delivery.** Gabox settles packs in order and sends the total to the buyer. If the account cannot receive, the result becomes owed and can be claimed.
-7. **Afterwards.** The buyer keeps the tokens or signs `sell_tokens`. A sale has no pack fee, but the venue still charges 1.25%.
+1. **Launch.** A creator launches a new coin and its machine in one transaction. The coin uses its quote token's registered Meteora configuration. The creator pays the seed, which buys the first coins into the prize vault.
+2. **Price.** The buyer picks a pack: $10, $50, $200, $500 or $1,000. The price is fixed in USDC. How many coins it buys depends on the market price at that moment.
+3. **Purchase.** The buyer pays USDC. On a machine quoted in another token, the same transaction first swaps the USDC into that token. The market sends the bought coins straight to the vault. 0.20% of the price is the pack fee. It goes to the buyer's referrer, to Gabox, or after graduation to the Mega Pack.
+4. **Reservation.** Gabox takes a snapshot of the prize table and the free coins in the vault. It reserves the most this pack can pay. Each purchase is its own draw, so many purchases can run at the same time.
+5. **Randomness.** MagicBlock VRF sends 32 random bytes back to Gabox. Gabox turns them into one ticket out of 65,536, and the ticket picks a prize row.
+6. **Delivery.** Gabox pays the prize to the buyer's coin account. If that account cannot receive it, the prize is recorded as owed and can be claimed later.
+7. **Afterwards.** The buyer keeps the coins or sells them. A sale pays the market's trading fee, but no pack fee.
 
 ## Graduation
 
-When the DBC curve completes, Meteora migrates the coin to DAMM v2. Gabox binds that pool for later buys and sells. The pack amount, table, vault, reservations, and 0.75% pack fee stay the same.
+Before graduation, the coin trades on a Meteora DBC bonding curve. A bonding curve is a market whose price rises as coins are bought. The Gabox transfer hook makes sure that only Gabox can buy on it. When the curve has raised its target, Meteora moves the coin into a DAMM v2 pool. After that, anyone can trade the coin, and the $1,000 pack unlocks.
 
-On devnet, the transfer hook restricts DBC curve buys to the machine vault and DBC removes it at graduation. See [deployment status](/status-and-addresses) before using another network.
+The prize table, the vault and open draws do not change at graduation. See [Transfer hook and graduation](/hook-and-graduation).
+
+## After graduation: the Mega Pack
+
+After graduation, the pack fee of a buyer with no referrer goes into the machine's Mega Pack balance. When the balance reaches its target, Gabox opens a Mega Pack on its own. The coin's holders share what it pulls. See [Mega Pack](/mega-pack).
 
 ## The accounting rule
 
-Tokens purchased, seed, and donations become vault inventory. Inventory is paid out or remains there. Pending reservations cannot be spent by another draw.
+Seed coins, bought coins and donations all enter the vault. Coins leave the vault only as prizes. Coins reserved for open draws and owed prizes cannot be used by another draw.

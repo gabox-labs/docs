@@ -7,20 +7,29 @@ icon: "book"
 | Term | Meaning |
 | --- | --- |
 | Machine | One Gabox prize game tied to one new coin. |
-| Pack | 1,000,000 tokens of that coin, bought through its market. |
-| Prize row | A fixed multiplier and ticket count chosen by the creator at launch. |
-| Ticket | One of 65,536 equally likely numbers that selects a prize row. |
-| Draw | One purchase of 1 to 5 packs, from buy through payment or an owed claim. |
-| Vault | The machine's token account holding prize inventory. |
-| Reservation | Tokens held for pending draws or prizes already owed. |
-| Seed | Tokens bought by the creator at launch for the prize vault. |
-| Quote asset | The token used to price and pay for a machine's coin, such as WSOL. |
-| Bonding curve | The DBC market a new coin uses before graduation. |
-| Graduation | DBC's migration into a DAMM v2 liquidity pool. |
-| AMM | Automated market maker, the market after graduation. |
-| Transfer hook | Token-2022 rule that limits buys from the DBC curve vault to the Gabox machine vault. |
-| VRF | Verifiable random function. MagicBlock supplies randomness for draws. |
-| PDA | Program derived address, calculated from fixed seeds and a program ID. |
-| ATA | Associated token account, a wallet's standard account for one token. |
-| Slot | Solana clock unit used for retry and expiry deadlines. |
-| Basis point | One hundredth of one percent. 75 bps is 0.75%. |
+| Coin | The new Token-2022 token a machine is built on. Every coin has 9 decimals and a fixed supply of 1,000,000,000. |
+| Pack | One purchase at a fixed USDC price: $10, $50, $200, $500 or $1,000. Its coins are what that price buys on the market. |
+| Pack coins | The coins one pack bought. Every prize is a multiple of them. |
+| Prize row | A fixed multiplier and a number of tickets, set at launch. The app calls the rows Common, Rare, Epic and Mythic. |
+| Ticket | One of 65,536 equally likely numbers. The random ticket picks a prize row. |
+| Draw | One pack, from purchase until its prize is paid or claimed. |
+| Vault | The machine's token account that holds the prize coins. |
+| Free coins | Vault coins that no open draw or owed prize has reserved. |
+| Reservation | Coins held back for open draws and owed prizes. |
+| Seed | Coins the creator buys into the vault at launch. They cannot be taken back. |
+| Quote token | The token the coin trades against: USDC, SOL or a registered stock token. |
+| Pack fee | 0.20% of the pack price, already inside the price. |
+| Trading fee | Meteora's fee inside every trade's price. |
+| Referrer | The wallet a buyer named on their first referred purchase. The link is permanent. |
+| Bonding curve | The Meteora DBC market a new coin trades on before graduation. Its price rises as coins are bought. |
+| Graduation | Meteora moves the coin from the bonding curve into a DAMM v2 pool. |
+| AMM | Automated market maker. DAMM v2 is the AMM a coin trades on after graduation. |
+| Transfer hook | A Token-2022 rule. While the coin is on the curve, coins leaving the curve may only go to the machine's vault. |
+| Mega Pack | A pack paid for by pack fees after graduation. Its prize goes to the coin's holders. |
+| Snapshot | The list of holder balances that Gabox takes just before a Mega Pack round opens. |
+| Merkle root | A 32-byte fingerprint of the holders' reward list, stored on chain. A wallet proves its reward against it. |
+| VRF | Verifiable random function. MagicBlock supplies the randomness for every draw. |
+| PDA | Program derived address: an address computed from fixed seeds and a program ID. Nobody holds a private key for it. |
+| ATA | Associated token account: a wallet's standard account for one token. |
+| Slot | The Solana clock unit. Retry and expiry deadlines count slots. |
+| Basis point | One hundredth of one percent. 20 bps is 0.20%. |

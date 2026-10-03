@@ -4,29 +4,54 @@ description: "Creator steps and launch rules"
 icon: "rocket"
 ---
 
-A machine can only open for a brand new Gabox coin. The creator launches a Token-2022 coin through the registered Meteora DBC configuration, then calls `initialize_pool` for that same, still untraded coin.
+A machine can only open for a brand new coin. The creator launches the coin and its machine in **one transaction**, so nobody can trade the coin before the machine exists.
 
 ## What you choose
 
-- **Starting liquidity:** the app uses a fixed prize table with a 10× top row. You choose how many extra seed tokens to buy for the vault. This is an irrevocable donation. SDK clients may supply other valid tables, up to the program's 20× limit.
-- **Quote limits:** `max_seed_quote_in` and `max_seed_native_debit`, signed caps for the seed purchase.
+- **Name, symbol and image.** They go into the coin's own metadata.
+- **Quote token.** The token your coin trades against: USDC, SOL or a registered stock token. It cannot change later. Buyers still pay for packs in USDC.
+- **Starting liquidity.** How many extra jackpots your seed funds. See [Seed and jackpot](/seed-and-jackpot).
 
-The pack size is always 1,000,000 tokens. The creator does not set a fixed pack price. DBC sets the launch price, then DAMM v2 sets the price after graduation.
+Everything else is fixed for every coin: 9 decimals, 1,000,000,000 coins, the app's prize table, the trading fees and the move to DAMM v2 at graduation. A client built on the SDK may pass another valid prize table.
+
+## What happens in the launch transaction
 
 ```mermaid
 flowchart LR
- A[Create new hooked Token-2022 coin and DBC curve] --> B[Initialize hook account list]
- B --> C[initialize_pool validates fresh coin and config]
- C --> D[Buy mandatory and extra seed]
- D --> E[Seed enters vault; machine opens]
+ A[Meteora creates the coin and its curve] --> B[Hook account list for the coin]
+ B --> C[initialize_pool checks the new coin]
+ C --> D[Seed buy into the vault]
+ D --> E[Machine is open]
 ```
+
+1. Meteora DBC creates the Token-2022 coin, with the Gabox transfer hook, and its bonding curve. It uses the quote token's registered Gabox config.
+2. The hook program creates the coin's account list. The hook needs it to run.
+3. `initialize_pool` checks the config, the coin, the hook and the prize table. It refuses a coin that has already traded.
+4. The seed buy is the coin's first trade. It buys the seed coins straight into the vault.
+
+If any step fails, nothing happens.
+
+## What it costs
+
+- **The seed**, paid in the machine's quote token. There is no swap at launch, so on a USDC or stock token machine you must already hold that token. The seed buy pays the curve's trading fee, but no pack fee.
+- **SOL** for account rent and the network fee.
+
+You sign `max_seed_quote_in`, the most quote tokens the seed may spend, and `max_seed_native_debit`, the most SOL it may spend. The app shows the estimated launch cost before you sign.
 
 ## Launch checks
 
-The program checks the registered DBC configuration, creator signer, fresh untraded DBC pool, Token-2022 mint rules, prize table, and seed limits. Existing coins and pools that already traded are refused. The transfer hook is verified on devnet; see [deployment status](/status-and-addresses) for other networks.
+The program checks that:
+
+- the config is the one Gabox registered for that quote token, with the Gabox fee terms;
+- the coin has 9 decimals, the fixed supply and the Gabox hook;
+- the curve is new and has had no trade;
+- the vault is empty before the seed;
+- the prize table is valid, and even the smallest possible buy on this curve pays every row at least one coin unit.
 
 ## After launch
 
-The table, pack size, coin binding, and fee rules cannot change. The creator may call `fund_prizes` to donate more coin tokens. The creator cannot withdraw vault inventory, mint replacement prizes, or borrow from it.
+The prize table and the coin's market terms cannot change. Anyone can add more prize coins with `fund_prizes`. This is a gift to the vault: nobody can take it back, the creator included.
 
-When the DBC curve completes, the coin graduates to Meteora DAMM v2. Gabox binds that pool for future trades. The creator may claim their accumulated 0.75% pack fee share, or 0.25% when a referrer is active.
+As creator you earn part of every trade's fee: 0.495% on the curve and about 0.25% after graduation, through your locked share of the pool. You do not earn pack fees on your own machine. See [Referrals and earnings](/referrals-and-earnings).
+
+When the curve reaches its target, the coin graduates. See [Transfer hook and graduation](/hook-and-graduation).

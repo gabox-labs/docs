@@ -1,34 +1,41 @@
 ---
 title: "Check a draw"
-description: "How randomness becomes each pack's prize"
+description: "How randomness becomes your prize"
 icon: "shield-check"
 ---
 
-The machine's prize table is fixed at launch. The app uses a 10× top row; another client can submit a different valid table. Each row has a token multiplier and a number of **tickets**. The ticket counts must total 65,536. Your purchase stores the table, pack size and free vault inventory in its draw, so later purchases cannot change its result.
+Every pack is one draw. When you buy, the draw stores the prize table, your pack coins and the free coins in the vault. Later purchases cannot change these numbers, so they cannot change your result.
 
 ```mermaid
 sequenceDiagram
   participant Buyer
   participant Gabox
   participant VRF as MagicBlock VRF
-  Buyer->>Gabox: buy_packs (1 to 5 packs)
-  Gabox->>Gabox: snapshot terms and reserve maximum
-  Gabox->>VRF: one request for the batch
-  VRF-->>Gabox: authenticated callback with 32 bytes
-  Gabox->>Gabox: derive one ticket per pack and settle in order
-  Gabox-->>Buyer: pay total, or record it as owed
+  Buyer->>Gabox: buy_fixed_pack
+  Gabox->>Gabox: Store terms and reserve the top prize
+  Gabox->>VRF: Request randomness, tagged with the draw's seq
+  VRF-->>Gabox: Authenticated callback with 32 bytes
+  Gabox->>Gabox: Ticket, row, prize
+  Gabox-->>Buyer: Pay the prize, or record it as owed
 ```
 
-For pack `k`, Gabox hashes the 32 random bytes, machine address, batch starting sequence and `k`. The first two hash bytes, read as a little-endian number, give a ticket from 0 to 65,535. The ticket falls into exactly one row. Using 65,536 tickets matches the 16-bit range, so no modulo reduction is needed.
+## From random bytes to a prize
 
-Each row's nominal prize is `floor(1,000,000 tokens × multiplier_bps / 10,000)`. The amount paid to a pack is capped by available vault tokens at that pack's turn. Packs in a batch settle in order; an earlier award changes the cap for later packs. [Funding](/always-funded) explains the reservation.
+1. Gabox hashes three values with SHA-256: the 32 random bytes, the machine's address and the draw's sequence number (`seq`, 8 bytes, little-endian).
+2. The first two bytes of the hash, read as a little-endian number, are the ticket: a number from 0 to 65,535.
+3. The rows own consecutive ranges of tickets, in table order. The ticket falls into exactly one row.
+4. The prize is `min(floor(pack coins × multiplier / 10,000), free coins + pack coins)`.
 
-## Verify your purchase
+There are exactly 65,536 tickets, which is the full range of a 16-bit number. So every ticket has the same chance, and no rounding favours a row.
 
-1. Find `PacksBought` for your draw. It records the batch, `seq_start`, free inventory snapshot and first pack's prizes.
-2. Find `DrawResolved` for that draw. It records the 32 bytes, each pack's row and amount, total, `timed_out` and `paid`.
-3. Recompute the tickets and amounts with the SDK's `settle(...)` function, or the formula above. Compare each result and the total.
+Each machine gives every pack a new `seq`, and it never repeats. A callback must carry the same `seq` as the draw, so a random value can only settle the draw that asked for it.
 
-If `timed_out` is true, randomness was not used: every pack gets its smallest prize row. If `paid` is false, the outcome is fixed but [still needs a claim](/if-the-draw-is-late).
+## Verify your pack
 
-The program authenticates MagicBlock's scoped callback and ties it to this draw's sequence. MagicBlock's randomness and delivery are external trust dependencies; see [trust boundaries](/trust-boundaries).
+1. Find the `PackBoughtV2` event of your purchase. It records the draw, `seq`, your pack coins (`tokens_bought`), the free coins snapshot and the prize offer.
+2. Find the `DrawResolved` event of that draw. It records the 32 random bytes, the row, the amount, and the `timed_out` and `paid` flags.
+3. Recompute the ticket and the prize with the steps above, or with the SDK's `settle(...)` function. Compare them with the event.
+
+If `timed_out` is true, no randomness was used: the draw paid its smallest row. If `paid` is false, the result is fixed but [still needs a claim](/if-the-draw-is-late).
+
+The program checks that the callback comes from MagicBlock's authority for this program and carries the right `seq`. It relies on MagicBlock to generate the bytes fairly and to deliver them. See [trust boundaries](/trust-boundaries).

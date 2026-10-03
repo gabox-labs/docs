@@ -1,28 +1,57 @@
 ---
 title: "What a pack costs"
-description: "The market price, venue fee, and Gabox fee"
+description: "The pack price, the pack fee and the trading fee"
 icon: "coins"
 ---
 
-There is no fixed SOL price. The coin's market sets the cost of 1,000,000 tokens.
+A pack costs its listed USDC price. The pack fee and the market's trading fee are already inside that price. Nothing is added on top, except SOL for the network, rent and randomness.
 
-| Item | Rule | Paid to |
+## What the price pays for
+
+| Part | Rule | Paid to |
 | --- | --- | --- |
-| Pack price | Venue charge for 1,000,000 tokens | Meteora market |
-| Venue fee | 1.25%, included in every DBC or DAMM v2 trade | Configured as 0.25% Meteora, 0.50% Gabox, 0.50% creator; Meteora rebates 0.05% of the trade to Gabox's venue referral account |
-| Pack fee | 0.75% of measured venue charge, added on top | Creator, or creator plus referrer |
-| VRF, rent, network | Variable transaction costs | Solana and MagicBlock |
+| Pack fee | 0.20% of the amount charged | The buyer's referrer, or Gabox. After graduation, with no referrer, the machine's Mega Pack. |
+| Trading fee | 1.875% on the curve, 0.94% after graduation, inside the market price | Meteora, Gabox and the creator |
+| Coins | Everything else buys coins for the vault | The machine's vault |
+| Swap | Only on a SOL or stock token machine: the USDC to quote token swap | The swap route |
+| Network, rent, VRF | Variable costs, paid in SOL | Solana and MagicBlock |
 
-`pack_fee = venue_charge × 75 / 10,000`, rounded down. With a referrer, `referrer_fee = venue_charge × 50 / 10,000`, rounded down. The creator receives the remaining 0.25%. With no referrer, the creator receives all 0.75%.
+## How the pack fee is taken
 
-The buyer's `max_quote_in` covers venue charge and pack fee. A sale pays no pack fee, but still pays the venue's 1.25% trade fee. Meteora holds the venue earnings; `claim_earnings` only pays the separate Gabox pack fee shares.
+The pack fee is inclusive. The program takes it out of the pack's budget before it buys:
+
+```text
+market budget = budget − floor(budget × 20 / 10,000)
+pack fee      = floor(amount charged × 20 / 10,000)
+```
+
+Example: a $10 pack on a USDC machine has a budget of 10,000,000 raw USDC units. The market may spend up to 9,980,000. If it spends all of it, the pack fee is 20,000 units, or $0.02, and the total is exactly $10. If the market spends less, for example on the last pack of the curve, the fee is smaller and the rest stays with the buyer.
+
+## Trading fees
+
+Every trade on a Gabox coin pays a trading fee inside the market price. Gabox only accepts market configs with these terms, so every coin pays the same:
+
+| Market | Total | Meteora | Gabox | Creator |
+| --- | --- | --- | --- | --- |
+| Bonding curve (DBC) | 1.875% | 0.30% | 1.08% | 0.495% |
+| After graduation (DAMM v2) | 0.94% | about 0.15% | about 0.54% | about 0.25% |
+
+- **On the curve.** Meteora keeps 20% of the fee. Of the rest, the creator gets 33% and Gabox 67%. Meteora pays 20% of its own part back to the referral account that the trade names. Gabox names its own account there, so this 0.075% is part of Gabox's 1.08%.
+- **After graduation.** Meteora keeps 20% of the pool fee, with the same rebate. The rest goes to the pool's liquidity, which is locked for ever: 67% is Gabox's position and 33% is the creator's.
+- All fees are collected in the machine's quote token.
+
+## Fee summary
+
+| Action | Pack fee | Trading fee |
+| --- | --- | --- |
+| Open a pack on the curve | 0.20% | 1.875% |
+| Open a pack after graduation | 0.20% | 0.94% |
+| Sell coins | None | 1.875% on the curve, 0.94% after graduation |
+| Seed buy at launch | None | 1.875% |
+| Mega Pack opening | None | 0.94% |
 
 ## Before and after graduation
 
-Before graduation, the venue is Meteora DBC, the bonding curve. After the curve completes, it is Meteora DAMM v2. The pack size and Gabox fee stay the same while the market price changes.
+Before graduation, the market is the Meteora DBC bonding curve. After it, the market is a Meteora DAMM v2 pool. The pack prices stay the same. The number of coins a pack buys follows the market price.
 
-## Referrer rules
-
-The first valid referrer a buyer names becomes permanent. A buyer cannot refer themselves. Later names are ignored. Referrers and creators claim their accumulated earnings from their quote accounts.
-
-The seed buy at launch and `sell_tokens` pay no Gabox pack fee.
+Read [Referrals and earnings](/referrals-and-earnings) for who receives the pack fee and how they claim it.

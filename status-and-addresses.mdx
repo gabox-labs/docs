@@ -1,20 +1,22 @@
 ---
 title: "Deployment status"
-description: "Which Gabox rules are confirmed on each network"
+description: "Which Gabox rules run on each network"
 icon: "server"
 ---
 
-This site explains the **current source tree**. A feature in source is not live until that build is deployed and verified on the network you use.
+These pages explain the **current Gabox source**. A rule in the source is live only after that build is deployed and checked on the network you use.
 
 | Network | Last verified record | What that record covers |
 | --- | --- | --- |
-| Devnet | 24 September 2026, Gabox slot `503610380` and hook slot `503610147` | Meteora DBC to DAMM v2, quote registry, batch packs, 0.75% pack fee, referrals, earnings and the transfer hook. Both deployed binaries were read back and matched to their build artifacts. |
-| Mainnet | 24 September 2026, Gabox slot `450133593` and hook slot `450131931` | Meteora DBC to DAMM v2 and the transfer hook. Both deployed binaries were read back and matched to their build artifacts. A finalized read at slot `450136264` found 22 enabled quote registry entries. |
+| Devnet | 3 October 2026, Gabox slot `507136398`; hook slot `503610147` | The rules on these pages. The deployed binary was read back and matched its build. |
+| Mainnet | 24 September 2026, Gabox slot `450133593`; hook slot `450131931` | An earlier build: packs of 1,000,000 coins, a 0.75% pack fee added on top, and earlier trading fee terms. Both binaries were read back and matched their builds. |
+
+The rules on these pages reach mainnet with a later upgrade. Until then, mainnet follows the earlier build.
 
 | Address | Value |
 | --- | --- |
 | Gabox program | `GaBoxR9nYcK1zeu8EvSJVHV3SrYpCFmvbh2MLgobMcUA` |
-| Gabox hook program on devnet and mainnet | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
-| Last recorded upgrade authority for both programs | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
+| Gabox transfer hook | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
+| Last recorded upgrade authority of both programs | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
 
-The programs are deployed on both networks, but the production app has not yet switched to the Meteora build. The four mainnet machines created with the earlier LaunchLab build no longer work in Gabox after the upgrade; their coins still trade on their market. Existing machines from incompatible account layouts are not migrated by the current source. See the [deployment record](https://github.com/gabox-labs/gabox-program/blob/main/DEPLOYMENT.md) for the verified builds and remaining launch work.
+Both programs use the same addresses on devnet and mainnet. Machines made with an earlier account layout are not migrated by the current source. Their coins still trade on their own market. See the [deployment record](https://github.com/gabox-labs/gabox-program/blob/main/DEPLOYMENT.md) for the verified builds and the remaining launch work.

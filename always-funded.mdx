@@ -1,19 +1,38 @@
 ---
 title: "How prizes stay funded"
-description: "Vault inventory, caps and reservations"
+description: "Vault coins, caps and reservations"
 icon: "vault"
 ---
 
-The **vault** holds the machine's coin tokens. The creator's seed, later donations and every bought pack add tokens. Only prize payments remove them through the normal program instructions. There is no creator withdrawal.
+The **vault** holds the machine's prize coins. The seed, donations and every pack's bought coins go in. Only prize payments take coins out, through the program's normal instructions. There is no creator withdrawal.
 
 ```text
-free inventory = vault balance - already reserved tokens
-batch reservation = min(pack count × full top prize,
-                        free inventory + pack count × one pack)
+free coins   = vault balance − reserved coins
+pack's cap   = free coins + the pack's own coins
+reservation  = min(full top prize, pack's cap)
 ```
 
-A purchase adds its pack tokens, records its own reservation and requests randomness in one transaction. The invariant is `vault balance ≥ all reservations`. Pending draws reserve their maximum possible payout; settled draws that are still owed reserve the exact owed amount. One draw cannot spend another's reservation.
+## One purchase, one reservation
 
-The first pack's displayed top prize is capped at `free inventory + one pack`. The buyer signs `min_first_maximum`, a floor for that value. Later packs settle in order against the snapshot: each adds one pack to the available amount after the earlier packs' payouts. A top row can therefore pay less than its full multiplier when free inventory is low. The odds of its row do not change.
+In the same transaction, a purchase:
 
-At launch, the table's **uncapped average token payout** must be no more than one pack. This limits the table; the reservation and cap protect each actual purchase. None of these rules protects the coin's market price or guarantees a cash return.
+1. adds its bought coins to the vault;
+2. takes a snapshot of the free coins, before its own coins;
+3. reserves the most it can pay;
+4. asks for randomness.
+
+The program keeps this rule at all times: `vault balance ≥ all reservations`. An open draw reserves its most possible prize. A settled but owed draw reserves exactly what it owes. One draw can never spend another draw's reservation.
+
+When the draw settles, its reservation is released. The prize is paid, or it stays reserved as owed until a claim.
+
+## Caps
+
+Every prize row is capped at `free coins + the pack's own coins`. When the vault is thin, the top rows pay less than their full multiplier. Their chances do not change. The buyer signs `min_maximum`, so a purchase fails if the top prize fell below what the buyer saw.
+
+A [Mega Pack](/mega-pack) draw follows the same rules. While it is open, its reservation also lowers the caps that other buyers on that machine see.
+
+## The table limit
+
+At launch, the prize table's average payout, before any cap, must be at most one pack's coins. This limits the table. The reservations and caps protect each real purchase.
+
+None of these rules protect the coin's market price or promise a dollar value.

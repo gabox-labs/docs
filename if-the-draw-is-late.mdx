@@ -1,33 +1,50 @@
 ---
 title: "If the draw is late"
-description: "Retries and the 24 hour timeout"
+description: "Retries, expiry and owed prizes"
 icon: "timer"
 ---
 
-MagicBlock VRF normally answers quickly. The draw has bounded retries and a final timeout.
+MagicBlock VRF usually answers within seconds. If it does not, the draw has limited retries and a final deadline.
 
 | Rule | Value |
 | --- | --- |
-| Retry wait | 300 slots, about 2 minutes after the last attempt |
-| Maximum attempts | 3 total, including the first request |
-| Timeout | 216,000 slots, about 24 hours from purchase |
+| Retry wait | 300 slots after the last request |
+| Requests | 3 at most, the first one included |
+| Deadline | 216,000 slots after the purchase |
+
+A slot is about 400 milliseconds. So 300 slots is about two minutes, and 216,000 slots is about 24 hours. Slot times can vary, so these are estimates.
 
 ```mermaid
 stateDiagram-v2
- [*] --> Pending: buy_packs
- Pending --> Resolved: VRF callback
+ [*] --> Pending: buy_fixed_pack
+ Pending --> Settled: VRF callback
  Pending --> Pending: retry_draw after 300 slots
- Pending --> Expired: expire_draw after 216,000 slots
- Resolved --> [*]
- Expired --> [*]
+ Pending --> Settled: expire_draw after 216,000 slots
+ Settled --> Owed: coin account cannot receive
+ Owed --> Closed: claim_prize, then close_draw
+ Settled --> Closed: close_draw
+ Closed --> [*]
 ```
 
 ## Retry
 
-Anyone can call `retry_draw` after the retry wait. The caller pays the next VRF request and signs `max_vrf_debit`. Retry does not change the frozen table, reservation, or deadline. It is unavailable after three attempts or timeout.
+Only the buyer can call `retry_draw`, after the retry wait. The buyer pays the next randomness fee and signs `max_vrf_debit`, the most SOL it may cost. A retry does not change the stored prize table, the reservation or the deadline. Every request carries the same `seq`. The first answer that arrives settles the draw. The others then fail and change nothing.
 
 ## Expiry
 
-After the slot deadline, anyone can call `expire_draw`. Every pack settles at its smallest prize row. Gabox pays the total or records it as owed. A paid draw closes; an owed draw stays open until claimed. Expiry does not refund the market purchase.
+From the deadline on, anyone can call `expire_draw`. The pack then pays its **smallest** prize row, without randomness. The prize is paid or recorded as owed, the same way as a normal result. Expiry never refunds the purchase.
 
-A callback is allowed only before the deadline; expiry is allowed from the deadline onward. If the buyer's account cannot receive, the fixed result stays claimable.
+The callback is accepted only before the deadline. Expiry is accepted only from the deadline on. So the two can never both settle a draw.
+
+## Owed prizes
+
+The callback never fails because of your coin account. If the account is missing, closed or cannot receive the coins for another reason, the prize stays in the vault as **owed**. It stays reserved for you.
+
+- `claim_prize`: anyone can send it. It pays the owed prize to your standard coin account and creates that account if needed. The sender pays that account's rent.
+- `claim_prize_to`: only you can send it. It pays to any coin account you own.
+
+The app lists owed prizes and claims them for you.
+
+## Closing a draw
+
+A draw account holds a little SOL as rent. When the draw owes and reserves nothing, anyone can call `close_draw`. The rent goes back to the buyer.

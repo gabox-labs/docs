@@ -4,21 +4,27 @@ description: "Your prize after the draw"
 icon: "arrows-split-up-and-left"
 ---
 
-Once the draw settles, the prize is yours. Keeping it costs no Gabox fee.
+Once the draw settles, the prize coins are yours. There is nothing to claim on the normal path: they go straight to your wallet.
 
 ## Keep
 
-Do nothing. Tokens remain in your coin account. If delivery was recorded as owed, use `claim_prize` or `claim_prize_to` first.
+Do nothing. The coins stay in your coin account. If the prize was recorded as owed, claim it first. See [If the draw is late](/if-the-draw-is-late).
+
+After graduation, holding the coin also counts for the [Mega Pack](/mega-pack).
 
 ## Sell
 
-Sign `sell_tokens` with the amount and your minimum quote output.
+Sign `sell_tokens` with the amount of coins and your minimum output.
 
-1. The app quotes the current DBC or DAMM v2 market.
-2. You sign `min_quote_output`. The venue checks this floor before delivery.
-3. The program sells through the official market.
-4. The venue takes its 1.25% trade fee. Gabox takes no pack fee on a sale.
+1. The app quotes the current market: the DBC curve before graduation, the DAMM v2 pool after it.
+2. You sign `min_quote_output`, the least quote tokens you accept. The program checks it after the trade.
+3. The program sells through the machine's own market.
+4. The market takes its trading fee: 1.875% on the curve, 0.94% after graduation. Gabox takes no pack fee on a sale.
 
-A sale may be partial. A jackpot can move the market more than a common prize, so its received quote depends on the live market and amount sold. There is no Gabox buyback or guaranteed price.
+You receive the machine's quote token. On a SOL machine the proceeds arrive as SOL. On a USDC machine you receive USDC. On a stock token machine you receive that stock token. The app does not swap it back to USDC.
 
-At graduation, the market changes from DBC to DAMM v2. The tokens remain yours, and the program continues to enforce the market and minimum-output checks.
+You can sell part of your coins. A large prize can move the market price more than a small one, so check the quote before you sign. There is no Gabox buyback and no guaranteed price.
+
+## At graduation
+
+When the curve completes, the market moves from DBC to DAMM v2. Your coins stay yours. While Meteora moves the liquidity, the app cannot sell for a short time. After that, you can trade the coin anywhere it is listed, not only through Gabox.

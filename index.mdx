@@ -4,38 +4,41 @@ description: "Open a token pack, or launch a machine"
 icon: "dice"
 ---
 
-Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin and a machine together. A buyer opens one to five packs. Each pack is 1,000,000 tokens, and MagicBlock VRF chooses the prize from a fixed table.
+Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin and its **machine** together. A buyer opens a **pack** at a fixed USDC price. MagicBlock's verifiable randomness picks the prize from a fixed table, and the prize is paid in the coin.
 
 ## The short version
 
 | Question | Answer |
 | --- | --- |
-| What is a pack? | 1,000,000 tokens, or 0.1% of a 1,000,000,000 token supply. |
-| What does it cost? | The coin's market price for one pack, plus a 0.75% Gabox pack fee and normal network, rent, and VRF costs. |
-| Where is the market? | Meteora DBC until graduation, then Meteora DAMM v2. |
-| Who chooses the prize? | MagicBlock VRF, using the creator's immutable prize table. |
-| Can the creator withdraw prizes? | No. Extra funding is a donation. |
-| Is it an investment? | No. Average token payout is capped at one pack, and the coin price can move. |
+| What is a pack? | A fixed price in USDC: $10, $50, $200, $500 or $1,000. The price buys coins on the market, and the prize is a multiple of those coins. |
+| What does it cost? | The pack price. It already includes the 0.20% pack fee and the market's trading fee. Network fees, rent and the randomness fee are paid in SOL. |
+| Where is the market? | A Meteora bonding curve until graduation, then a Meteora DAMM v2 pool. |
+| Who picks the prize? | MagicBlock VRF, against the machine's fixed prize table. |
+| How big can a prize be? | Up to 10× the coins your pack bought, if the vault holds enough. |
+| Can the creator take the prizes back? | No. Nobody can withdraw the prize vault. |
+| What is the Mega Pack? | After graduation, pack fees fill a shared pack. It opens on its own, and the coin's holders share the prize. |
+| Is it an investment? | No. On average a pack pays back at most the coins it bought. The app's table pays about 95%. The coin price can also fall. |
 
 ## Choose a page
 
 <Columns cols={3}>
-  <Card title="Open a pack" icon="box-open" href="/opening-a-pack">Price, fees, the draw, and late draws.</Card>
-  <Card title="Launch a machine" icon="rocket" href="/launch-a-machine">Creator steps, seed, and graduation.</Card>
-  <Card title="Understand prizes" icon="table-list" href="/prizes-and-odds">Multipliers, tickets, caps, and odds.</Card>
+  <Card title="Open a pack" icon="box-open" href="/opening-a-pack">Prices, what you sign, and the draw.</Card>
+  <Card title="Launch a machine" icon="rocket" href="/launch-a-machine">Creator steps, seed and graduation.</Card>
+  <Card title="Mega Pack" icon="gift" href="/mega-pack">How pack fees become a prize for holders.</Card>
 </Columns>
 
 ## Who does what
 
-- **Creator:** launches the coin with the app's fixed 10× prize table, pays the seed, and receives creator earnings.
-- **Buyer:** pays the market price and pack fee, signs cost and prize floors, and receives the draw result.
-- **Referrer:** may earn 0.50% of the measured market charge after a buyer binds them.
-- **Gabox:** holds the vault, checks reservations, requests VRF, and pays or records prizes.
-- **Meteora:** supplies the market and charges its 1.25% venue fee inside each trade.
-- **MagicBlock:** supplies the randomness callback.
+- **Creator:** launches the coin and its machine, pays the seed, and earns part of the trading fees.
+- **Buyer:** pays a fixed pack price, signs price and prize limits, and gets the prize.
+- **Referrer:** gets the whole 0.20% pack fee of every buyer they referred.
+- **Holder:** holds the coin after graduation and shares each Mega Pack prize.
+- **Gabox:** runs the program, holds the vault, checks every reservation and pays prizes.
+- **Meteora:** runs the market and charges a trading fee inside each trade.
+- **MagicBlock:** supplies the randomness.
 
 ## Safety boundaries
 
-The machine is bound to one brand new Token-2022 coin. Its table, pack size, and fee rules are fixed at launch. Every pending draw reserves its maximum possible payment. The table's uncapped expected payout cannot exceed one pack.
+Each machine belongs to one brand new coin. Its prize table cannot change after launch. Every open draw reserves the most it can pay, so one draw cannot spend another draw's prize. A valid table pays at most one pack's coins on average.
 
-Read [What can go wrong](/risks) before you buy. See [Status and addresses](/status-and-addresses) for deployment information.
+Read [Risks](/risks) before you buy. See [Deployment status](/status-and-addresses) for what runs on each network.

@@ -1,0 +1,116 @@
+---
+title: "Events"
+description: "What the program emits, and how to check a draw yourself"
+icon: "list-check"
+---
+
+The program emits Anchor events for indexers. Events make reading easier, but no result depends on them. An owed draw keeps everything on chain. A paid draw's randomness is in the oracle's transaction on the ledger.
+
+All quote amounts are raw units of the event's quote token. All coin amounts are raw coin units.
+
+## Machines and purchases
+
+| Event | Fields that matter |
+| --- | --- |
+| `PoolCreated` | `pool`, `mint`, `creator`, `quote_mint`, `curve_pool`, `tiers`, `seed_tokens`, `extra_seed_tokens`, `seed_quote_amount`, `seed_native_debit` |
+| `PackBoughtV2` | See the table below. |
+| `TokensSold` | `pool`, `seller`, `venue`, `quote_mint`, `amount`, `quote_proceeds`, `native_debit` |
+| `PrizesFunded` | `pool`, `funder`, `amount` |
+| `ReferrerBound` | `buyer`, `referrer`. Once per buyer, for ever. |
+| `EarningsClaimed` | `wallet`, `quote_mint`, `amount` |
+
+`PackBought` is the event of the retired purchase path. Old purchases keep it. New purchases emit `PackBoughtV2`.
+
+### PackBoughtV2
+
+| Field | Meaning |
+| --- | --- |
+| `pool`, `draw`, `purchaser`, `seq` | The machine, the draw account, the buyer, and the pack's sequence number. |
+| `venue`, `pack_tier` | The market program (DBC or DAMM v2), and the catalog tier 0 to 4. |
+| `tokens_bought` | The coins the vault received. This is the pack. |
+| `max_quote_budget` | The cap the buyer signed. |
+| `quote_debit` | What the market charged. |
+| `gross_quote_charged` | `quote_debit` plus the pack fee. |
+| `pack_fee`, `fee_recipient` | The 0.20% fee, and the wallet whose `Earnings` record got all of it. |
+| `referrer`, `referrer_fee` | The bound referrer, or the default key. `referrer_fee` equals `pack_fee` when a referrer got it. |
+| `unused_quote_budget`, `refunded_quote_amount` | Budget left unspent, and quote returned from a temporary account. |
+| `curve_completed` | True when this purchase completed the DBC curve. |
+| `native_debit`, `vrf_native_debit`, `total_native_debit` | SOL spent on market rent, on the VRF fee, and in total inside the handler. |
+| `free_snapshot`, `reserved` | Free vault coins before this pack, and what this pack reserved. |
+| `prizes` | The pack's prize table after the vault cap: one `amount` and `tickets` per row. |
+
+Never add `quote_debit` and `native_debit`. One is quote token, the other is lamports.
+
+When `fee_recipient` is a machine's Mega spender PDA, the fee funded that machine's Mega Pack.
+
+## Draws
+
+| Event | Fields that matter |
+| --- | --- |
+| `RandomnessRetried` | `pool`, `draw`, `seq`, `attempt` |
+| `DrawResolved` | `pool`, `draw`, `purchaser`, `seq`, `tier`, `amount`, `randomness`, `timed_out`, `paid` |
+| `PrizeClaimed` | `pool`, `draw`, `purchaser`, `amount`, `payer`, `destination` |
+
+`paid` is false when the prize waits in the vault for a claim. `timed_out` is true after an expiry. The randomness is then all zero.
+
+## Quote registry
+
+| Event | Fields |
+| --- | --- |
+| `QuoteRegistered` | `quote_mint`, `dbc_config`, `raise`, `reference_valuation` |
+| `QuoteEnabledSet` | `quote_mint`, `enabled` |
+| `QuotePurchasesSet` | `quote_mint`, `purchases_on` |
+| `QuoteMegaSet` | `quote_mint`, `on` |
+
+## Mega Pack
+
+| Event | Fields |
+| --- | --- |
+| `MegaConfigUpdated` | `old_target`, `new_target`, `version`, `operator`. At creation `old_target` is 0. |
+| `MegaOpened` | `pool`, `round`, `draw_index`, `draw`, `seq`, `config_version`, `target_usdc_raw`, `budget`, `quote_debit`, `pack_tokens`, `reserved`, `maximum`, `snapshot_slot`, `snapshot_hash`, `snapshot_id` |
+| `MegaRoundSealed` | `pool`, `round`, `draws` |
+| `MegaDrawFinished` | `pool`, `round`, `draw_index`, `draw`, `reward` |
+| `MegaRoundFunded` | `pool`, `round`, `reward`, `draws`. The round's reward is now final. |
+| `MegaRootPublished` | `pool`, `root`, `version`, `through_round`, `allocated`, `distribution_id` |
+| `MegaClaimed` | `pool`, `wallet`, `amount`, `cumulative` |
+
+## Verify a draw
+
+Every input is on the `Draw` account or in the events above. You can recompute any pack.
+
+1. Read `pool`, `seq`, `tiers`, `pack_tokens` and `free_snapshot` from the draw, or from `PackBoughtV2` and `PoolCreated`.
+2. Read `randomness` from `DrawResolved`, or from the draw while it is still open.
+3. Compute the ticket:
+
+   ```text
+   hash   = sha256(randomness ‖ pool ‖ seq as u64 little-endian)
+   ticket = hash[0] + 256 × hash[1]          a number from 0 to 65,535
+   ```
+
+4. Walk the prize rows in order and skip rows with zero tickets. Add up the tickets. The first row whose running total is above `ticket` is the winning row. The 65,536 tickets match the 16-bit range, so there is no modulo bias.
+5. Compute the amount:
+
+   ```text
+   amount = min(floor(pack_tokens × multiplier_bps / 10,000), free_snapshot + pack_tokens)
+   ```
+
+6. If `timed_out` is true, skip the ticket. The pack pays its smallest ticketed row.
+7. Compare `tier` and `amount` with `DrawResolved`.
+
+The SDK does the same work. `settle(input)` takes the fields above. `settleDraw(draw)` reads a settled draw that is still on chain.
+
+## Verify a Mega claim
+
+A Mega root is a Merkle root over every wallet's cumulative reward on one machine.
+
+```text
+leaf = sha256(0x00 ‖ MegaState ‖ wallet ‖ cumulative as u64 little-endian)
+node = sha256(0x01 ‖ min(a, b) ‖ max(a, b))      compare the 32 bytes
+```
+
+- The leaves follow the order of the distribution file, sorted by the wallet's raw bytes.
+- Pair neighbours, level by level. A last node without a neighbour moves up unchanged.
+- An empty tree has a root of 32 zero bytes.
+- A proof lists the siblings from the leaf up, with no left or right flags.
+
+To check a root, download the file that `distribution_id` names, rebuild the tree, and compare it with `MegaState.root`.

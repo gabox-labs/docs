@@ -6,12 +6,15 @@ icon: "scale"
 
 | Boundary | Rule or dependency |
 | --- | --- |
-| Gabox program | Validates launch config, table, token amounts, fee split, venue accounts, draw reservations and the authenticated callback. It has no instruction to withdraw prize inventory. |
-| Gabox transfer hook | While the coin is on the DBC curve, curve vault transfers may only enter that coin's machine vault. DBC removes the hook at graduation. |
-| MagicBlock VRF | Supplies the random bytes. Gabox checks the scoped callback signer and matching draw sequence, but relies on MagicBlock for fair generation and delivery. A late draw can expire at its minimum prize. |
-| Meteora | Sets execution prices, runs curve and graduated pool trades, collects venue fees and performs migration. Gabox does not compare a trade with an independent price oracle. |
-| Quote issuer | Some registered Token-2022 quote assets can have issuer controls such as pause, freeze or permanent delegate. Gabox rejects transfer fee, live hook and unsupported mint behavior and rechecks a quote at trades, but the issuer can still affect trading or balances. |
-| Admin / upgrade authority | The admin registers quote configurations and may disable new launches on a quote. The last recorded deployments use a single upgrade key. New code could change vault and draw rules. |
-| RPC / indexer | Helps you read offers and events. Check signed transactions and on-chain data when accuracy matters. |
+| Gabox program | Checks the launch config, prize table, coin amounts, pack fee, market accounts, reservations and the authenticated callback. It has no instruction to withdraw prize coins. |
+| Gabox transfer hook | While the coin is on the curve, coins leaving the curve may only enter that coin's machine vault. Meteora removes the hook at graduation. |
+| MagicBlock VRF | Supplies the random bytes. Gabox checks the callback's signer and the draw's `seq`. It relies on MagicBlock to generate the bytes fairly and to deliver them. A late draw can expire at its smallest prize. |
+| Meteora | Sets trade prices, runs the curve and the pool, collects trading fees and moves the coin at graduation. Gabox does not compare a trade with an outside price. |
+| Swap route | On a SOL or stock token machine, the app swaps USDC through Jupiter first. The program does not check where the quote tokens came from or what they cost. |
+| Mega operator | A Gabox server wallet. It opens Mega Packs, sets the budget on non-USDC machines from Jupiter's USD price, takes holder snapshots and publishes reward lists. The program checks the accounting. It trusts the operator for the snapshot, the split and the budget's dollar value. |
+| Irys | Stores the Mega snapshot and distribution files. Their ids and the snapshot hash are on chain, so a changed file is detected. |
+| Quote token issuer | Some registered Token-2022 quote tokens, such as stock tokens, let the issuer pause, freeze or move tokens. Gabox refuses transfer fees, live transfer hooks, interest-bearing or rebasing tokens and unknown features. It checks the quote token again at every trade. The issuer can still affect trading and balances. |
+| Gabox admin and upgrade authority | The admin registers quote tokens, can stop new machines or purchases on a quote token, and sets the Mega Pack target and operator. In the last recorded deployments, one key also holds the upgrade authority. New code could change vault and draw rules. |
+| App server, RPC and indexer | Help you read machines, offers and events. Check signed transactions and on-chain data when accuracy matters. |
 
-A quote registry change applies only to machines launched afterward. A creator's existing prize table stays fixed under the current program, but an upgrade can replace that code. See [status](/status-and-addresses) for the deployment boundary.
+A quote registry change only applies to machines launched after it. An existing machine's prize table stays fixed under the current program, but an upgrade can replace that program. See [Deployment status](/status-and-addresses).

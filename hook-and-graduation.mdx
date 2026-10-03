@@ -4,28 +4,45 @@ description: "How curve trading becomes a free market"
 icon: "arrows-spin"
 ---
 
-A new Gabox coin starts on a Meteora DBC **bonding curve**: a market whose price changes as coins are bought. Its Token-2022 mint carries the Gabox transfer hook while the curve is open.
+A new Gabox coin starts on a Meteora DBC **bonding curve**: a market whose price rises as coins are bought. While the curve is open, the coin's Token-2022 mint carries the Gabox transfer hook.
 
 ```mermaid
 flowchart LR
-  A[New coin on DBC curve] --> B[Curve vault sends coins]
-  B -->|Destination is machine vault| C[Gabox pack or seed buy]
-  B -->|Other destination| D[Hook rejects transfer]
-  C --> E[Curve reaches target]
-  E --> F[DBC removes hook and migrates liquidity]
-  F --> G[DAMM v2 market: ordinary transfers and trades]
+  A[New coin on the DBC curve] --> B[Curve vault sends coins]
+  B -->|To the machine vault| C[Gabox pack or seed buy]
+  B -->|Anywhere else| D[Hook rejects the transfer]
+  C --> E[Curve reaches its target]
+  E --> F[Meteora removes the hook and moves the liquidity]
+  F --> G[DAMM v2 pool: free trading]
 ```
 
-The hook checks transfers **out of the DBC curve vault**. Those coins may go only to this coin's Gabox machine vault. Prize payments, wallet transfers and sales into the curve pass. The hook keeps no state; the mint has an empty Token-2022 extra account list so the hook can run.
+## While the curve is open
 
-At launch, the SDK creates the hooked coin and curve, initializes that extra account list, then initializes the machine and buys its seed in the same transaction. The Gabox program checks the registered DBC config, the mint's hook and the hook accounts. A plain coin or a hook pointing elsewhere is refused.
+The hook checks every transfer **out of the curve's vault**. Those coins may only go to this coin's Gabox machine vault. So every buy on the curve is a Gabox pack, or the launch seed. A direct buy through Meteora, a swap app or a bot fails.
+
+Sales into the curve, wallet transfers and prize payments are not affected. The hook keeps no state of its own.
+
+On the curve, the four smaller packs are open. The $1,000 pack stays locked until graduation.
+
+## The graduation target
+
+Each quote token has one registered Meteora config. Its **raise** is how much quote token the curve collects before the coin graduates. The create page shows this target before you launch, and the machine page shows the progress. A machine keeps the config it launched with. A later registration only affects new machines.
+
+## The last pack
+
+The curve stops exactly at its target. The pack that reaches it buys only what is left. It may spend less than its price and get fewer coins, and the unused part stays with the buyer.
 
 ## When the curve completes
 
-DBC migrates the coin into a Meteora DAMM v2 automated market maker (AMM) pool and removes the hook's program from the mint. Gabox then buys and sells through that pool. Its fixed prize table, pack size, vault, pending reservations and referral links carry on. The market price can change at graduation; the pack still means 1,000,000 coin tokens.
+1. **Migrating.** The curve is full. Meteora's migration moves the liquidity into a DAMM v2 pool. The app pauses packs until the pool exists.
+2. **Graduated.** Meteora removes the hook from the mint. The coin now trades freely in the DAMM v2 pool, and anywhere else it is listed.
 
-When fewer than one whole pack remains on the curve, `buy_packs` cannot buy that remainder. A separate `completeCurve` client operation can buy it into the machine vault so DBC can finish the curve. That operation is outside a pack draw and requires a payer. The program does not automatically advance the curve.
+After graduation:
 
-<Note>
-The hook and the Gabox program are verified together on devnet and mainnet. The production app has not yet switched to the Meteora build. See [deployment status](/status-and-addresses).
-</Note>
+- Gabox buys and sells through that DAMM v2 pool. It proves the pool from the pool's own data.
+- The $1,000 pack unlocks.
+- The trading fee drops from 1.875% to 0.94%.
+- The pool's liquidity is locked for ever. Gabox owns 67% of the locked position and the creator 33%.
+- Pack fees from buyers with no referrer can fill the [Mega Pack](/mega-pack).
+
+The prize table, the vault, open draws and referral links carry on unchanged.
