@@ -99,10 +99,7 @@
       {
         "tab": "Developer",
         "pages": [
-          "developer/overview",
-          "developer/accounts",
-          "developer/instructions",
-          "developer/events"
+          "developer/overview"
         ]
       }
     ]
@@ -129,5 +126,19 @@
       "claude",
       "mcp"
     ]
-  }
+  },
+  "redirects": [
+    {
+      "source": "/developer/accounts",
+      "destination": "/developer/overview"
+    },
+    {
+      "source": "/developer/instructions",
+      "destination": "/developer/overview"
+    },
+    {
+      "source": "/developer/events",
+      "destination": "/developer/overview"
+    }
+  ]
 }
