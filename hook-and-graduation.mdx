@@ -8,12 +8,10 @@ A new Gabox coin starts on a Meteora DBC **bonding curve**: a market whose price
 
 ```mermaid
 flowchart LR
-  A[New coin on the DBC curve] --> B[Curve vault sends coins]
-  B -->|To the machine vault| C[Gabox pack or seed buy]
-  B -->|Anywhere else| D[Hook rejects the transfer]
-  C --> E[Curve reaches its target]
-  E --> F[Meteora removes the hook and moves the liquidity]
-  F --> G[DAMM v2 pool: free trading]
+  A[Coins leave the curve] --> B[To the machine vault: allowed]
+  A --> C[Anywhere else: rejected]
+  B --> D[Target reached]
+  D --> E[DAMM v2 pool]
 ```
 
 ## While the curve is open
@@ -22,7 +20,7 @@ The hook checks every transfer **out of the curve's vault**. Those coins may onl
 
 Sales into the curve, wallet transfers and prize payments are not affected. The hook keeps no state of its own.
 
-On the curve, the four smaller packs are open. The $1,000 pack stays locked until graduation.
+On the curve, every pack except the largest is open. The largest pack stays locked until graduation.
 
 ## The graduation target
 
@@ -40,7 +38,7 @@ The curve stops exactly at its target. The pack that reaches it buys only what i
 After graduation:
 
 - Gabox buys and sells through that DAMM v2 pool. It proves the pool from the pool's own data.
-- The $1,000 pack unlocks.
+- The largest pack unlocks.
 - The trading fee drops from 1.875% to 0.94%.
 - The pool's liquidity is locked for ever. Gabox owns 67% of the locked position and the creator 33%.
 - Pack fees from buyers with no referrer can fill the [Mega Pack](/mega-pack).

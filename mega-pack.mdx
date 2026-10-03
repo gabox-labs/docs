@@ -8,12 +8,10 @@ Each graduated machine funds its own **Mega Pack**. Pack fees fill it. When it i
 
 ```mermaid
 flowchart LR
- A[Pack after graduation, no referrer] -->|0.20% pack fee| B[Machine's Mega balance]
- B -->|Reaches the target| C[Holder snapshot]
- C --> D[Mega Pack opens: one pack of the target size]
- D --> E[VRF draw: Common to Mythic]
- E --> F[Reward list published]
- F --> G[Holders claim]
+ A[Pack fees] --> B[Mega balance]
+ B --> C[Snapshot]
+ C --> D[Mega Pack opens]
+ D --> E[Holders claim]
 ```
 
 ## How it fills
@@ -28,19 +26,19 @@ flowchart LR
 - The balance stays in the machine's own quote token. A USDC machine collects USDC. A stock token machine collects that stock token. Nothing is converted.
 - Nobody can withdraw the balance. Only a Mega Pack opening can spend it.
 
-At 0.20%, a $1,000 target needs about $500,000 of packs without a referrer after graduation, on that one machine.
+At 0.20%, a \$1,000 target needs about \$500,000 of packs without a referrer after graduation, on that one machine.
 
 ## The target
 
-The target is a dollar amount. The default is **$1,000**. The Gabox admin can set it between $200 and $10,000. A change only affects later openings.
+The target is a dollar amount. The default is **\$1,000**. The Gabox admin can set it between \$200 and \$10,000. A change only affects later openings.
 
-On a USDC machine, one USDC counts as $1. For other quote tokens, Gabox's server converts the target with Jupiter's USD price when it checks the machine. The program does not check that price.
+On a USDC machine, one USDC counts as \$1. For other quote tokens, Gabox converts the target with a USD market price.
 
 ## How it opens
 
-- Gabox's server checks graduated machines about every 10 minutes. When a machine's balance covers the target, it opens a Mega Pack. Nobody can trigger an opening by hand.
+- When a machine's balance covers the target, Gabox opens a Mega Pack on its own. Nobody can trigger an opening by hand, and the exact time is not announced.
 - Many machines can be ready at once. Then some wait for a later check. The app shows that a machine is ready, but not an exact time.
-- A Mega Pack is an ordinary pack of the target size on that machine. It uses the same prize table, vault caps, randomness, retries and deadline as any pack. So it can pull anything from Common to Mythic. At 3.5×, a $1,000 Mega Pack pulls about $3,500 of the coin at the opening price.
+- A Mega Pack is an ordinary pack of the target size on that machine. It uses the same prize table, vault caps, randomness, retries and deadline as any pack. So it can pull anything from Common to Mythic. At 3.5×, a \$1,000 Mega Pack pulls about \$3,500 of the coin at the opening price.
 - The opening pays no pack fee. The whole budget buys coins. The market's trading fee still applies.
 - If the balance covers several targets, several Mega Packs open together. Each is its own pack with its own draw. They are never merged into one bigger pack. Credit that is left waits for a later opening.
 
@@ -95,7 +93,7 @@ Gabox publishes two files for every round on Irys, and stores their ids on chain
 
 From the distribution file, anyone can rebuild the **Merkle root**: a 32-byte fingerprint of the whole reward list. The program stores that root. A claim must prove that its amount is in the list behind the root. The app builds this proof from the published file.
 
-## What the program enforces, and what it trusts
+## What the program enforces
 
 The program enforces the accounting:
 
@@ -105,10 +103,6 @@ The program enforces the accounting:
 - A wallet can never claim more than its total in the published root.
 - Each completed round gets exactly one root.
 
-The program does not check the split itself. Gabox's server wallet, the **Mega operator**, is trusted to build the snapshot and the reward list correctly, and to keep every earlier reward in each new list. The published files let anyone check that work afterwards. They cannot stop a wrong list. The program also trusts the operator's budget on a non-USDC machine. If the operator key leaked, the admin can replace it. A list that was already published and claimed cannot be undone.
-
-## A known risk
-
-The balance is public. A trader can buy coins when a machine is close to its target, and sell them after the opening. Automatic opening removes control over the exact moment, but it does not stop this trade.
+Gabox prepares the snapshot and the reward list. The published files let anyone check them.
 
 See [Risks](/risks) and [Trust boundaries](/trust-boundaries).

@@ -7,6 +7,7 @@
 - `../program/DEPLOYMENT.md` is the source for what was actually deployed. Separate implemented behavior from confirmed deployment.
 - Do not copy examples or numbers from older Gabox versions. Verify constants and formulas in source.
 - Use short, direct sentences. Explain a technical term on first use. Use `machine`, `pack`, `coin`, `buyer`, `creator`, `holder`, `prize row`, `vault`, and `draw` consistently. Write at CEFR B2 level: one idea per sentence, plain words, active voice.
-- Packs have fixed USDC prices ($10, $50, $200, $500, $1,000), and buyers pay in USDC. Inside the program, amounts are in the machine's quote token, which may be USDC, SOL or a registered stock token. Do not promise a cash return.
+- Packs have fixed USDC prices from a fixed range, and buyers pay in USDC. Do not list the exact pack prices: they may change. Say "a fixed range of pack prices" and "the largest pack". Escape a dollar sign before a digit as `\$` (an unescaped pair renders as LaTeX math). Inside the program, amounts are in the machine's quote token, which may be USDC, SOL or a registered stock token. Do not promise a cash return.
 - Keep each page focused. Use a diagram when it clarifies an order of events or a trust boundary.
 - Do not publish internal keys, test wallets, or private RPC endpoints.
+- Do not describe security weak points or how to get around a guard: no upgrade-key setup, no checks the program leaves to off-chain services, no operator or snapshot timing, no exploit-style examples. Say what the program enforces and how users can verify it.

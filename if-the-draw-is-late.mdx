@@ -15,16 +15,16 @@ MagicBlock VRF usually answers within seconds. If it does not, the draw has limi
 A slot is about 400 milliseconds. So 300 slots is about two minutes, and 216,000 slots is about 24 hours. Slot times can vary, so these are estimates.
 
 ```mermaid
-stateDiagram-v2
- [*] --> Pending: buy_fixed_pack
- Pending --> Settled: VRF callback
- Pending --> Pending: retry_draw after 300 slots
- Pending --> Settled: expire_draw after 216,000 slots
- Settled --> Owed: coin account cannot receive
- Owed --> Closed: claim_prize, then close_draw
- Settled --> Closed: close_draw
- Closed --> [*]
+flowchart LR
+ A[Pending] --> B[Settled]
+ B --> C[Paid]
+ B --> D[Owed]
+ D --> E[Claimed]
+ C --> F[Closed]
+ E --> F
 ```
+
+The VRF callback settles a pending draw. If it never comes, expiry settles it at the deadline. A settled prize is paid at once, or owed until a claim. Then the draw can close.
 
 ## Retry
 

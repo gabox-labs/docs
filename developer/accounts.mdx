@@ -18,16 +18,16 @@ Every seed below uses the Gabox program ID unless the table says otherwise. A `u
 | `QuoteConfig` | `["quote-config", quote_mint]` |
 | `Earnings` | `["earnings", wallet, quote_mint]` |
 | `ReferralLink` | `["referral", buyer]` |
-| Fee authority | `["fees"]`. It has no data. It owns the fee vaults. |
-| Fee vault | The ATA of the fee authority for `quote_mint`, under the quote's token program |
-| Prize vault | The ATA of `Pool` for the coin mint, under Token-2022 |
+| Fee authority (no data, owns the fee vaults) | `["fees"]` |
+| Fee vault | The fee authority's ATA for the quote mint, under the quote's token program |
+| Prize vault | The pool's ATA for the coin mint, under Token-2022 |
 | `MegaConfig` | `["mega-config"]` |
-| Mega spender | `["mega-spender", pool]`. Never created. Never signs. |
+| Mega spender (never created, never signs) | `["mega-spender", pool]` |
 | Mega funding record | `["earnings", spender, quote_mint]`, an `Earnings` account |
 | `MegaState` | `["mega", pool]` |
 | Mega draw | `["draw", pool, MegaState, draw_index as u64 LE]`, a `Draw` account |
 | `MegaClaim` | `["mega-claim", MegaState, wallet]` |
-| Reward escrow | The ATA of `MegaState` for the coin mint, under Token-2022 |
+| Reward escrow | The Mega state's ATA for the coin mint, under Token-2022 |
 
 An ATA (associated token account) is the standard token account of one owner for one mint.
 
@@ -58,9 +58,9 @@ One pack, from purchase until its prize is paid. The client picks `nonce`, so tw
 | `seq` | The pack's unique sequence number on this machine. The VRF callback must carry it. |
 | `request_slot`, `last_attempt_slot`, `attempts` | Timing for retries and expiry. |
 | `tiers`, `pack_tokens` | A copy of the prize table and the coins this pack bought. Settlement reads these, not the pool. |
-| `free_snapshot` | `vault - reserved` at purchase, before this pack's own coins. |
-| `reserved` | What this draw holds in `pool.reserved`. |
-| `settled`, `randomness`, `timed_out` | The fixed outcome. `randomness` is all zero after an expiry. |
+| `free_snapshot` | Vault balance minus reserved coins at purchase, before this pack's own coins. |
+| `reserved` | What this draw holds in the pool's reserved total. |
+| `settled`, `randomness`, `timed_out` | The fixed outcome. The randomness is all zero after an expiry. |
 | `owed` | Coins a claim still has to pay. Zero on the normal path. |
 
 `close_draw` closes a settled draw that owes and reserves nothing. The rent goes back to the purchaser.
@@ -91,7 +91,7 @@ A machine copies `dbc_config` and `reference_valuation` at launch. A later chang
 
 | Field | Meaning |
 | --- | --- |
-| `target_usdc_raw` | The dollar size of one Mega Pack, in 6-decimal USDC units. It lies between `200_000_000` ($200) and `10_000_000_000` ($10,000). |
+| `target_usdc_raw` | The dollar size of one Mega Pack, in 6-decimal USDC units. It lies between `200_000_000` (\$200) and `10_000_000_000` (\$10,000). |
 | `version` | 1 at creation. Every update adds 1. |
 | `operator` | The server wallet that opens Mega Packs and publishes roots. It is never the platform admin. |
 
@@ -101,13 +101,13 @@ A machine copies `dbc_config` and `reference_valuation` at launch. A later chang
 
 | Field | Meaning |
 | --- | --- |
-| `next_round`, `funded_rounds` | The next round number, and the rounds that are complete. A round is in progress when `funded_rounds < next_round - 1`. |
+| `next_round`, `funded_rounds` | The next round number, and the rounds that are complete. A round is in progress while `funded_rounds` is below `next_round - 1`. |
 | `next_draw`, `first_draw`, `pending_draws` | Mega draw indices, and the draws not finished yet. |
 | `round`, `budget`, `config_version`, `target_usdc_raw` | The terms of the latest round, fixed by its first opening. |
 | `snapshot_slot`, `snapshot_hash`, `snapshot_id` | The holder snapshot of the latest round: its slot, its SHA-256 hash, and its file id. |
-| `opening_complete` | True once `seal_mega_round` ends the round's openings. |
+| `opening_complete` | True once the round is sealed and takes no more openings. |
 | `last_reward` | The total reward of the latest round's finished draws, in raw coin units. |
-| `funded`, `allocated`, `claimed` | Totals in raw coin units. `claimed <= allocated <= funded` always holds. |
+| `funded`, `allocated`, `claimed` | Totals in raw coin units. Claimed is never above allocated, and allocated is never above funded. |
 | `root`, `root_version`, `root_through_round`, `distribution_id` | The current Merkle root, its version, the last round it covers, and the id of its distribution file. |
 
 **`MegaClaim`** holds one field, `claimed`: the wallet's cumulative amount at its last claim on this machine. Its seeds prove the wallet and the machine. It is never closed.

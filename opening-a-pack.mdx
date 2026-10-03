@@ -8,17 +8,11 @@ A pack has a fixed USDC price. You open one pack per purchase, and each pack get
 
 ## Pick a pack
 
-| Price | Available | Program tier |
-| --- | --- | --- |
-| $10 | Always | 0 |
-| $50 | Always | 1 |
-| $200 | Always | 2 |
-| $500 | Always | 3 |
-| $1,000 | After graduation | 4 |
+Gabox offers a fixed range of pack prices, from small to large. The app shows the current prices on every machine. The largest pack unlocks only after the coin graduates. All other packs are always available.
 
 The price includes the 0.20% pack fee and the market's trading fee. It does not include network fees, account rent or the randomness fee. You pay those in SOL.
 
-The price buys coins on the market. So the number of coins in a pack changes with the coin's price. When the coin trades higher, the same $10 buys fewer coins.
+The price buys coins on the market. So the number of coins in a pack changes with the coin's price. When the coin trades higher, a pack at the same price buys fewer coins.
 
 ## How you pay
 
@@ -27,7 +21,7 @@ You always pay in USDC.
 - **USDC machine.** The program takes the price straight from your USDC account.
 - **SOL or stock token machine.** The same transaction first swaps your USDC into the machine's quote token. Then it buys the pack with that token. Quote tokens that the purchase did not use go back to you. On a SOL machine they come back as SOL.
 
-The swap is a separate trade with its own price and fees. The program does not check where your quote tokens came from or what they were worth in dollars.
+The swap is a separate trade with its own price and fees.
 
 ## What you sign
 
@@ -47,16 +41,15 @@ The market sends the bought coins straight to the vault. Gabox records the draw,
 ```mermaid
 sequenceDiagram
  participant B as Buyer
- participant M as DBC or DAMM v2
  participant G as Gabox
- participant V as MagicBlock VRF
- B->>G: buy_fixed_pack
- G->>M: Buy coins with the pack price, less 0.20%
- M->>G: Coins into the vault
- G->>G: Take the pack fee, snapshot, reserve
- G->>V: Request randomness
- V-->>G: Callback with 32 bytes
- G-->>B: Pay the prize, or record it as owed
+ participant M as Market
+ participant V as VRF
+ B->>G: Buy a pack
+ G->>M: Buy coins
+ M->>G: Coins to vault
+ G->>V: Request
+ V-->>G: Random bytes
+ G-->>B: Prize
 ```
 
 ## The draw

@@ -60,9 +60,9 @@ Every builder returns a Kit version 0 transaction message. The fee payer, blockh
 
 | Stage | What it means |
 | --- | --- |
-| `curve` | The coin trades on its Meteora DBC bonding curve. Only Gabox can buy on it. The $1,000 pack is locked. |
+| `curve` | The coin trades on its Meteora DBC bonding curve. Only Gabox can buy on it. The largest pack (tier 4) is locked. |
 | `migrating` | The curve reached its graduation target. Meteora is moving the liquidity, and packs pause. |
-| `damm` | The coin trades in a Meteora DAMM v2 pool. Packs work again, and the $1,000 pack unlocks. |
+| `damm` | The coin trades in a Meteora DAMM v2 pool. Packs work again, and the largest pack (tier 4) unlocks. |
 
 ## Addresses
 
@@ -73,7 +73,6 @@ Every builder returns a Kit version 0 transaction message. The fee payer, blockh
 | Meteora DBC | `dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN` |
 | Meteora DAMM v2 | `cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG` |
 | MagicBlock VRF | `Vrf1RNUjXmQGjmQrQLvJHs9SNkvDJEsRVFPkfSQUwGz` |
-| Gabox platform admin (fee claimer) | `5WcPTEQ59UqpQzjZUPbU8QRGCbj7NeQNLDa7DbsLkLKT` |
 | Mainnet address lookup table | `9SkGyTX98QPP2rbJcXuWSEYPyhSwqoj7X4DTxQYQYcdy` |
 
 `createClient` adds the cluster's lookup table for you. An address lookup table lets a transaction name many accounts with one byte each, so large purchases fit in one transaction.

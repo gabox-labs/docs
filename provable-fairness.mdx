@@ -8,15 +8,15 @@ Every pack is one draw. When you buy, the draw stores the prize table, your pack
 
 ```mermaid
 sequenceDiagram
-  participant Buyer
-  participant Gabox
-  participant VRF as MagicBlock VRF
-  Buyer->>Gabox: buy_fixed_pack
-  Gabox->>Gabox: Store terms and reserve the top prize
-  Gabox->>VRF: Request randomness, tagged with the draw's seq
-  VRF-->>Gabox: Authenticated callback with 32 bytes
-  Gabox->>Gabox: Ticket, row, prize
-  Gabox-->>Buyer: Pay the prize, or record it as owed
+ participant B as Buyer
+ participant G as Gabox
+ participant V as VRF
+ B->>G: Buy a pack
+ G->>G: Store terms, reserve
+ G->>V: Request with seq
+ V-->>G: 32 random bytes
+ G->>G: Ticket and prize
+ G-->>B: Paid or owed
 ```
 
 ## From random bytes to a prize

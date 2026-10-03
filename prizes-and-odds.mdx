@@ -4,7 +4,7 @@ description: "Read the fixed prize table"
 icon: "table-list"
 ---
 
-Every machine has one prize table, fixed at launch. A prize is a multiple of the coins your own pack bought. So a $500 pack and a $10 pack have the same odds, but the $500 pack's prizes are 50 times larger.
+Every machine has one prize table, fixed at launch. A prize is a multiple of the coins your own pack bought. So a large pack and a small pack have the same odds. A pack that costs 50 times more has prizes about 50 times larger.
 
 ## The app's table
 
@@ -33,7 +33,7 @@ A machine created through the SDK can use another table. The program accepts a t
 | --- | --- |
 | Multiplier | Paid as basis points of the pack coins. `10,000` is 1×; `100,000` is 10×. |
 | Tickets | Equal chances for that row. All rows add up to 65,536. |
-| Prize | `floor(pack coins × multiplier / 10,000)` raw coin units. |
+| Prize | Pack coins × multiplier / 10,000, rounded down, in raw coin units. |
 | Chance | `tickets / 65,536`. |
 
 ## Caps

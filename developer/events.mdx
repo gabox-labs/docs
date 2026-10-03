@@ -30,8 +30,8 @@ All quote amounts are raw units of the event's quote token. All coin amounts are
 | `tokens_bought` | The coins the vault received. This is the pack. |
 | `max_quote_budget` | The cap the buyer signed. |
 | `quote_debit` | What the market charged. |
-| `gross_quote_charged` | `quote_debit` plus the pack fee. |
-| `pack_fee`, `fee_recipient` | The 0.20% fee, and the wallet whose `Earnings` record got all of it. |
+| `gross_quote_charged` | `quote_debit` plus `pack_fee`. |
+| `pack_fee`, `fee_recipient` | The 0.20% fee, and the wallet whose earnings record got all of it. |
 | `referrer`, `referrer_fee` | The bound referrer, or the default key. `referrer_fee` equals `pack_fee` when a referrer got it. |
 | `unused_quote_budget`, `refunded_quote_amount` | Budget left unspent, and quote returned from a temporary account. |
 | `curve_completed` | True when this purchase completed the DBC curve. |

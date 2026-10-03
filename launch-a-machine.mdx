@@ -18,10 +18,10 @@ Everything else is fixed for every coin: 9 decimals, 1,000,000,000 coins, the ap
 
 ```mermaid
 flowchart LR
- A[Meteora creates the coin and its curve] --> B[Hook account list for the coin]
- B --> C[initialize_pool checks the new coin]
- C --> D[Seed buy into the vault]
- D --> E[Machine is open]
+ A[Coin and curve] --> B[Hook accounts]
+ B --> C[Checks]
+ C --> D[Seed buy]
+ D --> E[Machine open]
 ```
 
 1. Meteora DBC creates the Token-2022 coin, with the Gabox transfer hook, and its bonding curve. It uses the quote token's registered Gabox config.
