@@ -9,7 +9,7 @@ A machine can only open for a brand new coin. The creator launches the coin and 
 ## What you choose
 
 - **Name, symbol and image.** They go into the coin's own metadata.
-- **Quote token.** The token your coin trades against: USDC, SOL or a registered stock token. It cannot change later. Buyers still pay for packs in USDC.
+- **Quote token.** The token your coin trades against: USDC, SOL, a registered stock token or another registered Solana token. It cannot change later. Buyers still pay for packs in USDC. Your holders' Mega Pack rewards are paid in this token.
 - **Starting liquidity.** How many extra jackpots your seed funds. See [Seed and jackpot](/seed-and-jackpot).
 
 Everything else is fixed for every coin: 9 decimals, 1,000,000,000 coins, the app's prize table, the trading fees and the move to DAMM v2 at graduation. A client built on the SDK may pass another valid prize table.
@@ -33,7 +33,7 @@ If any step fails, nothing happens.
 
 ## What it costs
 
-- **The seed**, paid in the machine's quote token. There is no swap at launch, so on a USDC or stock token machine you must already hold that token. The seed buy pays the curve's trading fee, but no pack fee.
+- **The seed**, paid in the machine's quote token. There is no swap at launch, so on a machine not quoted in SOL you must already hold that token. The seed buy pays the curve's trading fee, but no pack fee.
 - **SOL** for account rent and the network fee.
 
 You sign `max_seed_quote_in`, the most quote tokens the seed may spend, and `max_seed_native_debit`, the most SOL it may spend. The app shows the estimated launch cost before you sign.

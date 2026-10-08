@@ -17,7 +17,7 @@ icon: "book"
 | Free coins | Vault coins that no open draw or owed prize has reserved. |
 | Reservation | Coins held back for open draws and owed prizes. |
 | Seed | Coins the creator buys into the vault at launch. They cannot be taken back. |
-| Quote token | The token the coin trades against: USDC, SOL or a registered stock token. |
+| Quote token | The token the coin trades against: USDC, SOL, a registered stock token or another registered Solana token. |
 | Pack fee | 0.20% of the pack price, already inside the price. |
 | Trading fee | Meteora's fee inside every trade's price. |
 | Referrer | The wallet a buyer named on their first referred purchase. The link is permanent. |
@@ -25,11 +25,10 @@ icon: "book"
 | Graduation | Meteora moves the coin from the bonding curve into a DAMM v2 pool. |
 | AMM | Automated market maker. DAMM v2 is the AMM a coin trades on after graduation. |
 | Transfer hook | A Token-2022 rule. While the coin is on the curve, coins leaving the curve may only go to the machine's vault. |
-| Mega Pack | A pack paid for by pack fees after graduation. Its prize goes to the coin's holders. |
-| Snapshot | The list of holder balances that Gabox takes just before a Mega Pack round opens. |
-| Merkle root | A 32-byte fingerprint of the holders' reward list, stored on chain. A wallet proves its reward against it. |
+| Mega Pack | A pot of pack fees after graduation. When it is full, it is paid out to the coin's holders. |
+| Snapshot | The list of holder balances that Gabox takes just before a Mega Pack payout. |
 | VRF | Verifiable random function. MagicBlock supplies the randomness for every draw. |
 | PDA | Program derived address: an address computed from fixed seeds and a program ID. Nobody holds a private key for it. |
 | ATA | Associated token account: a wallet's standard account for one token. |
-| Slot | The Solana clock unit. Retry and expiry deadlines count slots. |
+| Slot | The Solana clock unit, about 0.27 seconds today. Retry and expiry deadlines count slots. |
 | Basis point | One hundredth of one percent. 20 bps is 0.20%. |

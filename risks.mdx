@@ -5,13 +5,13 @@ icon: "triangle-alert"
 ---
 
 - **Coins, not dollars.** A pack wins coins, not a fixed amount of USDC. The coin can fall in price or lose its market.
-- **Average payout.** A valid table pays at most one pack's coins on average. The app's table pays about 95%. The trading fee and the pack fee come out of the price first. So on average a pack is worth less than you paid.
+- **Average payout.** A valid table pays at most one pack's coins on average. The app's table pays about 92%. The trading fee and the pack fee come out of the price first. So on average a pack is worth less than you paid.
 - **Price movement.** The market sets the price. A pack buys fewer coins when the coin trades higher. Your signed limits protect you from a stale quote, but the purchase can then fail.
-- **Swap cost.** On a SOL or stock token machine, your USDC is swapped first. That swap has its own price and fees.
-- **Selling.** A large prize can move the market when you sell it. A sale pays the trading fee. On a stock token or SOL machine, you receive that token, not USDC.
+- **Swap cost.** On a machine not quoted in USDC, your USDC is swapped first. That swap has its own price and fees.
+- **Selling.** A large prize can move the market when you sell it. A sale pays the trading fee. On a machine not quoted in USDC, you receive its quote token, not USDC.
 - **Thin vault.** A top prize can pay less than its full multiplier when free vault coins are low. Your `min_maximum` protects the offer you accepted.
 - **Late randomness.** Only the buyer can retry a draw, and nobody retries for you automatically. After the deadline, anyone can settle the pack at its smallest prize.
-- **Mega Pack rewards.** Gabox prepares the holder snapshot and the reward list. The published files let anyone check them. One late draw delays a whole round's rewards. A Mega Pack prize is paid in the coin, so its value moves with the coin price.
+- **Mega Pack rewards.** Only part of a reward is guaranteed. The rest is drawn, so your reward can be smaller or larger than your share. Rewards are paid in the quote token, so their value moves with that token's price.
 - **Creator fees.** Creator earnings depend on trading that may never happen.
 - **Outside systems.** Meteora, MagicBlock, Jupiter, Irys, Solana, the quote token's issuer, the RPC and program upgrades can each affect you. A stock token issuer can pause or freeze its token.
 

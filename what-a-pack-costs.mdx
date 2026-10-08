@@ -13,7 +13,7 @@ A pack costs its listed USDC price. The pack fee and the market's trading fee ar
 | Pack fee | 0.20% of the amount charged | The buyer's referrer, or Gabox. After graduation, with no referrer, the machine's Mega Pack. |
 | Trading fee | 1.875% on the curve, 0.94% after graduation, inside the market price | Meteora, Gabox and the creator |
 | Coins | Everything else buys coins for the vault | The machine's vault |
-| Swap | Only on a SOL or stock token machine: the USDC to quote token swap | The swap route |
+| Swap | Only on a machine not quoted in USDC: the USDC to quote token swap | The swap route |
 | Network, rent, VRF | Variable costs, paid in SOL | Solana and MagicBlock |
 
 ## How the pack fee is taken
@@ -48,7 +48,8 @@ Every trade on a Gabox coin pays a trading fee inside the market price. Gabox on
 | Open a pack after graduation | 0.20% | 0.94% |
 | Sell coins | None | 1.875% on the curve, 0.94% after graduation |
 | Seed buy at launch | None | 1.875% |
-| Mega Pack opening | None | 0.94% |
+
+A Mega Pack payout does not trade, so it pays no fee.
 
 ## Before and after graduation
 

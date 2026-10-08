@@ -11,9 +11,9 @@ A **machine** belongs to one new coin. These are the parties in its life:
 | Creator | Launch the coin and machine, pay the seed, add more prize coins, and claim their part of the trading fees from Meteora. The app uses a fixed prize table; SDK clients can pass another valid table. | Change the prize table after launch, take coins out of the vault, or earn pack fees on their own machine (except as somebody's referrer). |
 | Buyer | Open one pack per purchase, set price and prize limits, keep or sell the coins, retry a late draw, and claim an owed prize. | Change a draw's result or choose its random value. |
 | Referrer | Receive the whole 0.20% pack fee of every buyer bound to them, and claim it. | Bind a buyer to themselves, or change an existing link. |
-| Holder | After graduation, share each Mega Pack prize by balance, and claim it. | Trigger a Mega Pack opening. |
-| Gabox admin | Register quote tokens for new machines, stop new machines or purchases on a quote, set the Mega Pack target and operator, and claim Gabox's pack fees. | Change an existing machine's prize table, config or open draws through the program's instructions. |
-| Mega operator | A Gabox server wallet. It opens Mega Packs, retries their draws, and publishes the holders' reward lists. | Change settings, upgrade the program, or move Mega funds outside these steps. |
+| Holder | After graduation, share each Mega Pack payout and claim it. | Claim another wallet's reward. |
+| Gabox admin | Register quote tokens for new machines, stop new machines or purchases on a quote, set the Mega Pack settings, and claim Gabox's pack fees. | Change an existing machine's prize table, config or open draws through the program's instructions. |
+| Mega operator | A Gabox server wallet. It pays out Mega Packs to holders. | Change settings, upgrade the program, or move Mega Pack funds anywhere else. |
 | Anyone | Add prize coins, expire an overdue draw, pay an owed prize into the buyer's own coin account, and close a finished draw. | Redirect another buyer's prize. |
 | Meteora DBC / DAMM v2 | Price every trade. DBC runs the curve; DAMM v2 runs the pool after graduation. | Choose a prize. |
 | MagicBlock VRF | Return random bytes through an authenticated callback. | Change the prize table or redirect a payment. |

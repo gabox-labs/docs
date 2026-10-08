@@ -93,6 +93,12 @@
               "trust-boundaries",
               "status-and-addresses"
             ]
+          },
+          {
+            "group": "Brand",
+            "pages": [
+              "brand-kit"
+            ]
           }
         ]
       },
