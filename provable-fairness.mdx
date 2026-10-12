@@ -4,7 +4,7 @@ description: "How randomness becomes your prize"
 icon: "shield-check"
 ---
 
-Every pack is one draw. When you buy, the draw stores the prize table, your pack coins and the free coins in the vault. Later purchases cannot change these numbers, so they cannot change your result.
+Every pack is one draw. When you buy, the draw stores the prize table, your pack coins and the free coins in the vault. No one can change which row your ticket picks. When the draw settles, the free coins are checked again, and the draw keeps the lower number. So the prize is never larger than the offer you saw.
 
 ```mermaid
 sequenceDiagram
@@ -12,7 +12,7 @@ sequenceDiagram
  participant G as Gabox
  participant V as VRF
  B->>G: Buy a pack
- G->>G: Store terms, reserve
+ G->>G: Store terms, hold pack
  G->>V: Request with seq
  V-->>G: 32 random bytes
  G->>G: Ticket and prize
@@ -24,7 +24,7 @@ sequenceDiagram
 1. Gabox hashes three values with SHA-256: the 32 random bytes, the machine's address and the draw's sequence number (`seq`, 8 bytes, little-endian).
 2. The first two bytes of the hash, read as a little-endian number, are the ticket: a number from 0 to 65,535.
 3. The rows own consecutive ranges of tickets, in table order. The ticket falls into exactly one row.
-4. The prize is `min(floor(pack coins × multiplier / 10,000), free coins + pack coins)`.
+4. The prize is `min(floor(pack coins × multiplier / 10,000), free coins + pack coins)`. The free coins here are the smaller of the free coins at purchase and the free coins when the draw settles.
 
 There are exactly 65,536 tickets, which is the full range of a 16-bit number. So every ticket has the same chance, and no rounding favours a row.
 
@@ -34,7 +34,8 @@ Each machine gives every pack a new `seq`, and it never repeats. A callback must
 
 1. Find the `PackBoughtV2` event of your purchase. It records the draw, `seq`, your pack coins (`tokens_bought`), the free coins snapshot and the prize offer.
 2. Find the `DrawResolved` event of that draw. It records the 32 random bytes, the row, the amount, and the `timed_out` and `paid` flags.
-3. Recompute the ticket and the prize with the steps above, or with the SDK's `settle(...)` function. Compare them with the event.
+3. Recompute the ticket and the row with the steps above, and compare them with the event. The amount is the row's prize, or less because of the cap. It is never more than the prize offer in `PackBoughtV2`, and a win never pays less than your pack coins.
+4. While the draw account is open, it holds the free coins the draw settled against. With them, the steps above, or the SDK's `settle(...)` function, give the exact amount.
 
 If `timed_out` is true, no randomness was used: the draw paid its smallest row. If `paid` is false, the result is fixed but [still needs a claim](/if-the-draw-is-late).
 

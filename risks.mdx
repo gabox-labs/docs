@@ -9,7 +9,7 @@ icon: "triangle-alert"
 - **Price movement.** The market sets the price. A pack buys fewer coins when the coin trades higher. Your signed limits protect you from a stale quote, but the purchase can then fail.
 - **Swap cost.** On a machine not quoted in USDC, your USDC is swapped first. That swap has its own price and fees.
 - **Selling.** A large prize can move the market when you sell it. A sale pays the trading fee. On a machine not quoted in USDC, you receive its quote token, not USDC.
-- **Thin vault.** A top prize can pay less than its full multiplier when free vault coins are low. Your `min_maximum` protects the offer you accepted.
+- **Thin vault.** A top prize can pay less than its full multiplier when free vault coins are low. Your `min_maximum` protects the offer when you buy. If another win settles before yours, a large prize can still pay less than that offer, but a win never pays less than your pack coins.
 - **Late randomness.** Only the buyer can retry a draw, and nobody retries for you automatically. After the deadline, anyone can settle the pack at its smallest prize.
 - **Mega Pack rewards.** Only part of a reward is guaranteed. The rest is drawn, so your reward can be smaller or larger than your share. Rewards are paid in the quote token, so their value moves with that token's price.
 - **Creator fees.** Creator earnings depend on trading that may never happen.

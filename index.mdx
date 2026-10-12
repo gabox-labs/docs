@@ -39,6 +39,6 @@ Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin 
 
 ## Safety boundaries
 
-Each machine belongs to one brand new coin. Its prize table cannot change after launch. Every open draw reserves the most it can pay, so one draw cannot spend another draw's prize. A valid table pays at most one pack's coins on average.
+Each machine belongs to one brand new coin. Its prize table cannot change after launch. Every open draw holds its own pack coins, and every owed prize stays held until it is claimed. One draw can never spend the coins another draw holds. A valid table pays at most one pack's coins on average.
 
 Read [Risks](/risks) before you buy. See [Deployment status](/status-and-addresses) for what runs on each network.
