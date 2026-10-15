@@ -10,6 +10,7 @@ icon: "scale"
 | Gabox transfer hook | While the coin is on the curve, coins leaving the curve may only enter that coin's machine vault. Meteora removes the hook at graduation. |
 | MagicBlock VRF | Supplies the random bytes. Gabox checks the callback's signer and the draw's sequence number. It relies on MagicBlock to generate the bytes fairly and to deliver them. A late draw can expire at its smallest prize. |
 | Meteora | Sets trade prices, runs the curve and the pool, collects trading fees and moves the coin at graduation. Gabox does not compare a trade with an outside price. |
+| Gift packs | Only the named wallet can open a gift, once, on its own machine. The gift's USDC can only pay for that one pack. If the opening fails, the gift is unchanged. See [Gift packs](/gift-packs). |
 | Swap route | On a machine not quoted in USDC, the app swaps USDC through Jupiter first. |
 | Mega operator | A Gabox server wallet. It pays out Mega Packs to holders. The program checks the amounts, and the published files let anyone check who got what. |
 | Irys | Stores the published Mega Pack files. Their fingerprints are on chain, so a changed file is detected. |
