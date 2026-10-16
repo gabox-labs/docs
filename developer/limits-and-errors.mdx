@@ -1,0 +1,71 @@
+---
+title: "Limits and errors"
+description: "Rate limits, API keys and the error codes every route can answer"
+icon: "gauge"
+---
+
+## Rate limits
+
+The API counts your calls in a short window. Over a limit, it answers `429 rate_limited` with a `retry-after` header, in seconds. Wait that long, then send again.
+
+| Calls | Limit | Counted per |
+| --- | --- | --- |
+| Reads without a key: every `GET /v1` call | 30 a minute, burst of 10 | IP address |
+| Reads with an API key: every `GET /v1` call | 120 a minute, burst of 30 | Key |
+| Builds with an API key: `POST /v1/.../build` (not live yet) | 20 a minute, burst of 5 | Key |
+
+**Burst** is how many calls you can send at once. After a burst, your allowance fills up again at the per-minute rate. For example, without a key you can send 10 calls at once, and then about one call every 2 seconds. A key counts all its calls together, wherever they come from.
+
+```js
+async function getJson(url, init) {
+  for (let tries = 0; tries < 3; tries++) {
+    const res = await fetch(url, init)
+    if (res.status !== 429) return res.json()
+    const wait = Number(res.headers.get("retry-after") ?? "1")
+    await new Promise((done) => setTimeout(done, wait * 1000))
+  }
+  throw new Error("Still rate limited")
+}
+```
+
+Most answers may be cached for 5 seconds. If many users of your app read the same machine, cache the answer on your own server. Then one call can serve them all.
+
+## API keys
+
+Reads do not need a key. A key gives your app its own limit, instead of the shared limit for your IP address. The future [build routes](/developer/preview-calls) will need a key.
+
+Ask for a key or a higher limit at hello@gabox.fun. Gabox issues keys by hand and shows each key once. Keep it secret, like a password, and keep it on your server.
+
+Send the key in the `Authorization` header:
+
+```bash
+curl "https://actions.gabox.fun/v1/machines" \
+  -H "Authorization: Bearer gbx_YOUR_KEY"
+```
+
+A key starts with `gbx_` and has 43 more characters. If the header is there but the key is malformed, unknown or revoked, the API answers `401 unauthorized`. It does not fall back to the limit without a key. So you see a typo at once. A request with no `Authorization` header never gets a 401.
+
+## Errors
+
+Every error answers with this shape:
+
+```json
+{
+  "error": {
+    "code": "not_found",
+    "message": "No machine at that address."
+  }
+}
+```
+
+Read `code` in your code. The `message` is for people, and its wording can change.
+
+| Code | Meaning | What to do |
+| --- | --- | --- |
+| `bad_request` (400) | A parameter is missing, unknown or malformed. | Fix the request. The message names the problem. |
+| `unauthorized` (401) | The API key is malformed, unknown or revoked. | Check the key, or send no key. |
+| `not_found` (404) | No such machine, draw or route. | Check the address. A brand-new machine or draw can take a few seconds to appear. |
+| `rate_limited` (429) | You are over a limit. | Wait `retry-after` seconds, then send again. |
+| `internal` (500) | Something broke on our side. | Safe to retry after a short wait. |
+
+An error answer is never cached.

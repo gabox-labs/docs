@@ -1,0 +1,232 @@
+---
+title: "Preview calls"
+description: "Launch, pack and fee calls that the API will serve next"
+icon: "flask"
+---
+
+<Warning>
+The calls on this page are **not served yet**. Do not call them. Gabox documents them now so you can plan your app. Their shape can still change before they go live. Until then, users take these steps on [gabox.fun](https://gabox.fun).
+</Warning>
+
+Each build call answers a transaction for your user to sign. The API never signs, and it never holds a key. Your app's wallet signs the transaction and sends it to Solana. Every transaction spends real money on mainnet, so show your user what it does and what it costs before they sign.
+
+The build calls will need an [API key](/developer/limits-and-errors#api-keys). A key's limit for builds is 20 a minute, with a burst of 5.
+
+In the samples below, `post`, `get`, `signAndSend` and `sleep` stand for a few lines of your own: a JSON `fetch`, your wallet kit's sign-and-send, and a timer.
+
+## Launch a machine
+
+```http
+POST /v1/machines/build
+```
+
+Builds the launch transaction. One transaction makes the new coin and opens its machine. The creator's wallet and the new mint both sign it, and the creator sends it. See [Launch a machine](/launch-a-machine).
+
+<ParamField body="creator" type="address" required>
+  The wallet that launches the coin, pays the launch cost and earns the creator fee.
+</ParamField>
+
+<ParamField body="mint" type="address" required>
+  The public key of a new keypair that your app makes. Its secret key never leaves your app. It signs beside the creator.
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  The coin's name, up to 32 bytes.
+</ParamField>
+
+<ParamField body="symbol" type="string" required>
+  The ticker: capital letters and digits, up to 10.
+</ParamField>
+
+<ParamField body="imageUrl" type="https URL" required>
+  The coin's image. Gabox stores it with the coin's metadata, and the transaction pays that cost back.
+</ParamField>
+
+<ParamField body="quote" type="string" required>
+  What packs are priced in: `SOL`, `USDC`, or the mint of another enabled quote token.
+</ParamField>
+
+<ParamField body="seed" type="number">
+  Extra starting coins for the prize vault, paid in the quote token you picked. For example, 250 means 250 USDC on a USDC machine. It buys the coin at launch, on top of the small seed every machine gets. Leave it out for none.
+</ParamField>
+
+```js
+import { generateKeyPairSigner } from "@solana/kit"
+
+const API = "https://actions.gabox.fun/v1"
+const mint = await generateKeyPairSigner() // your coin; its key stays here
+
+const { data } = await post(`${API}/machines/build`, {
+  creator: wallet.address,
+  mint: mint.address,
+  name: "Lucky Cats",
+  symbol: "LUCKY",
+  imageUrl: "https://example.com/lucky-cats.png",
+  quote: "USDC",
+  seed: 250, // optional extra seed, in the quote token (here USDC)
+})
+
+await signAndSend(data.transaction, [wallet, mint]) // you sign, Gabox never does
+// gabox.fun/<mint> is live: one transaction
+```
+
+Sample answer:
+
+```json
+{
+  "data": {
+    "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...",
+    "signers": ["<creator wallet>", "<new mint public key>"],
+    "pool": "<new machine pool>",
+    "metadataUri": "https://gateway.irys.xyz/<id>",
+    "expiresAt": "2026-10-10T12:01:30.000Z"
+  },
+  "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `transaction` | The transaction, base64 encoded, for the creator and the mint to sign. |
+| `signers` | The addresses that must sign. |
+| `pool` | The new machine's pool account. |
+| `metadataUri` | Where the coin's metadata is stored. |
+| `expiresAt` | Send the transaction before this time. After it, build a new one. |
+
+## Open a pack
+
+```http
+POST /v1/packs/build
+```
+
+Builds one pack's buy transaction for the buyer to sign. The answer names the draw that the pack opens, so you can [follow it](/developer/draws#follow-a-draw).
+
+<ParamField body="buyer" type="address" required>
+  The wallet that pays, signs and gets the prize.
+</ParamField>
+
+<ParamField body="mint" type="address" required>
+  The machine's mint.
+</ParamField>
+
+<ParamField body="pack" type="integer" required>
+  The pack's size in whole USDC. It must be one of the sizes in [`/v1/program`](/developer/stats-and-program#fixed-pack).
+</ParamField>
+
+```js
+const API = "https://actions.gabox.fun/v1"
+
+const { data: program } = await get(`${API}/program`)
+const smallest = Number(BigInt(program.fixedPacks[0].nominalUsdc) / 1_000_000n)
+
+const { data } = await post(`${API}/packs/build`, {
+  buyer: wallet.address,
+  mint: MINT,
+  pack: smallest, // whole USDC
+})
+await signAndSend(data.transaction, [wallet])
+
+let draw = await get(`${API}/draws/${data.draw}`)
+while (!draw.data.settled) {
+  await sleep(1000) // MagicBlock answers in seconds
+  draw = await get(`${API}/draws/${data.draw}`)
+}
+console.log(draw.data.results) // the tier and the coins won
+```
+
+Sample answer:
+
+```json
+{
+  "data": {
+    "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...",
+    "draw": "<draw address>",
+    "tokenFloor": "912000000",
+    "topPrizeFloor": "9120000000",
+    "expiresAt": "2026-10-10T12:01:30.000Z"
+  },
+  "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `transaction` | The transaction, base64 encoded, for the buyer to sign. |
+| `draw` | The draw account that the pack opens. |
+| `tokenFloor` | The fewest coins the vault must receive for this pack. The transaction signs it. |
+| `topPrizeFloor` | The smallest top prize the buyer accepts. The transaction signs it. |
+| `expiresAt` | Send the transaction before this time. After it, build a new one. |
+
+The buyer pays in USDC. If the market moved and a signed limit no longer holds, the program refuses the purchase and nothing is bought. See [What you sign](/opening-a-pack#what-you-sign).
+
+## Creator fees
+
+A machine's creator earns part of every trade of its coin: 0.495% on the curve, and about 0.25% after graduation. The creator can claim it any time. See [Referrals and earnings](/referrals-and-earnings#creator-earnings).
+
+### Read claimable fees
+
+```http
+GET /v1/fees/{wallet}
+```
+
+What a creator can claim now: the trading fees of each coin they launched.
+
+<ParamField path="wallet" type="address" required>
+  The creator's wallet.
+</ParamField>
+
+Sample answer:
+
+```json
+{
+  "data": {
+    "creator": [
+      {
+        "mint": "<coin mint>",
+        "quoteMint": "<quote mint>",
+        "claimable": "1820000"
+      }
+    ]
+  },
+  "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
+}
+```
+
+Each row is one coin. `claimable` is in the base units of `quoteMint`.
+
+### Claim fees
+
+```http
+POST /v1/fees/claim/build
+```
+
+Builds one transaction that claims every creator fee a wallet can claim, for that wallet to sign.
+
+<ParamField body="wallet" type="address" required>
+  The creator's wallet. It signs the claim.
+</ParamField>
+
+```js
+const API = "https://actions.gabox.fun/v1"
+
+const { data } = await post(`${API}/fees/claim/build`, {
+  wallet: wallet.address,
+})
+await signAndSend(data.transaction, [wallet]) // every creator fee, one signature
+```
+
+Sample answer:
+
+```json
+{
+  "data": {
+    "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...",
+    "expiresAt": "2026-10-10T12:01:30.000Z"
+  },
+  "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
+}
+```
+
+## Selling coins
+
+The API has no sell call. A winner sells the coin with a normal swap, for example on Jupiter. See [Keep or sell](/keep-or-sell).

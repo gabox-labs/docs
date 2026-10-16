@@ -105,8 +105,33 @@
       },
       {
         "tab": "Developer",
-        "pages": [
-          "developer/overview"
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "developer/overview",
+              "developer/agent-skill",
+              "developer/requests-and-answers",
+              "developer/limits-and-errors",
+              "developer/common-tasks"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "developer/machines",
+              "developer/draws",
+              "developer/pulls",
+              "developer/mega-pack",
+              "developer/stats-and-program"
+            ]
+          },
+          {
+            "group": "Coming next",
+            "pages": [
+              "developer/preview-calls"
+            ]
+          }
         ]
       }
     ]

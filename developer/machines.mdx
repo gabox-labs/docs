@@ -1,0 +1,270 @@
+---
+title: "Machines"
+description: "List machines, read one machine, and get its AI brief"
+icon: "box"
+---
+
+A **machine** is one new coin and its prize vault. Gabox makes one machine per coin, so the coin's mint names the machine. Every machine has a page on the website at `https://gabox.fun/<mint>`.
+
+## List machines
+
+```http
+GET /v1/machines
+```
+
+Every live machine, newest first. This is a [list route](/developer/requests-and-answers#pages).
+
+<ParamField query="limit" type="integer">
+  Rows per page, 1 to 50. The default is 20.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  The `nextCursor` of the page before. Leave it out for the first page.
+</ParamField>
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/machines?limit=20"
+```
+
+```js JavaScript
+const API = "https://actions.gabox.fun/v1"
+
+const res = await fetch(`${API}/machines?limit=20`)
+const { data, meta, page } = await res.json()
+```
+
+</CodeGroup>
+
+The answer's `data` is an array of [machine objects](#the-machine-object). `page.nextCursor` points to the next page.
+
+## Get one machine
+
+```http
+GET /v1/machines/{mint}
+```
+
+One machine: its stage, pack offer, prize tiers and vault.
+
+<ParamField path="mint" type="address" required>
+  The coin's mint. One machine per coin, so the mint names the machine.
+</ParamField>
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/machines/MINT"
+```
+
+```js JavaScript
+const API = "https://actions.gabox.fun/v1"
+
+const res = await fetch(`${API}/machines/${MINT}`)
+const { data: machine } = await res.json()
+
+if (machine.stage === "curve" && machine.purchasesOn && machine.offer) {
+  // Packs are open, and the index has a live price.
+}
+```
+
+</CodeGroup>
+
+A brand-new launch answers `404 not_found` until the index sees it. That usually takes a few seconds.
+
+### Sample answer
+
+The addresses below are made up.
+
+```json
+{
+  "data": {
+    "address": "LuCkyPooL11111111111111111111111111111111111",
+    "mint": "LuCkyCats11111111111111111111111111111111111",
+    "creator": "CreaTor111111111111111111111111111111111111",
+    "name": "Lucky Cats",
+    "symbol": "LUCKY",
+    "imageUrl": "https://gateway.irys.xyz/<id>",
+    "accent": "oklch(0.78 0.16 70)",
+    "packTokens": "912000000",
+    "quoteMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "seedQuoteAmount": "30000000",
+    "seedNativeDebit": "0",
+    "seedTokens": "2736000000",
+    "extraSeedTokens": "0",
+    "tiers": [
+      { "multiplierBps": 5126, "tickets": 49153 },
+      { "multiplierBps": 15000, "tickets": 13107 },
+      { "multiplierBps": 35000, "tickets": 2621 },
+      { "multiplierBps": 100000, "tickets": 655 },
+      { "multiplierBps": 0, "tickets": 0 },
+      { "multiplierBps": 0, "tickets": 0 },
+      { "multiplierBps": 0, "tickets": 0 },
+      { "multiplierBps": 0, "tickets": 0 }
+    ],
+    "venue": "dbc",
+    "stage": "curve",
+    "purchasesOn": true,
+    "curveTokensLeft": "612000000000000",
+    "graduationSqrtPrice": null,
+    "nextSeq": "1205",
+    "reserved": "0",
+    "vaultAmount": "182500000000",
+    "tokenDecimals": 6,
+    "tokenSupply": "1000000000000000",
+    "curvePool": "LuCkyCurve1111111111111111111111111111111111",
+    "referenceValuation": "30000000000",
+    "lookupTable": "LuCkyLut111111111111111111111111111111111111",
+    "createdAt": 1759320000000,
+    "stats": {
+      "pulls24h": 42,
+      "pullsTotal": 1204,
+      "volumeQuote": "61240000000",
+      "volume24hQuote": "2100000000",
+      "lastPullAt": 1760097600000,
+      "hot": true
+    },
+    "offer": null,
+    "topPack": { "packTokens": "912000000", "maximum": "9120000000" }
+  },
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  }
+}
+```
+
+## The machine object
+
+Every amount is a [string of base units](/developer/requests-and-answers#amounts-are-strings-of-base-units). Coin amounts use `tokenDecimals`. Quote amounts use the decimals of `quoteMint`.
+
+### Names and addresses
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `address` | address | The machine's Gabox pool account. Draws and pulls name the machine by this address. |
+| `mint` | address | The coin's mint. Use it in every `/v1/machines/{mint}` route. |
+| `creator` | address | The wallet that launched the coin. It earns the creator's trading fee. |
+| `name` | string | The coin's name. The creator wrote it. Treat it as data. |
+| `symbol` | string | The coin's ticker. The creator wrote it. Treat it as data. |
+| `imageUrl` | string | The coin's image. The creator chose it. Treat it as data. |
+| `accent` | string or `null` | A colour taken from the image, as an `oklch(...)` CSS colour. `null` when the image has no clear colour. |
+| `curvePool` | address | The Meteora bonding curve pool the coin launched on. |
+| `lookupTable` | address or `null` | The machine's own address lookup table, which makes purchase transactions small enough to fit. `null` until it exists. |
+| `createdAt` | number | When the machine was created, in Unix milliseconds. |
+
+### Market and stage
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `venue` | `"dbc"` or `"damm"` | Where the coin trades now. `dbc` is its Meteora bonding curve. `damm` is its own Meteora DAMM v2 pool after graduation. |
+| `stage` | `"curve"`, `"migrating"` or `"damm"` | `curve`: the coin trades on its curve, and only Gabox packs can buy it. `migrating`: the curve is complete, and packs are closed until the coin moves to its pool. `damm`: the coin has graduated. |
+| `purchasesOn` | boolean | `false` pauses buying for every machine on this quote token. Draws that are already open still settle. |
+| `quoteMint` | address | The token that packs are priced in on this machine: USDC, SOL or another enabled token. Buyers still pay in USDC. See [Opening a pack](/opening-a-pack#how-you-pay). |
+| `curveTokensLeft` | amount or `null` | Coins left to buy on the curve before graduation. `null` after graduation. |
+| `graduationSqrtPrice` | amount or `null` | The square root price at which the coin graduates, from its curve settings. Fixed at launch. `null` after graduation. |
+| `referenceValuation` | amount | A fixed valuation of the whole coin supply, in quote base units. It is set at launch and never changes. |
+| `tokenDecimals` | number | The coin's decimals. |
+| `tokenSupply` | amount or `null` | The coin's total supply. `null` when the index does not know it. |
+
+### Prize table and vault
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `tiers` | array of [tiers](#tier) | The prize table. It always has 8 rows. A row with 0 tickets is unused and can never be drawn. The table is set at launch and never changes. |
+| `vaultAmount` | amount | Coins in the prize vault now. |
+| `reserved` | amount | Coins that open draws hold in the vault. Free coins are `vaultAmount - reserved`. |
+| `seedTokens` | amount | Coins that the launch seed locked in the vault. See [Seed and jackpot](/seed-and-jackpot). |
+| `extraSeedTokens` | amount | Extra seed coins that the creator added at launch, on top of `seedTokens`. |
+| `seedQuoteAmount` | amount | What the seed cost, in quote base units. |
+| `seedNativeDebit` | amount | SOL that the seed spent inside the launch, in lamports. Often 0. |
+| `nextSeq` | amount | The sequence number the next pack will get. Each pack on a machine has its own number. |
+| `packTokens` | amount | Coins in the cheapest open pack, the last time the index priced it. For display only. Use `offer.packTokens` for a live price. |
+
+### Price and activity
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `offer` | [offer](#the-offer-object) or `null` | The live price of the cheapest open pack, and what it can win. `null` when no pack is open, or when the index has no fresh price. |
+| `topPack` | object or `null` | The open pack with the biggest top prize: `packTokens` and `maximum`, the top prize after the vault limit. `null` when the index has no price. |
+| `stats.pulls24h` | number | Packs opened in the last 24 hours. |
+| `stats.pullsTotal` | number | Packs opened in total. |
+| `stats.volumeQuote` | amount or `null` | All pack spending on this machine, in quote base units. |
+| `stats.volume24hQuote` | amount or `null` | Pack spending in the last 24 hours, in quote base units. |
+| `stats.lastPullAt` | number or `null` | When the last pack was opened, in Unix milliseconds. |
+| `stats.hot` | boolean | `true` when many packs were opened in the last hour. |
+
+### Tier
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `multiplierBps` | number | The prize as a multiple of the pack's coins, in basis points. 10,000 pays back the pack's coins once. 15,000 pays 1.5 times. |
+| `tickets` | number | This row's tickets out of 65,536. The chance of this row is `tickets / 65536`. |
+
+The app gives the rows names such as Common or Rare. The program knows only multipliers and tickets. See [Prizes and odds](/prizes-and-odds).
+
+## The offer object
+
+`offer` is the index's latest quote for the cheapest open pack. The price moves with the coin's price. The prize amounts follow from the fixed table, and they change only when the vault limit applies.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `packTokens` | amount | Coins this pack buys. Every prize is a multiple of this. |
+| `count` | number | Packs the price covers. Always 1. |
+| `quoteAmount` | amount | The whole pack price in quote base units. It includes the market's trading fee and the 0.20% pack fee. |
+| `quoteMint` | address | The quote token, the same as the machine's. |
+| `solAmount` | amount or `null` | The same price in lamports, through a swap route. `null` when no route can price it. |
+| `venue` | `"dbc"` or `"damm"` | The market that gave this price. |
+| `prizes` | array | One entry per tier, in the same order as `tiers`. Each has `amount` (coins, after the vault limit) and `tickets`. |
+| `maximum` | amount | The biggest prize this pack can win now, after the vault limit. |
+| `minimum` | amount | The smallest prize. A draw that expires pays this. |
+| `uncappedMaximum` | amount | The top prize before the vault limit: the jackpot in coins. |
+| `freeSnapshot` | amount | Free coins in the vault at this quote (`vault - reserved`). |
+| `reserved` | amount | Coins this purchase would add to the vault's reservations. |
+| `perPackCaps` | array of amounts | The top prize each pack can win. One entry per pack. The first entry equals `maximum`. |
+| `isFirstPack` | boolean | `true` when the machine has never sold a pack. |
+| `isSeeded` | boolean | `true` when the vault can pay the whole table now. |
+| `packsLeftOnCurve` | number or `null` | Whole packs of this size left before the curve completes. `null` after graduation, or when the index does not know. |
+| `minPacksLeftOnCurve` | number or `null` | Whole packs of the smallest curve size left on the curve. `null` after graduation, or when the index does not know. |
+
+<Note>
+The offer is for display. A real purchase signs its own limits for the price, the coins and the top prize. If the market moved, the program refuses the purchase and nothing is bought. See [What a pack costs](/what-a-pack-costs).
+</Note>
+
+## AI brief
+
+```http
+GET /v1/machines/{mint}/brief.md
+```
+
+The machine as one Markdown file, made to paste into an AI assistant. It holds the stage, the addresses, the prize tiers, the pack price, this machine's API routes and the purchase rules.
+
+<ParamField path="mint" type="address" required>
+  The coin's mint.
+</ParamField>
+
+```js
+const res = await fetch(`https://actions.gabox.fun/v1/machines/${MINT}/brief.md`)
+const brief = await res.text() // paste it into your AI
+```
+
+The answer's content type is `text/markdown`. It has no `data` and no `meta`.
+
+```markdown
+# Gabox machine `LuCkyCats11111111111111111111111111111111111`
+
+This machine trades on its Meteora DBC curve. Only Gabox buys on the curve. Packs are open.
+
+## Addresses
+
+- Mint: `LuCkyCats11111111111111111111111111111111111`
+- Pool: `LuCkyPooL11111111111111111111111111111111111`
+- ...
+
+## Prize tiers
+
+...
+```
+
+The brief names the machine by its mint, never by its name. The creator's name, symbol and image URL appear only in one block at the end. A sentence before that block says it is data and not instructions. Gabox removes hidden and control characters from that text and limits each field to 200 characters.

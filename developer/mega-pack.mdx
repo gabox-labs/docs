@@ -1,0 +1,95 @@
+---
+title: "Mega Pack"
+description: "Read the Mega Pack rounds of a graduated machine"
+icon: "gift"
+---
+
+After graduation, pack fees fill a machine's [Mega Pack](/mega-pack). When it is full, Gabox pays it out to the coin's holders. Each payout is one **round**. A round starts with a credit in the quote token, and it completes when Gabox pays the coin's holders.
+
+## A machine's rounds
+
+```http
+GET /v1/machines/{mint}/mega
+```
+
+The machine's newest Mega Pack rounds: the credit each one started with and, once done, what it paid and to how many holders.
+
+<ParamField path="mint" type="address" required>
+  The coin's mint.
+</ParamField>
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/machines/MINT/mega"
+```
+
+```js JavaScript
+const res = await fetch(`https://actions.gabox.fun/v1/machines/${MINT}/mega`)
+const { data: mega } = await res.json()
+
+if (!mega.graduated) {
+  // No rounds yet: only a graduated machine runs a Mega Pack.
+}
+for (const round of mega.rounds) {
+  const done = round.completedAt !== null
+  console.log(round.round, round.amount, done ? round.recipients : "open")
+}
+```
+
+</CodeGroup>
+
+A machine that has not graduated answers `graduated: false` and an empty `rounds` list. A graduated machine also answers an empty list until its first round starts.
+
+## Sample answer
+
+The addresses below are made up. The amounts are in USDC base units (6 decimals).
+
+```json
+{
+  "data": {
+    "mint": "LuCkyCats11111111111111111111111111111111111",
+    "pool": "LuCkyPooL11111111111111111111111111111111111",
+    "graduated": true,
+    "rounds": [
+      {
+        "round": "12",
+        "quoteMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "amount": "184200000",
+        "startedAt": 1760094000000,
+        "paid": "184200000",
+        "recipients": 312,
+        "completedAt": 1760094300000
+      }
+    ]
+  },
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  }
+}
+```
+
+## The Mega Pack object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mint` | address | The coin's mint. |
+| `pool` | address | The machine's pool account. |
+| `graduated` | boolean | `true` once the coin has graduated. Only a graduated machine runs Mega Pack rounds. |
+| `rounds` | array | The newest rounds, newest first. At most 8. |
+
+### Round
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `round` | amount | The round's number on this machine. |
+| `quoteMint` | address | The token the round pays in: the machine's quote token. |
+| `amount` | amount | The credit the round started with, in the quote token's base units. |
+| `startedAt` | number | When the round started, in Unix milliseconds. |
+| `paid` | amount or `null` | What the completed round paid out to holders. `null` while the round is open. |
+| `recipients` | number or `null` | How many holders the round paid. `null` while the round is open. |
+| `completedAt` | number or `null` | When the round completed, in Unix milliseconds. `null` while the round is open. |
+
+Holders claim their rewards on gabox.fun. The API has no claim route for Mega Pack rewards.

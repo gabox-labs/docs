@@ -44,7 +44,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-#content-area table td:has(> code:only-child) {
+/* Keep each code span on one line, but let the text around it wrap. A rule
+   on the cell would also stop the wrap in a cell with text and one code span. */
+#content-area table td > code {
   white-space: nowrap;
 }
 

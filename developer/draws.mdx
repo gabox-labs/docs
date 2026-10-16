@@ -1,0 +1,140 @@
+---
+title: "Draws"
+description: "Follow one pack's draw until its randomness settles it"
+icon: "dice"
+---
+
+A pack opens a **draw**: an account that keeps the pack's own copy of the prize table. MagicBlock's verifiable randomness settles the draw, usually within a few seconds. Then the vault pays the prize. See [Opening a pack](/opening-a-pack#the-draw) and [Provable fairness](/provable-fairness).
+
+## Get a draw
+
+```http
+GET /v1/draws/{address}
+```
+
+One draw: waiting for randomness, or settled with its tier and the coins paid.
+
+<ParamField path="address" type="address" required>
+  The draw account that the pack opened.
+</ParamField>
+
+You find a draw's address in the pack's buy transaction, in a [pull](/developer/pulls) (`draw`), or later in the answer of the [pack build route](/developer/preview-calls#open-a-pack).
+
+The route keeps answering after the prize is paid and the draw account closes. Then the API rebuilds the result from the draw's stored events.
+
+## Follow a draw
+
+Ask about once a second until `settled` is `true`.
+
+```js
+const API = "https://actions.gabox.fun/v1"
+const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
+
+async function waitForDraw(address) {
+  for (let tries = 0; tries < 60; tries++) {
+    const res = await fetch(`${API}/draws/${address}`)
+    if (res.ok) {
+      const { data: draw } = await res.json()
+      if (draw.settled) return draw
+    } else if (res.status !== 404) {
+      throw new Error(`Draw read failed: ${res.status}`)
+    }
+    await sleep(1000) // a new draw can answer 404 for a moment
+  }
+  return null // still waiting: show the user and check again later
+}
+
+const draw = await waitForDraw(DRAW)
+if (draw && !draw.timedOut) {
+  console.log(draw.resolvedTier, draw.amount) // the tier and the coins won
+}
+```
+
+Without a key you can make 30 reads a minute. Stop asking once the draw settles, and slow down if you follow many draws at once. See [Limits and errors](/developer/limits-and-errors#rate-limits).
+
+If MagicBlock is late, the draw can wait longer. It can ask for randomness again, and after a deadline it pays the smallest prize. See [If the draw is late](/if-the-draw-is-late).
+
+## Sample answer
+
+The addresses below are made up.
+
+```json
+{
+  "data": {
+    "packTier": 1,
+    "prizeTier": 1,
+    "address": "LuCkyDraw11111111111111111111111111111111111",
+    "machine": "LuCkyPooL11111111111111111111111111111111111",
+    "purchaser": "BuYer111111111111111111111111111111111111111",
+    "seqStart": "1204",
+    "count": 1,
+    "status": "delivered",
+    "requestSlot": "371204110",
+    "lastAttemptSlot": "371204110",
+    "attempts": 1,
+    "tiers": [],
+    "packTokens": "912000000",
+    "freeSnapshot": "182500000000",
+    "reserved": "0",
+    "settled": true,
+    "paid": true,
+    "owed": "0",
+    "results": [{ "tier": 1, "amount": "1368000000" }],
+    "amount": "1368000000",
+    "randomness": "9f2c4e7a1b03d5e8c6a4f2b0d9e7c5a3f1b9d7e5c3a1f0e2d4c6b8a0f2e4d6c8",
+    "timedOut": false,
+    "resolvedTier": 1,
+    "delivered": true
+  },
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  }
+}
+```
+
+## The draw object
+
+### The state of a draw
+
+A draw moves through these states:
+
+| State | What the fields say |
+| --- | --- |
+| Waiting for randomness | `status` is `"pending"`. `settled`, `paid` and `delivered` are `false`. |
+| Settled, prize waits as owed | `status` is `"delivered"`. `settled` is `true`. `paid` and `delivered` are `false`. |
+| Settled and paid | `status` is `"delivered"`. `settled`, `paid` and `delivered` are `true`. |
+
+Most draws go straight from waiting to paid. The sample above is a paid draw whose account has closed. A prize waits as owed only when the buyer's coin account could not receive it. Then `owed` shows what a claim still has to pay. See [If the draw is late](/if-the-draw-is-late).
+
+### Fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `address` | address | The draw account. |
+| `machine` | address | The machine's pool account (`address` in the [machine object](/developer/machines#names-and-addresses)). |
+| `purchaser` | address | The wallet that bought the pack. |
+| `packTier` | number or `null` | Which fixed pack size was bought: its `packTier` in [`/v1/program`](/developer/stats-and-program#program-facts). `null` when the index does not know it. This is the pack size, not the prize. |
+| `prizeTier` | number or `null` | The prize row the pack landed on, an index into the machine's `tiers`. `null` while waiting, or when the draw expired. |
+| `resolvedTier` | number or `null` | The same as `prizeTier`. Older clients read this name. |
+| `status` | `"pending"` or `"delivered"` | `pending` while the draw waits for randomness. `delivered` once it has settled. |
+| `settled` | boolean | `true` once the randomness landed or the draw expired. The result is then fixed. |
+| `paid` | boolean | `true` once nothing is owed any more. |
+| `delivered` | boolean | `true` once the draw account has closed after paying. The API then rebuilds the answer from the draw's events. |
+| `owed` | amount | Coins a claim still has to pay. 0 unless the draw settled and is not paid. |
+| `results` | array | One entry per pack, in order: `tier` and `amount` in coins. Empty while waiting. |
+| `amount` | amount | The coins the draw paid, or still owes. 0 while waiting. |
+| `timedOut` | boolean | `true` when the draw expired and paid the smallest prize. |
+| `randomness` | string or `null` | The random bytes that settled the draw, as hex. `null` while waiting, and when the draw expired. |
+| `packTokens` | amount | The coins the pack bought. Every prize is a multiple of this. |
+| `tiers` | array of [tiers](/developer/machines#tier) | The prize table this draw copied at purchase. Empty on an answer rebuilt from events. The machine holds the same table. |
+| `freeSnapshot` | amount | Free coins in the vault (`vault - reserved`) that the draw counts against. |
+| `reserved` | amount | Coins this draw holds in the vault's reservations. |
+| `seqStart` | amount | The sequence number of the draw's first pack. Pack `k` has number `seqStart + k`. |
+| `count` | number | How many packs the purchase opened. New purchases open one pack. |
+| `requestSlot` | amount | The slot of the purchase. The draw's deadline counts from this slot. |
+| `lastAttemptSlot` | amount | The slot of the last randomness request. |
+| `attempts` | number | How many times the draw asked for randomness. |
+
+Coin amounts use the machine's `tokenDecimals`.

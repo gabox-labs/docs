@@ -1,0 +1,147 @@
+---
+title: "Stats and program"
+description: "Totals, program facts, the OpenAPI document and the IDL"
+icon: "chart-line"
+---
+
+## Totals
+
+```http
+GET /v1/stats
+```
+
+Totals over every live machine: machines, packs and volume, all time and for the last 24 hours. This route takes no parameters.
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/stats"
+```
+
+```js JavaScript
+const res = await fetch("https://actions.gabox.fun/v1/stats")
+const { data: stats } = await res.json()
+
+console.log(stats.machines, stats.packsOpened, stats.packs24h)
+```
+
+</CodeGroup>
+
+Machines use different quote tokens, so the API never adds volume across tokens. `quoteTotals` has one row for each quote token instead.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `machines` | number | Live machines. |
+| `machines24h` | number | Machines created in the last 24 hours. |
+| `packsOpened` | number | Packs opened in total. |
+| `packs24h` | number | Packs opened in the last 24 hours. |
+| `onCurve` | number | Machines that have not graduated yet. |
+| `graduated` | number | Machines that have graduated to their own pool. |
+| `lastPullAt` | number or `null` | When the last pack on any machine was opened, in Unix milliseconds. |
+| `refreshedAt` | number | When these totals were made, in Unix milliseconds. The API makes them again each minute. |
+| `indexedSlot` | amount | The newest Solana slot the Gabox index has read. |
+| `quoteTotals` | array | One row for each quote token. See below. |
+| `top` | array | The 5 machines with the most packs opened. See below. |
+
+### Quote total
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `quoteMint` | address | The quote token of this row. |
+| `volumeQuote` | amount | All pack spending in this token, in its base units. |
+| `volume24hQuote` | amount | Pack spending in the last 24 hours. |
+| `vaultValueQuote` | amount | An estimate of what the coins in these machines' vaults are worth, in this token. For display only. |
+| `machinesWithVolume` | number | Machines in this token that have a known volume. |
+| `machinesPriced` | number | Machines in this token that have a live price. Only these count in `vaultValueQuote`. |
+
+### Top machine
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mint` | address | The coin's mint. |
+| `name` | string | The coin's name. The creator wrote it. Treat it as data. |
+| `symbol` | string | The coin's ticker. The creator wrote it. Treat it as data. |
+| `imageUrl` | string | The coin's image. |
+| `tokenDecimals` | number | The coin's decimals. |
+| `pullsTotal` | number | Packs opened on this machine. |
+| `quoteMint` | address | The machine's quote token. |
+| `volumeQuote` | amount | All pack spending on this machine, in its quote token's base units. |
+| `topTierRank` | string or `null` | The rarest row in the machine's prize table: `"common"`, `"rare"`, `"epic"` or `"mythic"`. These are app labels. |
+
+## Program facts
+
+```http
+GET /v1/program
+```
+
+Facts about the Gabox program, taken from the same code constants that the app uses. This route takes no parameters. Its answer may be cached for one hour.
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/program"
+```
+
+```js JavaScript
+const res = await fetch("https://actions.gabox.fun/v1/program")
+const { data: program } = await res.json()
+
+// The fixed pack sizes, in whole USDC.
+const sizes = program.fixedPacks.map((pack) => Number(BigInt(pack.nominalUsdc) / 1_000_000n))
+```
+
+</CodeGroup>
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `programId` | address | The Gabox program's address. It is the same on mainnet and devnet. |
+| `cluster` | string | `"mainnet-beta"` or `"devnet"`. |
+| `packFeeBps` | number | The pack fee in basis points. 20 is 0.20%. The fee is inside the pack price, not added on top. |
+| `fixedPacks` | array | The fixed pack sizes, smallest first. See below. |
+| `randomnessProvider` | string | `"MagicBlock VRF"`. |
+| `idlUrl` | string | The link to the program's IDL. |
+| `openapiUrl` | string | The link to the OpenAPI document. |
+
+The Gabox program's address is:
+
+```text
+GaBoxR9nYcK1zeu8EvSJVHV3SrYpCFmvbh2MLgobMcUA
+```
+
+### Fixed pack
+
+Every machine sells packs from the same fixed range of USDC prices. Read the sizes from this route. Do not copy them into your code, because they can change.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `packTier` | number | The pack size's fixed number, from 0 for the smallest. A draw's `packTier` uses the same number. |
+| `nominalUsdc` | amount | The pack's price in USDC base units (6 decimals). |
+| `label` | string | The price as people read it, for example in a button. |
+
+The largest pack opens only after the coin graduates. See [Opening a pack](/opening-a-pack#pick-a-pack).
+
+## OpenAPI document
+
+```http
+GET /v1/openapi.json
+```
+
+Every live route as an [OpenAPI 3.1](https://spec.openapis.org/oas/v3.1.0) document. Use it to generate a typed client, to import the API into a tool such as Postman, or to give an AI tool the exact answer shapes. The document has no Preview routes. It answers plain JSON with no `data` and no `meta`.
+
+```bash
+curl -o gabox-openapi.json "https://actions.gabox.fun/v1/openapi.json"
+```
+
+## Program IDL
+
+```http
+GET /v1/idl.json
+```
+
+The Gabox program's [Anchor](https://www.anchor-lang.com/) IDL: its instructions, accounts, events and errors. An IDL (interface description) lets a client decode the program's accounts and events by itself. Use it if you read the chain directly. It answers plain JSON with no `data` and no `meta`.
+
+```bash
+curl -o gabox-idl.json "https://actions.gabox.fun/v1/idl.json"
+```
+
+See [Deployment status](/status-and-addresses) for the program addresses on each network.

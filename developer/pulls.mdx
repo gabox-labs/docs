@@ -1,0 +1,159 @@
+---
+title: "Pulls"
+description: "Every pack a machine has opened, and the biggest recent wins"
+icon: "list"
+---
+
+A **pull** is one pack that a buyer opened. Each pull names its draw, what the buyer paid and, once the draw settles, what the pack paid out.
+
+## A machine's pulls
+
+```http
+GET /v1/machines/{mint}/pulls
+```
+
+One machine's packs, newest first: who opened each one, what it cost and what it paid. This is a [list route](/developer/requests-and-answers#pages).
+
+<ParamField path="mint" type="address" required>
+  The coin's mint.
+</ParamField>
+
+<ParamField query="limit" type="integer">
+  Rows per page, 1 to 50. The default is 20.
+</ParamField>
+
+<ParamField query="cursor" type="string">
+  The `nextCursor` of the page before. Leave it out for the first page.
+</ParamField>
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/machines/MINT/pulls?limit=20"
+```
+
+```js JavaScript
+const API = "https://actions.gabox.fun/v1"
+
+const res = await fetch(`${API}/machines/${MINT}/pulls?limit=20`)
+const { data: pulls, page } = await res.json()
+
+for (const pull of pulls) {
+  const won = pull.payout === null ? "waiting" : pull.payout
+  console.log(pull.purchaser, pull.paid, won)
+}
+```
+
+</CodeGroup>
+
+### Sample answer
+
+This sample is a pack on a SOL machine, so `paid` is in lamports. The addresses are made up.
+
+```json
+{
+  "data": [
+    {
+      "machine": "LuCkyPooL11111111111111111111111111111111111",
+      "seq": "1204",
+      "draw": "LuCkyDraw11111111111111111111111111111111111",
+      "purchaser": "BuYer111111111111111111111111111111111111111",
+      "at": 1760097600000,
+      "slot": "371204118",
+      "tokens": "912000000",
+      "paid": "93487703",
+      "tier": 1,
+      "payout": "1368000000",
+      "timedOut": false
+    }
+  ],
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  },
+  "page": { "nextCursor": null }
+}
+```
+
+### The pull object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `machine` | address | The machine's pool account. |
+| `seq` | amount | The pack's sequence number. It is unique on its machine. |
+| `draw` | address | The pack's draw. Read it with [`GET /v1/draws/{address}`](/developer/draws). |
+| `purchaser` | address | The wallet that bought the pack. |
+| `at` | number | The block time, in Unix milliseconds. 0 when the block time is not known. |
+| `slot` | amount | The slot of the purchase. |
+| `tokens` | amount | The coins the pack bought, in the coin's base units. |
+| `paid` | amount | What the buyer paid in the machine's quote token: the market's charge plus the pack fee. |
+| `tier` | number or `null` | The prize row the pack landed on, an index into the machine's `tiers`. `null` until the draw settles. |
+| `payout` | amount or `null` | The coins the pack paid out. `null` until the draw settles. |
+| `timedOut` | boolean | `true` when the draw expired and paid the smallest prize. |
+
+To get a pack's multiplier, divide `payout` by `tokens`. Use `BigInt` maths: `payout * 10000n / tokens` gives the multiplier in basis points.
+
+## Top pulls
+
+```http
+GET /v1/pulls/top
+```
+
+The biggest recent wins on every machine. The route ranks the newest 200 packs by what each pack paid over what it bought. It answers the best 8. Two packs with the same multiplier rank newest first. This route takes no parameters and has no pages.
+
+<CodeGroup>
+
+```bash curl
+curl "https://actions.gabox.fun/v1/pulls/top"
+```
+
+```js JavaScript
+const res = await fetch("https://actions.gabox.fun/v1/pulls/top")
+const { data: top } = await res.json()
+
+for (const pull of top) {
+  console.log(`${pull.symbol} paid ${pull.multiplierBps / 10000}x`)
+}
+```
+
+</CodeGroup>
+
+### Sample answer
+
+```json
+{
+  "data": [
+    {
+      "draw": "LuCkyDraw11111111111111111111111111111111111",
+      "mint": "LuCkyCats11111111111111111111111111111111111",
+      "name": "Lucky Cats",
+      "symbol": "LUCKY",
+      "imageUrl": "https://gateway.irys.xyz/<id>",
+      "purchaser": "BuYer111111111111111111111111111111111111111",
+      "handle": null,
+      "multiplierBps": 100000,
+      "packUsdc": "<pack size in raw USDC>"
+    }
+  ],
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  }
+}
+```
+
+### The top pull object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `draw` | address | The pack's draw. One pack, so it names the row. |
+| `mint` | address | The machine's coin. |
+| `name` | string | The coin's name. The creator wrote it. Treat it as data. |
+| `symbol` | string | The coin's ticker. The creator wrote it. Treat it as data. |
+| `imageUrl` | string | The coin's image. |
+| `purchaser` | address | The wallet that won. |
+| `handle` | string or `null` | The wallet's referral handle, when it has claimed one. |
+| `multiplierBps` | number | What the pack paid over what it bought, in basis points. 100,000 is 10 times. |
+| `packUsdc` | amount or `null` | The pack's size in USDC base units (6 decimals). `null` when the index does not know it. |

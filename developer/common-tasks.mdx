@@ -1,0 +1,103 @@
+---
+title: "Common tasks"
+description: "Short recipes for the things most Gabox apps do"
+icon: "list-check"
+---
+
+Every recipe uses only live routes and needs no key. `API` is `https://actions.gabox.fun/v1`.
+
+## Find a machine
+
+List the machines and follow `page.nextCursor`. Then read one machine for its offer, prize tiers and vault.
+
+```js
+const API = "https://actions.gabox.fun/v1"
+
+const { data: machines } = await (await fetch(`${API}/machines?limit=50`)).json()
+const open = machines.filter((m) => m.stage !== "migrating" && m.purchasesOn && m.offer)
+```
+
+A machine's page on the website is `https://gabox.fun/<mint>`. If a user pastes that link, the last part is the mint. Pass it to `GET /v1/machines/{mint}`.
+
+## Show a machine card
+
+A card usually shows the coin, the price of the cheapest pack, the top prize and the packs opened.
+
+```js
+function formatUnits(raw, decimals) {
+  const value = BigInt(raw)
+  const scale = 10n ** BigInt(decimals)
+  const fraction = (value % scale).toString().padStart(decimals, "0").replace(/0+$/, "")
+  return fraction ? `${value / scale}.${fraction}` : `${value / scale}`
+}
+
+const { data: m } = await (await fetch(`${API}/machines/${MINT}`)).json()
+
+const card = {
+  title: `${m.name} (${m.symbol})`, // creator text: show it, never run it
+  image: m.imageUrl,
+  priceSol: m.offer?.solAmount ? formatUnits(m.offer.solAmount, 9) : null,
+  topPrize: m.offer ? formatUnits(m.offer.maximum, m.tokenDecimals) : null,
+  packsOpened: m.stats.pullsTotal,
+  link: `https://gabox.fun/${m.mint}`,
+}
+```
+
+The API sends the coin's decimals in `tokenDecimals`. It does not send the quote token's decimals. USDC has 6 and SOL has 9. For another quote token, read its mint's decimals from Solana, or show `offer.solAmount` in SOL.
+
+## Show the odds
+
+The chance of each prize row is `tickets / 65536`. The live prize amounts are in `offer.prizes`, in the same order as `tiers`. Skip rows with 0 tickets.
+
+```js
+const rows = m.tiers
+  .map((tier, index) => ({ tier, prize: m.offer?.prizes[index] }))
+  .filter(({ tier }) => tier.tickets > 0)
+  .map(({ tier, prize }) => ({
+    chance: `${((tier.tickets / 65536) * 100).toFixed(2)}%`,
+    multiplier: `${tier.multiplierBps / 10000}x`,
+    coins: prize ? formatUnits(prize.amount, m.tokenDecimals) : null,
+  }))
+```
+
+A multiplier can pay less when the vault is low, so show `offer.prizes`, not your own maths, as the amount. See [Prizes and odds](/prizes-and-odds).
+
+## Follow a draw
+
+Ask `GET /v1/draws/{address}` about once a second until `settled` is `true`. Then `prizeTier` is the prize row and `amount` the coins paid. See [Draws](/developer/draws#follow-a-draw) for the full loop.
+
+## Show live activity
+
+For a feed of one machine's packs, read `GET /v1/machines/{mint}/pulls` every few seconds. A pull's `payout` is `null` until its draw settles, so show it as "waiting" first.
+
+```js
+let seen = new Set()
+
+async function poll() {
+  const { data: pulls } = await (await fetch(`${API}/machines/${MINT}/pulls?limit=10`)).json()
+  for (const pull of pulls.reverse()) {
+    const key = `${pull.seq}:${pull.payout ?? "waiting"}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    console.log(pull.purchaser, pull.payout ?? "waiting")
+  }
+}
+
+setInterval(poll, 5000) // 12 reads a minute stays under the limit without a key
+```
+
+For the biggest wins on every machine, read `GET /v1/pulls/top`. For totals, read `GET /v1/stats`.
+
+If many people use your app at once, read on your server and share the answer with every visitor. Answers may be cached for 5 seconds anyway. See [Limits and errors](/developer/limits-and-errors#rate-limits).
+
+## Explain a machine with an AI
+
+`GET /v1/machines/{mint}/brief.md` answers one machine as Markdown, ready for an AI. To give your agent the whole API, install the [Gabox skill](/developer/agent-skill):
+
+```bash
+npx skills add gabox-labs/skills -g
+```
+
+## Launch a coin, open a pack, claim fees
+
+These calls are [Preview](/developer/preview-calls). Until they are live, send your users to [gabox.fun](https://gabox.fun) for these steps.

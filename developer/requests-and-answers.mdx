@@ -1,0 +1,119 @@
+---
+title: "Requests and answers"
+description: "The rules every call shares: answer shape, amounts, pages and headers"
+icon: "brackets-curly"
+---
+
+Every route follows the same rules. Learn them once, and every route reads the same way.
+
+## The answer shape
+
+A successful answer is JSON with `data` and `meta`. A list also has `page`.
+
+```json
+{
+  "data": { "mint": "LuCkyCats11111111111111111111111111111111111", "...": "..." },
+  "meta": {
+    "apiVersion": "1",
+    "cluster": "mainnet-beta",
+    "generatedAt": "2026-10-10T12:00:00.000Z"
+  }
+}
+```
+
+| Field | What it holds |
+| --- | --- |
+| `data` | The answer itself: one object, or an array for a list. |
+| `meta.apiVersion` | Always `"1"` for routes under `/v1`. |
+| `meta.cluster` | The Solana cluster the API read: `"mainnet-beta"` or `"devnet"`. |
+| `meta.generatedAt` | When the API made this answer, as an ISO 8601 time. |
+| `page.nextCursor` | On a list only. The cursor for the next page, or `null` on the last page. |
+
+An error has a different shape. See [Limits and errors](/developer/limits-and-errors#errors).
+
+Three routes answer in their own standard format, with no `data` and no `meta`:
+
+- `GET /v1/openapi.json` answers a plain OpenAPI 3.1 document.
+- `GET /v1/idl.json` answers the program's plain Anchor IDL.
+- `GET /v1/machines/{mint}/brief.md` answers Markdown, not JSON.
+
+## Amounts are strings of base units
+
+Every on-chain amount is a whole number written as a string, for example `"912000000"`. JSON numbers lose precision above 2^53, and a Solana `u64` can be much larger. So the API never sends an amount as a JSON number.
+
+The string counts **base units**: the token's smallest unit. To show an amount, divide it by 10 to the power of the token's decimals. A machine's coin decimals are in `tokenDecimals`. USDC has 6 decimals, and SOL has 9 (one SOL is 1,000,000,000 lamports).
+
+Keep amounts as `BigInt` while you add, compare or multiply. Turn them into text only at the end.
+
+```js
+// "1368000000" coins with 6 decimals -> "1,368"
+function formatUnits(raw, decimals) {
+  const value = BigInt(raw)
+  const scale = 10n ** BigInt(decimals)
+  const whole = value / scale
+  const fraction = (value % scale).toString().padStart(decimals, "0").replace(/0+$/, "")
+  return fraction ? `${whole.toLocaleString("en-US")}.${fraction}` : whole.toLocaleString("en-US")
+}
+```
+
+Small counts are plain JSON numbers: `tickets`, `multiplierBps`, `tokenDecimals`, `count`, `attempts` and the stats counters. Times are Unix milliseconds as JSON numbers, for example `createdAt` and `at`. Slots and sequence numbers are `u64` values, so they are strings.
+
+### Basis points and tickets
+
+- A **basis point** (bps) is one hundredth of a percent. 10,000 bps is 100%. A tier's `multiplierBps` of 15,000 pays 1.5 times the coins the pack bought.
+- A **ticket** is one equal chance in a draw. Every machine's tiers add up to 65,536 tickets. A tier's chance is `tickets / 65536`. See [Prizes and odds](/prizes-and-odds).
+
+## Pages
+
+A list route sends at most `limit` rows. It also sends `page.nextCursor`. To get the next page, send that value back as `cursor`. When `page.nextCursor` is `null`, you have the last page.
+
+| Parameter | Type | Rule |
+| --- | --- | --- |
+| `limit` | integer | 1 to 50. The default is 20. |
+| `cursor` | string | The `nextCursor` of the page before. Leave it out for the first page. At most 1,024 characters. |
+
+```js
+const API = "https://actions.gabox.fun/v1"
+
+async function allMachines() {
+  const machines = []
+  let cursor = null
+  do {
+    const url = new URL(`${API}/machines`)
+    url.searchParams.set("limit", "50")
+    if (cursor) url.searchParams.set("cursor", cursor)
+    const { data, page } = await (await fetch(url)).json()
+    machines.push(...data)
+    cursor = page.nextCursor
+  } while (cursor)
+  return machines
+}
+```
+
+A cursor can expire. An expired or broken cursor answers `400 bad_request`. Start again from the first page.
+
+## Query parameters are strict
+
+Each route accepts only its own query parameters. An unknown parameter, or a parameter sent twice, answers `400 bad_request`. The message names the parameters that the route accepts. So a typo fails at once and does not quietly do nothing.
+
+Only the two list routes, `/v1/machines` and `/v1/machines/{mint}/pulls`, take `limit` and `cursor`. Every other route takes no query parameters.
+
+## Headers
+
+| Header | On | What it means |
+| --- | --- | --- |
+| `x-gabox-cluster` | Every answer | The cluster, the same as `meta.cluster`. |
+| `cache-control` | Every answer | Most answers may be cached for 5 seconds. The program facts, the IDL and the OpenAPI document may be cached for one hour. Errors are never cached. |
+| `retry-after` | A 429 answer | How many seconds to wait before you send again. |
+| `access-control-allow-origin` | Every answer | Always `*`. Any website may call the API. |
+| `www-authenticate` | A 401 answer | `Bearer`, the only scheme the API accepts. |
+
+Your browser code can read `retry-after` and `x-gabox-cluster`, because the API exposes both to scripts.
+
+To send an [API key](/developer/limits-and-errors#api-keys), add `Authorization: Bearer gbx_...`. Reads do not need a key.
+
+## How fresh the data is
+
+The API reads the Gabox index, not the chain directly. The index usually follows the chain within seconds. A brand-new machine or draw can answer `404 not_found` for a short time, until the index sees it. Ask again after a second or two.
+
+`GET /v1/stats` returns `indexedSlot`, the newest slot that the index has read.
