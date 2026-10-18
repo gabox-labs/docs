@@ -4,20 +4,20 @@ description: "Read the fixed prize table"
 icon: "table-list"
 ---
 
-Every machine has one prize table, fixed at launch. A prize is a multiple of the coins your own pack bought. So a large pack and a small pack have the same odds. A pack that costs 50 times more has prizes about 50 times larger.
+A machine's prize table is set at launch. The Gabox admin can later replace it, but only with a table that pays at least as much on average as the one it replaces. A pack already bought keeps the table it was bought under, even after a later change. A prize is a multiple of the coins your own pack bought. So a large pack and a small pack have the same odds. A pack that costs 50 times more has prizes about 50 times larger.
 
 ## The app's table
 
-The Gabox app launches every machine with this table:
+The Gabox app launches every machine built from October 18, 2026 onward with this table:
 
 | Row | Chance | Prize |
 | --- | ---: | ---: |
-| Common | 75% | 0.5126× your pack coins |
-| Rare | 20% | 1.5× |
-| Epic | 4% | 3.5× |
-| Mythic | 1% | 10× |
+| Common | 75% | 0.7× your pack coins |
+| Rare | 20% | 1.25× |
+| Epic | 4% | 2.5× |
+| Mythic | 1% | 8× |
 
-On average this table pays 0.9244× your pack coins. Machines launched before October 7, 2026 keep the earlier table: Common 80% at 0.5126×, Rare 15% at 2×. The row names are app labels. The program only knows multipliers and tickets.
+On average this table pays about 0.955× your pack coins. The $GABOX machine uses this table too. Older machines keep their own table unless the Gabox admin raises it. Machines launched from October 7 until this change use Common 75% at 0.5126×, Rare 20% at 1.5×, Epic 4% at 3.5×, Mythic 1% at 10× (average 0.9244×). Machines launched before October 7, 2026 use Common 80% at 0.5126×, Rare 15% at 2×, with the same Epic and Mythic rows. The row names are app labels. The program only knows multipliers and tickets.
 
 ## The program's rules
 
@@ -28,6 +28,8 @@ A machine created through the SDK can use another table. The program accepts a t
 - no row pays more than 10× the pack coins;
 - the average payout is at most 1× the pack coins;
 - every row pays at least one raw coin unit for the pack.
+
+The Gabox admin can later give a machine a new table through the same checks, plus one more: the new average payout must be at least the machine's current average payout. The admin can never lower a machine's average payout. A pack already bought keeps the table it was bought under. Anyone can verify a change on chain, because it emits an event with the old and the new table.
 
 | Field | Meaning |
 | --- | --- |

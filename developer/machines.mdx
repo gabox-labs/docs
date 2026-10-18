@@ -93,10 +93,10 @@ The addresses below are made up.
     "seedTokens": "2736000000",
     "extraSeedTokens": "0",
     "tiers": [
-      { "multiplierBps": 5126, "tickets": 49153 },
-      { "multiplierBps": 15000, "tickets": 13107 },
-      { "multiplierBps": 35000, "tickets": 2621 },
-      { "multiplierBps": 100000, "tickets": 655 },
+      { "multiplierBps": 7000, "tickets": 49153 },
+      { "multiplierBps": 12500, "tickets": 13107 },
+      { "multiplierBps": 25000, "tickets": 2621 },
+      { "multiplierBps": 80000, "tickets": 655 },
       { "multiplierBps": 0, "tickets": 0 },
       { "multiplierBps": 0, "tickets": 0 },
       { "multiplierBps": 0, "tickets": 0 },
@@ -172,7 +172,7 @@ Every amount is a [string of base units](/developer/requests-and-answers#amounts
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `tiers` | array of [tiers](#tier) | The prize table. It always has 8 rows. A row with 0 tickets is unused and can never be drawn. The table is set at launch and never changes. |
+| `tiers` | array of [tiers](#tier) | The prize table. It always has 8 rows. A row with 0 tickets is unused and can never be drawn. The table is set at launch. The Gabox admin can raise it later with `set_pool_tiers`, but the average payout can never go down. A draw keeps its own copy of the table it was bought under. |
 | `vaultAmount` | amount | Coins in the prize vault now. |
 | `reserved` | amount | Coins that open draws hold in the vault. Free coins are `vaultAmount - reserved`. |
 | `seedTokens` | amount | Coins that the launch seed locked in the vault. See [Seed and jackpot](/seed-and-jackpot). |
