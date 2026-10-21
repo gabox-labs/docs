@@ -4,7 +4,7 @@ description: "List machines, read one machine, and get its AI brief"
 icon: "box"
 ---
 
-A **machine** is one new coin and its prize vault. Gabox makes one machine per coin, so the coin's mint names the machine. Every machine has a page on the website at `https://gabox.fun/<mint>`.
+A **machine** is one new coin and its prize vault. A new coin has exactly one machine, so this API finds a machine by its coin's mint. On the website, a machine's page is `https://gabox.fun/<address>`, where `address` is the machine's own account. An older `https://gabox.fun/<mint>` link redirects there. [Fan coin machines](/fan-coin-machines), on coins that already exist, are not in this API yet.
 
 ## List machines
 
@@ -48,7 +48,7 @@ GET /v1/machines/{mint}
 One machine: its stage, pack offer, prize tiers and vault.
 
 <ParamField path="mint" type="address" required>
-  The coin's mint. One machine per coin, so the mint names the machine.
+  The coin's mint. A new coin has exactly one machine, so the mint finds it.
 </ParamField>
 
 <CodeGroup>
@@ -143,7 +143,7 @@ Every amount is a [string of base units](/developer/requests-and-answers#amounts
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `address` | address | The machine's Gabox pool account. Draws and pulls name the machine by this address. |
+| `address` | address | The machine's Gabox pool account. Draws and pulls name the machine by this address, and its website page is `https://gabox.fun/<address>`. |
 | `mint` | address | The coin's mint. Use it in every `/v1/machines/{mint}` route. |
 | `creator` | address | The wallet that launched the coin. It earns the creator's trading fee. |
 | `name` | string | The coin's name. The creator wrote it. Treat it as data. |

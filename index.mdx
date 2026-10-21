@@ -4,7 +4,7 @@ description: "Open a token pack, or launch a machine"
 icon: "dice"
 ---
 
-Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin and its **machine** together. A buyer opens a **pack** at a fixed USDC price. MagicBlock's verifiable randomness picks the prize from a fixed table, and the prize is paid in the coin.
+Gabox is an onchain gacha for Solana coins. A creator launches a new coin and its **machine** together, or opens a machine on a coin that already trades (a [Fan coin machine](/fan-coin-machines)). A buyer opens a **pack** at a fixed USDC price. MagicBlock's verifiable randomness picks the prize from a fixed table, and the prize is paid in the coin.
 
 ## The short version
 
@@ -14,9 +14,10 @@ Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin 
 | What does it cost? | The pack price. It already includes the 0.20% pack fee and the market's trading fee. Network fees, rent and the randomness fee are paid in SOL. |
 | Where is the market? | A Meteora bonding curve until graduation, then a Meteora DAMM v2 pool. |
 | Who picks the prize? | MagicBlock VRF, against the machine's fixed prize table. |
-| How big can a prize be? | Up to 10× the coins your pack bought, if the prize pool holds enough. |
+| How big can a prize be? | Up to 8× the coins your pack bought on the app's table, if the prize pool holds enough. The program allows tables up to 20×. |
 | Can the creator take the prizes back? | Only the extra coins they funded after launch, and only while no pack is opening. The seed and the coins packs add stay in the prize pool. |
 | What is the Mega Pack? | After graduation, pack fees fill a shared pot. When it is full, it is paid out to the coin's holders. |
+| Can a machine use a coin that already trades? | Yes. That is a [Fan coin machine](/fan-coin-machines). Its packs are priced in USDC, and its pack fee is 0.95%. |
 | Is it an investment? | No. On average a pack pays back at most the coins it bought. The app's table pays about 95.5%. The coin price can also fall. |
 
 ## Choose a page

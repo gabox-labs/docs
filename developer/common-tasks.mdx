@@ -17,7 +17,7 @@ const { data: machines } = await (await fetch(`${API}/machines?limit=50`)).json(
 const open = machines.filter((m) => m.stage !== "migrating" && m.purchasesOn && m.offer)
 ```
 
-A machine's page on the website is `https://gabox.fun/<mint>`. If a user pastes that link, the last part is the mint. Pass it to `GET /v1/machines/{mint}`.
+A machine's page on the website is `https://gabox.fun/<address>`, built from the machine's `address` field. The API finds a machine by its `mint`, so keep both from the list. If a user pastes a page link, match its last part against `address` in the list.
 
 ## Show a machine card
 
