@@ -27,7 +27,7 @@ flowchart LR
 1. Meteora DBC creates the Token-2022 coin, with the Gabox transfer hook, and its bonding curve. It uses the quote token's registered Gabox config.
 2. The hook program creates the coin's account list. The hook needs it to run.
 3. `initialize_pool` checks the config, the coin, the hook and the prize table. It refuses a coin that has already traded.
-4. The seed buy is the coin's first trade. It buys the seed coins straight into the vault.
+4. The seed buy is the coin's first trade. It buys the seed coins straight into the prize pool.
 
 If any step fails, nothing happens.
 
@@ -45,12 +45,12 @@ The program checks that:
 - the config is the one Gabox registered for that quote token, with the Gabox fee terms;
 - the coin has 9 decimals, the fixed supply and the Gabox hook;
 - the curve is new and has had no trade;
-- the vault is empty before the seed;
+- the prize pool is empty before the seed;
 - the prize table is valid, and even the smallest possible buy on this curve pays every row at least one coin unit.
 
 ## After launch
 
-The coin's market terms cannot change. The Gabox admin can later raise the prize table, but only to one that pays at least as much on average; a pack already bought keeps the table it was bought under. Anyone can add more prize coins with `fund_prizes`. This is a gift to the vault: nobody can take it back, the creator included.
+The coin's market terms cannot change. The Gabox admin can later raise the prize table, but only to one that pays at least as much on average; a pack already bought keeps the table it was bought under. As creator, you can add more prize coins with `fund_prizes` (Fund prizes in the app). You can take them back later with `withdraw_reserve` (Withdraw prizes): never more than you added, never more than the free coins, and only while no pack is opening and no prize is owed. Only the creator can do either. The seed never comes back.
 
 As creator you earn part of every trade's fee: 0.495% on the curve and about 0.25% after graduation, through your locked share of the pool. You do not earn pack fees on your own machine. See [Referrals and earnings](/referrals-and-earnings).
 

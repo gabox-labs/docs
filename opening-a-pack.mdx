@@ -28,8 +28,8 @@ The swap is a separate trade with its own price and fees.
 | Limit | What it protects |
 | --- | --- |
 | `max_quote_budget` | The most quote tokens the pack may spend, pack fee included. |
-| `min_net_tokens` | The fewest coins the vault must receive for your pack. |
-| `min_maximum` | The smallest top prize you accept when you buy. If the vault changed before your purchase landed and the top prize fell below this, the purchase fails. |
+| `min_net_tokens` | The fewest coins the prize pool must receive for your pack. |
+| `min_maximum` | The smallest top prize you accept when you buy. If the prize pool changed before your purchase landed and the top prize fell below this, the purchase fails. |
 | `max_native_debit` | The most SOL the program may spend inside the purchase: the randomness fee and some account rent. |
 
 Your first pack on a machine also creates a small account for your [Mega Pack](/mega-pack) rewards. You pay its rent once.
@@ -38,7 +38,7 @@ Some accounts are created before the program runs, for example the draw account.
 
 ## The purchase
 
-The market sends the bought coins straight to the vault. Gabox records the draw, reserves your pack's own coins and asks MagicBlock for randomness. All of this happens in one transaction. Other packs opened at the same time do not lower your offer.
+The market sends the bought coins straight to the prize pool. Gabox records the draw, reserves your pack's own coins and asks MagicBlock for randomness. All of this happens in one transaction. Other packs opened at the same time do not lower your offer.
 
 ```mermaid
 sequenceDiagram
@@ -48,7 +48,7 @@ sequenceDiagram
  participant V as VRF
  B->>G: Buy a pack
  G->>M: Buy coins
- M->>G: Coins to vault
+ M->>G: Coins to prize pool
  G->>V: Request
  V-->>G: Random bytes
  G-->>B: Prize
@@ -56,11 +56,11 @@ sequenceDiagram
 
 ## The draw
 
-Your draw keeps its own copy of the prize table, your pack coins and the free coins in the vault. No one can change which prize row you land on. MagicBlock usually answers in a few seconds. The prize then goes to your coin account.
+Your draw keeps its own copy of the prize table, your pack coins and the free coins in the prize pool. No one can change which prize row you land on. MagicBlock usually answers in a few seconds. The prize then goes to your coin account.
 
-The prize is capped by what the vault can pay when your draw settles. If another win settles first, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, and the smallest prize is never cut.
+The prize is capped by what the prize pool can pay when your draw settles. If another win settles first, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, and the smallest prize is never cut.
 
-If your coin account cannot receive the prize, the result is still fixed. The prize waits in the vault as owed. See [If the draw is late](/if-the-draw-is-late).
+If your coin account cannot receive the prize, the result is still fixed. The prize waits in the prize pool as owed. See [If the draw is late](/if-the-draw-is-late).
 
 ## The last pack on the curve
 

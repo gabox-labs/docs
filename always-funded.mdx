@@ -1,13 +1,13 @@
 ---
 title: "How prizes stay funded"
-description: "Vault coins, caps and reservations"
+description: "Prize pool coins, caps and reservations"
 icon: "vault"
 ---
 
-The **vault** holds the machine's prize coins. The seed, donations and every pack's bought coins go in. Only prize payments take coins out, through the program's normal instructions. There is no creator withdrawal.
+The **prize pool** holds the machine's prize coins. The seed, every pack's bought coins and any coins the creator funds go in. Prizes take coins out. The only other way out is a creator withdrawal of coins the creator funded. See [After launch](/launch-a-machine#after-launch). On chain the prize pool is the machine's token account, called the vault.
 
 ```text
-free coins   = vault balance − reserved coins
+free coins   = prize pool balance − reserved coins
 pack's cap   = free coins + the pack's own coins
 ```
 
@@ -15,24 +15,24 @@ pack's cap   = free coins + the pack's own coins
 
 In the same transaction, a purchase:
 
-1. adds its bought coins to the vault;
+1. adds its bought coins to the prize pool;
 2. takes a snapshot of the free coins, before its own coins;
 3. reserves its own coins;
 4. asks for randomness.
 
-The program keeps this rule at all times: `vault balance ≥ all reservations`. An open draw reserves only its own pack's coins. So packs that other buyers open at the same time do not lower your offer, and they do not make your purchase fail. A settled but owed draw reserves exactly what it owes. One draw can never spend another draw's reservation.
+The program keeps this rule at all times: `prize pool balance ≥ all reservations`. An open draw reserves only its own pack's coins. So packs that other buyers open at the same time do not lower your offer, and they do not make your purchase fail. A settled but owed draw reserves exactly what it owes. One draw can never spend another draw's reservation.
 
 When the draw settles, its reservation is released. The prize is paid, or it stays reserved as owed until a claim.
 
 ## Caps
 
-Every prize row is capped at `free coins + the pack's own coins`. When the vault is thin, the top rows pay less than their full multiplier. Their chances do not change. The app shows the capped amounts before you buy: they are the most the vault can pay at that moment.
+Every prize row is capped at `free coins + the pack's own coins`. When the prize pool is low, the top rows pay less than their full multiplier. Their chances do not change. The app shows the capped amounts before you buy: they are the most the prize pool can pay at that moment.
 
 The cap is checked again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, and the smallest prize is never cut. The odds and the prize table do not change.
 
 The buyer signs `min_maximum`, so a purchase fails if the top prize fell below what the buyer saw before the purchase landed.
 
-The [Mega Pack](/mega-pack) never uses the prize vault.
+The [Mega Pack](/mega-pack) never uses the prize pool.
 
 ## The table limit
 

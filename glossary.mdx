@@ -13,10 +13,10 @@ icon: "book"
 | Prize row | A fixed multiplier and a number of tickets, set at launch. The app calls the rows Common, Rare, Epic and Mythic. |
 | Ticket | One of 65,536 equally likely numbers. The random ticket picks a prize row. |
 | Draw | One pack, from purchase until its prize is paid or claimed. |
-| Vault | The machine's token account that holds the prize coins. |
-| Free coins | Vault coins that no open draw or owed prize holds. |
-| Reservation | Coins held back in the vault: each open draw's own pack coins, and each owed prize. |
-| Seed | Coins the creator buys into the vault at launch. They cannot be taken back. |
+| Prize pool | The coins a machine pays prizes from. On chain it is the machine's token account, called the vault. |
+| Free coins | Prize pool coins that no open draw or owed prize holds. |
+| Reservation | Coins held back in the prize pool: each open draw's own pack coins, and each owed prize. |
+| Seed | Coins the creator buys into the prize pool at launch. They cannot be taken back. |
 | Quote token | The token the coin trades against: USDC, SOL, a registered stock token or another registered Solana token. |
 | Pack fee | 0.20% of the pack price, already inside the price. |
 | Trading fee | Meteora's fee inside every trade's price. |
@@ -25,7 +25,7 @@ icon: "book"
 | Bonding curve | The Meteora DBC market a new coin trades on before graduation. Its price rises as coins are bought. |
 | Graduation | Meteora moves the coin from the bonding curve into a DAMM v2 pool. |
 | AMM | Automated market maker. DAMM v2 is the AMM a coin trades on after graduation. |
-| Transfer hook | A Token-2022 rule. While the coin is on the curve, coins leaving the curve may only go to the machine's vault. |
+| Transfer hook | A Token-2022 rule. While the coin is on the curve, coins leaving the curve may only go to the machine's prize pool. |
 | Mega Pack | A pot of pack fees after graduation. When it is full, it is paid out to the coin's holders. |
 | Snapshot | The list of holder balances that Gabox takes just before a Mega Pack payout. |
 | VRF | Verifiable random function. MagicBlock supplies the randomness for every draw. |

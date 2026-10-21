@@ -8,7 +8,7 @@ A new Gabox coin starts on a Meteora DBC **bonding curve**: a market whose price
 
 ```mermaid
 flowchart LR
-  A[Coins leave the curve] --> B[To the machine vault: allowed]
+  A[Coins leave the curve] --> B[To the machine's prize pool: allowed]
   A --> C[Anywhere else: rejected]
   B --> D[Target reached]
   D --> E[DAMM v2 pool]
@@ -16,7 +16,7 @@ flowchart LR
 
 ## While the curve is open
 
-The hook checks every transfer **out of the curve's vault**. Those coins may only go to this coin's Gabox machine vault. So every buy on the curve is a Gabox pack, or the launch seed. A direct buy through Meteora, a swap app or a bot fails.
+The hook checks every transfer **out of the curve**. Those coins may only go to this coin's Gabox prize pool. So every buy on the curve is a Gabox pack, or the launch seed. A direct buy through Meteora, a swap app or a bot fails.
 
 Sales into the curve, wallet transfers and prize payments are not affected. The hook keeps no state of its own.
 
@@ -43,4 +43,4 @@ After graduation:
 - The pool's liquidity is locked for ever. Gabox owns 67% of the locked position and the creator 33%.
 - Pack fees from buyers with no referrer can fill the [Mega Pack](/mega-pack).
 
-The prize table, the vault, open draws and referral links carry on unchanged.
+The prize table, the prize pool, open draws and referral links carry on unchanged.

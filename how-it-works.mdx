@@ -4,7 +4,7 @@ description: "From launch to a prize"
 icon: "route"
 ---
 
-Gabox connects a creator, a market, a buyer, a prize vault and MagicBlock VRF.
+Gabox connects a creator, a market, a buyer, a prize pool and MagicBlock VRF.
 
 ```mermaid
 flowchart LR
@@ -16,19 +16,19 @@ flowchart LR
 
 ## The flow
 
-1. **Launch.** A creator launches a new coin and its machine in one transaction. The coin uses its quote token's registered Meteora configuration. The creator pays the seed, which buys the first coins into the prize vault.
+1. **Launch.** A creator launches a new coin and its machine in one transaction. The coin uses its quote token's registered Meteora configuration. The creator pays the seed, which buys the first coins into the prize pool.
 2. **Price.** The buyer picks a pack from a fixed range of USDC prices. How many coins it buys depends on the market price at that moment.
-3. **Purchase.** The buyer pays USDC. On a machine quoted in another token, the same transaction first swaps the USDC into that token. The market sends the bought coins straight to the vault. 0.20% of the price is the pack fee. It goes to the buyer's referrer, to Gabox, or after graduation to the Mega Pack.
-4. **Reservation.** Gabox takes a snapshot of the prize table and the free coins in the vault. It reserves only this pack's own coins, so other purchases at the same time do not lower its offer. Each purchase is its own draw, so many purchases can run at the same time.
+3. **Purchase.** The buyer pays USDC. On a machine quoted in another token, the same transaction first swaps the USDC into that token. The market sends the bought coins straight to the prize pool. 0.20% of the price is the pack fee. It goes to the buyer's referrer, to Gabox, or after graduation to the Mega Pack.
+4. **Reservation.** Gabox takes a snapshot of the prize table and the free coins in the prize pool. It reserves only this pack's own coins, so other purchases at the same time do not lower its offer. Each purchase is its own draw, so many purchases can run at the same time.
 5. **Randomness.** MagicBlock VRF sends 32 random bytes back to Gabox. Gabox turns them into one ticket out of 65,536, and the ticket picks a prize row.
-6. **Delivery.** Gabox pays the prize to the buyer's coin account. The prize is capped by what the vault can pay at that moment: if another win settled first, a large prize can be lower than shown, but a win never pays less than the pack's own coins. If the buyer's account cannot receive the prize, it is recorded as owed and can be claimed later.
+6. **Delivery.** Gabox pays the prize to the buyer's coin account. The prize is capped by what the prize pool can pay at that moment: if another win settled first, a large prize can be lower than shown, but a win never pays less than the pack's own coins. If the buyer's account cannot receive the prize, it is recorded as owed and can be claimed later.
 7. **Afterwards.** The buyer keeps the coins or sells them. A sale pays the market's trading fee, but no pack fee.
 
 ## Graduation
 
 Before graduation, the coin trades on a Meteora DBC bonding curve. A bonding curve is a market whose price rises as coins are bought. The Gabox transfer hook makes sure that only Gabox can buy on it. When the curve has raised its target, Meteora moves the coin into a DAMM v2 pool. After that, anyone can trade the coin, and the largest pack unlocks.
 
-The prize table, the vault and open draws do not change at graduation. See [Transfer hook and graduation](/hook-and-graduation).
+The prize table, the prize pool and open draws do not change at graduation. See [Transfer hook and graduation](/hook-and-graduation).
 
 ## After graduation: the Mega Pack
 
@@ -36,4 +36,4 @@ After graduation, the pack fee of a buyer with no referrer fills the machine's M
 
 ## The accounting rule
 
-Seed coins, bought coins and donations all enter the vault. Coins leave the vault only as prizes. Each open draw holds its own pack's coins, and each owed prize holds what it owes. Another draw cannot use them.
+Seed coins, bought coins and coins the creator funds all enter the prize pool. Coins leave it as prizes, or as a creator withdrawal of coins the creator funded. Each open draw holds its own pack's coins, and each owed prize holds what it owes. Another draw cannot use them.

@@ -14,8 +14,8 @@ Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin 
 | What does it cost? | The pack price. It already includes the 0.20% pack fee and the market's trading fee. Network fees, rent and the randomness fee are paid in SOL. |
 | Where is the market? | A Meteora bonding curve until graduation, then a Meteora DAMM v2 pool. |
 | Who picks the prize? | MagicBlock VRF, against the machine's fixed prize table. |
-| How big can a prize be? | Up to 10× the coins your pack bought, if the vault holds enough. |
-| Can the creator take the prizes back? | No. Nobody can withdraw the prize vault. |
+| How big can a prize be? | Up to 10× the coins your pack bought, if the prize pool holds enough. |
+| Can the creator take the prizes back? | Only the extra coins they funded after launch, and only while no pack is opening. The seed and the coins packs add stay in the prize pool. |
 | What is the Mega Pack? | After graduation, pack fees fill a shared pot. When it is full, it is paid out to the coin's holders. |
 | Is it an investment? | No. On average a pack pays back at most the coins it bought. The app's table pays about 95.5%. The coin price can also fall. |
 
@@ -33,7 +33,7 @@ Gabox is an onchain gacha for brand new Solana coins. A creator launches a coin 
 - **Buyer:** pays a fixed pack price, signs price and prize limits, and gets the prize.
 - **Referrer:** gets the whole 0.20% pack fee of every buyer they referred.
 - **Holder:** holds the coin after graduation and shares each Mega Pack payout.
-- **Gabox:** runs the program, holds the vault, checks every reservation and pays prizes.
+- **Gabox:** runs the program, holds the prize pool, checks every reservation and pays prizes.
 - **Meteora:** runs the market and charges a trading fee inside each trade.
 - **MagicBlock:** supplies the randomness.
 

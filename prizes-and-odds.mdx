@@ -40,19 +40,19 @@ The Gabox admin can later give a machine a new table through the same checks, pl
 
 ## Caps
 
-A prize can never be larger than what the vault can pay:
+A prize can never be larger than what the prize pool can pay:
 
 ```text
 prize = min(row prize, free coins + your pack coins)
 ```
 
-The free coins are the vault coins that no open draw or owed prize holds. An open draw holds only its own pack coins, so packs that other buyers open at the same time do not lower your offer. The app shows each row's **payable** amount before you sign: the most the vault can pay at that moment. You sign `min_maximum`, the smallest top prize you accept.
+The free coins are the prize pool coins that no open draw or owed prize holds. An open draw holds only its own pack coins, so packs that other buyers open at the same time do not lower your offer. The app shows each row's **payable** amount before you sign: the most the prize pool can pay at that moment. You sign `min_maximum`, the smallest top prize you accept.
 
-When the vault is thin, the top rows are capped. Their chances do not change. New packs and donations add free coins over time. Large wins remove them. So the top prize can be capped for a while after a big win.
+When the prize pool is low, the top rows are capped. Their chances do not change. New packs and coins the creator funds add free coins over time. Large wins remove them. So the top prize can be capped for a while after a big win.
 
 The cap applies again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack coins, and the smallest prize is never cut.
 
-Example: your pack bought 1,000,000 coins, and the vault has 3,000,000 free coins. The Mythic row names 10,000,000 coins, but it can pay at most 4,000,000.
+Example: your pack bought 1,000,000 coins, and the prize pool has 3,000,000 free coins. The Mythic row names 10,000,000 coins, but it can pay at most 4,000,000.
 
 ## Not a promise of value
 
