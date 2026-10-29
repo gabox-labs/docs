@@ -15,7 +15,7 @@ A **Fan coin machine** is a Gabox machine on a coin that already exists and trad
 | Transfer hook | Yes, until graduation | No |
 | Machines per coin | One | Many |
 | Paired with | USDC, SOL, a stock token or another registered token | Always USDC |
-| Pack fee | 0.20% | 0.95% |
+| Pack fee | 0.50% | 2% |
 | What the creator earns | Part of the trading fee | Part of every pack fee |
 | Mega Pack | After graduation | No |
 
@@ -55,7 +55,7 @@ flowchart LR
 ```
 
 1. You pay the pack price in USDC. Packs have a fixed range of USDC prices.
-2. The program takes the 0.95% pack fee from the price.
+2. The program takes the 2% pack fee from the price.
 3. The rest is swapped into the coin in the same transaction. In the app, Jupiter finds the swap route. The app sets the fewest coins you accept, `min_net_tokens`, so the purchase fails rather than buy fewer.
 4. All the bought coins go into the prize pool. They are your pack coins: every prize is a multiple of them.
 5. From here the pack works like any other. Your draw keeps its own copy of the prize table, MagicBlock picks the ticket, and the prize goes to your coin account. The prize pool caps a prize the same way. See [Opening a pack](/opening-a-pack) and [Always funded](/always-funded).
@@ -64,12 +64,12 @@ If any step fails, the whole transaction fails and nothing moves. A late draw ca
 
 ## Where the pack fee goes
 
-The pack fee is 0.95% of the pack price. It is inside the price and paid in USDC.
+The pack fee is 2% of the pack price. It is inside the price and paid in USDC.
 
 | Part | Share of the price | Paid to |
 | --- | ---: | --- |
-| Creator | 0.25% | The machine's creator |
-| Referrer | 0.20% | The buyer's referrer. With no referrer, the creator. |
+| Creator | 1.20% | The machine's creator |
+| Referrer | 0.30% | The buyer's referrer. With no referrer, the creator. |
 | Gabox | 0.50% | Gabox |
 
 A Fan coin machine has no Gabox market, so its creator earns no trading fee. Instead the creator earns part of every pack. Referral links work as on new-coin machines. Each wallet claims its USDC fees from its profile. See [Referrals and earnings](/referrals-and-earnings).
@@ -84,7 +84,7 @@ Only the machine's creator can add more prize coins (Fund prizes in the app) and
 
 ## Gifts
 
-You can send a pack on a Fan coin machine as a gift. The gift holds its USDC until it is opened. The opening pays the same 0.95% pack fee as a purchase. See [Gift packs](/gift-packs).
+You can send a pack on a Fan coin machine as a gift. The gift holds its USDC until it is opened. The opening pays the same 2% pack fee as a purchase. See [Gift packs](/gift-packs).
 
 ## In the app
 

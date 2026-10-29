@@ -4,18 +4,18 @@ description: "Who receives the pack fee, and how fees are claimed"
 icon: "handshake"
 ---
 
-Refer users and earn 100% of their pack opening fees.
+Refer friends and earn up to 20% of their Gabox fees.
 
 ## Where the pack fee goes
 
-Every pack pays a 0.20% pack fee, inside its price. All of it goes to one place:
+Every pack pays a 0.50% pack fee, inside its price. Where it goes depends on the buyer:
 
 | Buyer | Before graduation | After graduation |
 | --- | --- | --- |
-| Has a referrer | The referrer | The referrer |
+| Has a referrer | 0.20% of the price to the referrer, the rest to Gabox | 0.20% of the price to the referrer, the rest to Gabox |
 | Has no referrer | Gabox | The machine's [Mega Pack](/mega-pack), when it is on for the quote token; otherwise Gabox |
 
-The creator gets no pack fee on their own machine. A creator earns pack fees only as somebody else's referrer. A [Fan coin machine](/fan-coin-machines) is the exception: its 0.95% pack fee pays its creator 0.25%, the referrer 0.20% and Gabox 0.50%.
+The creator gets no pack fee on their own machine. A creator earns pack fees only as somebody else's referrer. A [Fan coin machine](/fan-coin-machines) is the exception: its 2% pack fee pays its creator 1.20%, the referrer 0.30% and Gabox 0.50%. With no referrer, the creator also gets the referrer's 0.30%.
 
 ## How a referral is bound
 
@@ -40,8 +40,8 @@ On a new-coin machine, a creator earns from trading, not from packs:
 
 | Market | Creator's part of each trade | Where it is claimed |
 | --- | --- | --- |
-| Bonding curve | 0.495% | Meteora's creator fee for the coin |
-| DAMM v2 pool | about 0.25% | Fees of the creator's locked pool position |
+| Bonding curve | 0.96% (0.495% on older coins) | Meteora's creator fee for the coin |
+| DAMM v2 pool | about 0.72% (about 0.25% on older coins) | Fees of the creator's locked pool position |
 
 These fees are held by Meteora, outside Gabox's `claim_earnings`. The app's **Creator earnings** panel collects them for you. Trading fees depend on trading that may never happen.
 

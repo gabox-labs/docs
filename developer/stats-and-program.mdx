@@ -96,7 +96,7 @@ const sizes = program.fixedPacks.map((pack) => Number(BigInt(pack.nominalUsdc) /
 | --- | --- | --- |
 | `programId` | address | The Gabox program's address. It is the same on mainnet and devnet. |
 | `cluster` | string | `"mainnet-beta"` or `"devnet"`. |
-| `packFeeBps` | number | The pack fee in basis points. 20 is 0.20%. The fee is inside the pack price, not added on top. |
+| `packFeeBps` | number | The pack fee in basis points. 50 is 0.50%. The fee is inside the pack price, not added on top. |
 | `fixedPacks` | array | The fixed pack sizes, smallest first. See below. |
 | `randomnessProvider` | string | `"MagicBlock VRF"`. |
 | `idlUrl` | string | The link to the program's IDL. |

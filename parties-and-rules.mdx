@@ -10,7 +10,7 @@ A **machine** belongs to one new coin. These are the parties in its life:
 | --- | --- | --- |
 | Creator | Launch the coin and machine, pay the seed, fund more prize coins and withdraw what they funded, and claim their part of the trading fees from Meteora, or send all or part of them to the prize pool with [Machine recharge](/machine-recharge). The app uses a fixed prize table; SDK clients can pass another valid table. | Change the prize table after launch, withdraw the seed or more than they funded, withdraw while a pack is opening, or earn pack fees on their own machine (except as somebody's referrer). |
 | Buyer | Open one pack per purchase, set price and prize limits, keep or sell the coins, retry a late draw, and claim an owed prize. | Change a draw's result or choose its random value. |
-| Referrer | Receive the whole 0.20% pack fee of every buyer bound to them, and claim it. | Bind a buyer to themselves, or change an existing link. |
+| Referrer | Receive 0.20% of the price of every pack a buyer bound to them opens, and claim it. | Bind a buyer to themselves, or change an existing link. |
 | Holder | After graduation, share each Mega Pack payout and claim it. | Claim another wallet's reward. |
 | Gabox admin | Register quote tokens for new machines, stop new machines or purchases on a quote, set the Mega Pack settings, claim Gabox's pack fees, and replace a machine's prize table with one that pays at least as much on average. | Lower a machine's average payout, change the table of a pack already bought, or change a machine's config or open draws through the program's instructions. |
 | Mega operator | A Gabox server wallet. It pays out Mega Packs to holders. | Change settings, upgrade the program, or move Mega Pack funds anywhere else. |
@@ -22,6 +22,6 @@ The program can be upgraded. New code can change these rules. Check [status](/st
 
 ## Two kinds of fees
 
-The **pack fee** is 0.20% of the pack price. It is already inside the price. It goes to the buyer's referrer, or to Gabox when there is no referrer. After graduation, a fee with no referrer goes to the machine's [Mega Pack](/mega-pack) instead, when the Mega Pack is on for that quote token.
+The **pack fee** is 0.50% of the pack price. It is already inside the price. With a referrer, the referrer gets 0.20% of the price and Gabox the rest. With no referrer, it goes to Gabox. After graduation, a fee with no referrer goes to the machine's [Mega Pack](/mega-pack) instead, when the Mega Pack is on for that quote token.
 
 The **trading fee** is inside Meteora's price on every trade, buys and sales. Meteora, Gabox and the creator share it. See [What a pack costs](/what-a-pack-costs) and [Referrals and earnings](/referrals-and-earnings).
