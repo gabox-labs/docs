@@ -113,7 +113,7 @@ Most draws go straight from waiting to paid. The sample above is a paid draw who
 | Field | Type | Description |
 | --- | --- | --- |
 | `address` | address | The draw account. |
-| `machine` | address | The machine's pool account (`address` in the [machine object](/developer/machines#names-and-addresses)). |
+| `machine` | address | The machine's address (`address` in the [machine object](/developer/machines#names-and-addresses)). |
 | `purchaser` | address | The wallet that bought the pack. |
 | `packTier` | number or `null` | Which fixed pack size was bought: its `packTier` in [`/v1/program`](/developer/stats-and-program#program-facts). `null` when the index does not know it. This is the pack size, not the prize. |
 | `prizeTier` | number or `null` | The prize row the pack landed on, an index into the machine's `tiers`. `null` while waiting, or when the draw expired. |

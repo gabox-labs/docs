@@ -64,7 +64,7 @@ Read `code` in your code. The `message` is for people, and its wording can chang
 | --- | --- | --- |
 | `bad_request` (400) | A parameter is missing, unknown or malformed. | Fix the request. The message names the problem. |
 | `unauthorized` (401) | The API key is malformed, unknown or revoked. | Check the key, or send no key. |
-| `not_found` (404) | No such machine, draw or route. | Check the address. A brand-new machine or draw can take a few seconds to appear. |
+| `not_found` (404) | No such machine, draw or route. | Check the address. A coin's mint finds only its launch machine. A brand-new machine or draw can take a few seconds to appear. |
 | `rate_limited` (429) | You are over a limit. | Wait `retry-after` seconds, then send again. |
 | `internal` (500) | Something broke on our side. | Safe to retry after a short wait. |
 

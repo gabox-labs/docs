@@ -8,16 +8,19 @@ Every recipe uses only live routes and needs no key. `API` is `https://actions.g
 
 ## Find a machine
 
-List the machines and follow `page.nextCursor`. Then read one machine for its offer, prize tiers and vault.
+List the machines and follow `page.nextCursor`. Then read one machine for its packs, prize tiers and vault. Read `account` first: a launch machine (`Pool`) and a fan coin machine (`TokenMachine`) have different fields.
 
 ```js
 const API = "https://actions.gabox.fun/v1"
 
 const { data: machines } = await (await fetch(`${API}/machines?limit=50`)).json()
-const open = machines.filter((m) => m.stage !== "migrating" && m.purchasesOn && m.offer)
+const open = machines.filter((m) =>
+  m.purchasesOn &&
+  (m.account === "Pool" ? m.stage !== "migrating" && m.offer : m.packQuotes.length > 0),
+)
 ```
 
-A machine's page on the website is `https://gabox.fun/<address>`, built from the machine's `address` field. The API finds a machine by its `mint`, so keep both from the list. If a user pastes a page link, match its last part against `address` in the list.
+A machine's page on the website is `https://gabox.fun/<address>`, built from the machine's `address` field. Every machine route takes that `address` too. A coin's mint finds only the coin's launch machine. To list every machine on one coin, add `?mint=<mint>` to the list route. If a user pastes a page link, its last part is the machine's `address`.
 
 ## Show a machine card
 
@@ -31,7 +34,7 @@ function formatUnits(raw, decimals) {
   return fraction ? `${value / scale}.${fraction}` : `${value / scale}`
 }
 
-const { data: m } = await (await fetch(`${API}/machines/${MINT}`)).json()
+const { data: m } = await (await fetch(`${API}/machines/${MACHINE}`)).json()
 
 const card = {
   title: `${m.name} (${m.symbol})`, // creator text: show it, never run it
@@ -39,15 +42,17 @@ const card = {
   priceSol: m.offer?.solAmount ? formatUnits(m.offer.solAmount, 9) : null,
   topPrize: m.offer ? formatUnits(m.offer.maximum, m.tokenDecimals) : null,
   packsOpened: m.stats.pullsTotal,
-  link: `https://gabox.fun/${m.mint}`,
+  link: `https://gabox.fun/${m.address}`,
 }
 ```
+
+Only a launch machine has `offer`. On a `TokenMachine`, each entry of `packQuotes` is one pack price in USDC base units and the coins it buys now.
 
 The API sends the coin's decimals in `tokenDecimals`. It does not send the quote token's decimals. USDC has 6 and SOL has 9. For another quote token, read its mint's decimals from Solana, or show `offer.solAmount` in SOL.
 
 ## Show the odds
 
-The chance of each prize row is `tickets / 65536`. The live prize amounts are in `offer.prizes`, in the same order as `tiers`. Skip rows with 0 tickets.
+The chance of each prize row is `tickets / 65536`. On a launch machine, the live prize amounts are in `offer.prizes`, in the same order as `tiers`. A `TokenMachine` has no `offer`, so show its chances and multipliers only. Skip rows with 0 tickets.
 
 ```js
 const rows = m.tiers
@@ -68,13 +73,13 @@ Ask `GET /v1/draws/{address}` about once a second until `settled` is `true`. The
 
 ## Show live activity
 
-For a feed of one machine's packs, read `GET /v1/machines/{mint}/pulls` every few seconds. A pull's `payout` is `null` until its draw settles, so show it as "waiting" first.
+For a feed of one machine's packs, read `GET /v1/machines/{machine}/pulls` every few seconds. A pull's `payout` is `null` until its draw settles, so show it as "waiting" first.
 
 ```js
 let seen = new Set()
 
 async function poll() {
-  const { data: pulls } = await (await fetch(`${API}/machines/${MINT}/pulls?limit=10`)).json()
+  const { data: pulls } = await (await fetch(`${API}/machines/${MACHINE}/pulls?limit=10`)).json()
   for (const pull of pulls.reverse()) {
     const key = `${pull.seq}:${pull.payout ?? "waiting"}`
     if (seen.has(key)) continue
@@ -90,14 +95,34 @@ For the biggest wins on every machine, read `GET /v1/pulls/top`. For totals, rea
 
 If many people use your app at once, read on your server and share the answer with every visitor. Answers may be cached for 5 seconds anyway. See [Limits and errors](/developer/limits-and-errors#rate-limits).
 
+## Check a seed lock
+
+`seedLocked` says whether the creator can take the seed back. `true` means nothing can withdraw it, and a launch machine is always `true`. On a `TokenMachine`, `false` means the seed is the creator's deposit, and `null` means the index has not read it yet. See [Seed and jackpot](/seed-and-jackpot).
+
+## Check Machine recharge
+
+On a launch machine, `recharge` is `null` when [Machine recharge](/machine-recharge) is off. Otherwise, `recharge.machineBps` is the machine's share of the creator trading fee, and `recharge.coinsAdded` is the coins it has bought for the prize pool so far.
+
+```js
+const { data: m } = await (await fetch(`${API}/machines/${MACHINE}`)).json()
+
+if (m.account === "Pool" && m.recharge) {
+  const share = `${m.recharge.machineBps / 100}%`
+  const added = formatUnits(m.recharge.coinsAdded, m.tokenDecimals)
+  console.log(`${share} of the creator fee refills the prize pool. ${added} coins so far.`)
+}
+```
+
+The [recharge object](/developer/machines#the-recharge-object) lists every field.
+
 ## Explain a machine with an AI
 
-`GET /v1/machines/{mint}/brief.md` answers one machine as Markdown, ready for an AI. To give your agent the whole API, install the [Gabox skill](/developer/agent-skill):
+`GET /v1/machines/{machine}/brief.md` answers one machine as Markdown, ready for an AI. To give your agent the whole API, install the [Gabox skill](/developer/agent-skill):
 
 ```bash
 npx skills add gabox-labs/skills -g
 ```
 
-## Launch a coin, open a pack, claim fees
+## Launch a coin, open a machine on a coin, open a pack, claim fees
 
 These calls are [Preview](/developer/preview-calls). Until they are live, send your users to [gabox.fun](https://gabox.fun) for these steps.

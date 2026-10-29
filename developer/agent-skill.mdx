@@ -62,14 +62,14 @@ The skill gives the agent six rules. They protect your user, so keep them if you
 5. The agent does not call a [Preview](/developer/preview-calls) route. It sends the user to gabox.fun for that step.
 6. Amounts are strings of base units. The agent keeps them as whole numbers (`BigInt`) while it does maths, and divides by the token's decimals only to show them.
 
-The skill also explains machines, packs, tiers, draws, graduation, the Mega Pack and the fees. It ends with a list of common tasks and links.
+The skill also explains the two kinds of machine, packs, tiers, the seed lock, draws, graduation, the Mega Pack, Machine recharge and the fees. It ends with a list of common tasks and links.
 
 ## More files for AI tools
 
 | File | What it is |
 | --- | --- |
 | [`gabox.fun/llms.txt`](https://gabox.fun/llms.txt) | A short summary of the site and the API, for tools that read `llms.txt`. |
-| `GET /v1/machines/{mint}/brief.md` | One machine as Markdown: addresses, pack price, prize tiers, endpoints and rules. See [Machines](/developer/machines#ai-brief). |
+| `GET /v1/machines/{machine}/brief.md` | One machine as Markdown: addresses, pack price, prize tiers, endpoints and rules. See [Machines](/developer/machines#ai-brief). |
 | [`/v1/openapi.json`](https://actions.gabox.fun/v1/openapi.json) | Every live route as OpenAPI 3.1. Many AI tools and code generators read it. |
 
 <Warning>

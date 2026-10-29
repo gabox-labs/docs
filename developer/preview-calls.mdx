@@ -1,6 +1,6 @@
 ---
 title: "Preview calls"
-description: "Launch, pack and fee calls that the API will serve next"
+description: "Launch, open, pack and fee calls that the API will serve next"
 icon: "flask"
 ---
 
@@ -23,7 +23,7 @@ POST /v1/machines/build
 Builds the launch transaction. One transaction makes the new coin and opens its machine. The creator's wallet and the new mint both sign it, and the creator sends it. See [Launch a machine](/launch-a-machine).
 
 <ParamField body="creator" type="address" required>
-  The wallet that launches the coin, pays the launch cost and earns the creator fee.
+  The wallet that launches the coin and pays the launch cost. It earns the creator fee, less the machine's share when `rechargeBps` is set.
 </ParamField>
 
 <ParamField body="mint" type="address" required>
@@ -50,6 +50,10 @@ Builds the launch transaction. One transaction makes the new coin and opens its 
   Extra starting coins for the prize vault, paid in the quote token you picked. For example, 250 means 250 USDC on a USDC machine. It buys the coin at launch, on top of the small seed every machine gets. Leave it out for none.
 </ParamField>
 
+<ParamField body="rechargeBps" type="integer">
+  [Machine recharge](/machine-recharge): the machine's share of the coin's creator trading fee, in basis points from 1 to 10,000. 10,000 is all of it. That share buys the coin into the prize pool. Only the launch can turn it on. Later the share can go up, never down. The creator claims the rest. Leave it out to keep the whole fee.
+</ParamField>
+
 ```js
 import { generateKeyPairSigner } from "@solana/kit"
 
@@ -64,10 +68,11 @@ const { data } = await post(`${API}/machines/build`, {
   imageUrl: "https://example.com/lucky-cats.png",
   quote: "USDC",
   seed: 250, // optional extra seed, in the quote token (here USDC)
+  rechargeBps: 5_000, // optional: half the creator fee refills the prize pool
 })
 
 await signAndSend(data.transaction, [wallet, mint]) // you sign, Gabox never does
-// gabox.fun/<mint> is live: one transaction
+// gabox.fun/<data.pool> is live: one transaction
 ```
 
 Sample answer:
@@ -89,8 +94,67 @@ Sample answer:
 | --- | --- |
 | `transaction` | The transaction, base64 encoded, for the creator and the mint to sign. |
 | `signers` | The addresses that must sign. |
-| `pool` | The new machine's pool account. |
+| `pool` | The new machine's address. |
 | `metadataUri` | Where the coin's metadata is stored. |
+| `expiresAt` | Send the transaction before this time. After it, build a new one. |
+
+## Open a machine on a coin
+
+```http
+POST /v1/token-machines/build
+```
+
+Builds the transaction that opens a [fan coin machine](/fan-coin-machines) on a coin that already exists, such as BONK. The creator signs it, and the seed comes from their own coins. Nothing is bought.
+
+<ParamField body="creator" type="address" required>
+  The wallet that opens the machine. It pays the cost, puts in the seed and earns 0.25% of every pack.
+</ParamField>
+
+<ParamField body="mint" type="address" required>
+  The coin: any classic SPL Token coin, or a Token-2022 coin that is not paused and has no transfer hook program or transfer fee. Not USDC.
+</ParamField>
+
+<ParamField body="seed" type="number" required>
+  The starting coins for the prize vault, in whole coins. They come from the creator's wallet.
+</ParamField>
+
+<ParamField body="lockSeed" type="boolean">
+  `true`, the default, keeps the seed in the prize pool for good. `false` makes it the creator's deposit: they can take back what is left of it later, but only while no pack is opening and no prize waits for a claim.
+</ParamField>
+
+```js
+const API = "https://actions.gabox.fun/v1"
+
+const { data } = await post(`${API}/token-machines/build`, {
+  creator: wallet.address,
+  mint: COIN, // a coin that already exists, for example BONK
+  seed: 1_000_000, // whole coins, from your own wallet
+  lockSeed: true, // false: you can take the seed back later
+})
+
+await signAndSend(data.transaction, [wallet])
+// gabox.fun/<data.machine> is live
+```
+
+Sample answer:
+
+```json
+{
+  "data": {
+    "transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA...",
+    "signers": ["<creator wallet>"],
+    "machine": "<new machine address>",
+    "expiresAt": "2026-10-10T12:01:30.000Z"
+  },
+  "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
+}
+```
+
+| Field | Description |
+| --- | --- |
+| `transaction` | The transaction, base64 encoded, for the creator to sign. |
+| `signers` | The addresses that must sign: only the creator. |
+| `machine` | The new machine's address. |
 | `expiresAt` | Send the transaction before this time. After it, build a new one. |
 
 ## Open a pack
@@ -105,8 +169,8 @@ Builds one pack's buy transaction for the buyer to sign. The answer names the dr
   The wallet that pays, signs and gets the prize.
 </ParamField>
 
-<ParamField body="mint" type="address" required>
-  The machine's mint.
+<ParamField body="machine" type="address" required>
+  The machine's address.
 </ParamField>
 
 <ParamField body="pack" type="integer" required>
@@ -121,7 +185,7 @@ const smallest = Number(BigInt(program.fixedPacks[0].nominalUsdc) / 1_000_000n)
 
 const { data } = await post(`${API}/packs/build`, {
   buyer: wallet.address,
-  mint: MINT,
+  machine: MACHINE,
   pack: smallest, // whole USDC
 })
 await signAndSend(data.transaction, [wallet])
@@ -161,7 +225,7 @@ The buyer pays in USDC. If the market moved and a signed limit no longer holds, 
 
 ## Creator fees
 
-A machine's creator earns part of every trade of its coin: 0.495% on the curve, and about 0.25% after graduation. The creator can claim it any time. See [Referrals and earnings](/referrals-and-earnings#creator-earnings).
+A launch machine's creator earns part of every trade of its coin: 0.495% on the curve, and about 0.25% after graduation. With [Machine recharge](/machine-recharge), the machine takes its share of that fee first. A fan coin machine's creator earns 0.25% of every pack on it. The creator can claim these fees any time. See [Referrals and earnings](/referrals-and-earnings#creator-earnings).
 
 ### Read claimable fees
 
@@ -169,7 +233,7 @@ A machine's creator earns part of every trade of its coin: 0.495% on the curve, 
 GET /v1/fees/{wallet}
 ```
 
-What a creator can claim now: the trading fees of each coin they launched.
+What a creator can claim now: the trading fees of each coin they launched, their part of each Machine recharge fee, and their share of the packs on each machine they opened.
 
 <ParamField path="wallet" type="address" required>
   The creator's wallet.
@@ -186,13 +250,20 @@ Sample answer:
         "quoteMint": "<quote mint>",
         "claimable": "1820000"
       }
+    ],
+    "recharge": [
+      {
+        "machine": "<machine address>",
+        "quoteMint": "<quote mint>",
+        "claimable": "32500000"
+      }
     ]
   },
   "meta": { "apiVersion": "1", "cluster": "mainnet-beta" }
 }
 ```
 
-Each row is one coin. `claimable` is in the base units of `quoteMint`.
+Each `creator` row is one coin. Each `recharge` row is one machine with Machine recharge, and its `claimable` is the creator's part of that machine's fee. `claimable` is in the base units of `quoteMint`.
 
 ### Claim fees
 
@@ -200,7 +271,7 @@ Each row is one coin. `claimable` is in the base units of `quoteMint`.
 POST /v1/fees/claim/build
 ```
 
-Builds one transaction that claims every creator fee a wallet can claim, for that wallet to sign.
+Builds one transaction that claims every creator fee a wallet can claim, Machine recharge parts included, for that wallet to sign.
 
 <ParamField body="wallet" type="address" required>
   The creator's wallet. It signs the claim.

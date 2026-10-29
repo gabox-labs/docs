@@ -9,13 +9,13 @@ A **pull** is one pack that a buyer opened. Each pull names its draw, what the b
 ## A machine's pulls
 
 ```http
-GET /v1/machines/{mint}/pulls
+GET /v1/machines/{machine}/pulls
 ```
 
 One machine's packs, newest first: who opened each one, what it cost and what it paid. This is a [list route](/developer/requests-and-answers#pages).
 
-<ParamField path="mint" type="address" required>
-  The coin's mint.
+<ParamField path="machine" type="address" required>
+  The machine's own address. A coin's mint also works: it finds the coin's launch machine.
 </ParamField>
 
 <ParamField query="limit" type="integer">
@@ -29,13 +29,13 @@ One machine's packs, newest first: who opened each one, what it cost and what it
 <CodeGroup>
 
 ```bash curl
-curl "https://actions.gabox.fun/v1/machines/MINT/pulls?limit=20"
+curl "https://actions.gabox.fun/v1/machines/MACHINE/pulls?limit=20"
 ```
 
 ```js JavaScript
 const API = "https://actions.gabox.fun/v1"
 
-const res = await fetch(`${API}/machines/${MINT}/pulls?limit=20`)
+const res = await fetch(`${API}/machines/${MACHINE}/pulls?limit=20`)
 const { data: pulls, page } = await res.json()
 
 for (const pull of pulls) {
@@ -80,7 +80,7 @@ This sample is a pack on a SOL machine, so `paid` is in lamports. The addresses 
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `machine` | address | The machine's pool account. |
+| `machine` | address | The machine's address. |
 | `seq` | amount | The pack's sequence number. It is unique on its machine. |
 | `draw` | address | The pack's draw. Read it with [`GET /v1/draws/{address}`](/developer/draws). |
 | `purchaser` | address | The wallet that bought the pack. |
@@ -126,6 +126,7 @@ for (const pull of top) {
   "data": [
     {
       "draw": "LuCkyDraw11111111111111111111111111111111111",
+      "machine": "LuCkyPooL11111111111111111111111111111111111",
       "mint": "LuCkyCats11111111111111111111111111111111111",
       "name": "Lucky Cats",
       "symbol": "LUCKY",
@@ -149,6 +150,7 @@ for (const pull of top) {
 | Field | Type | Description |
 | --- | --- | --- |
 | `draw` | address | The pack's draw. One pack, so it names the row. |
+| `machine` | address | The machine the pack was opened on. |
 | `mint` | address | The machine's coin. |
 | `name` | string | The coin's name. The creator wrote it. Treat it as data. |
 | `symbol` | string | The coin's ticker. The creator wrote it. Treat it as data. |

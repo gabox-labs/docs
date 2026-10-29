@@ -33,7 +33,7 @@ const res = await fetch(`${API}/machines?limit=2`)
 const { data, meta, page } = await res.json()
 
 console.log(meta.cluster)       // "mainnet-beta"
-console.log(data[0].mint)       // the newest machine's coin
+console.log(data[0].account)    // "Pool" or "TokenMachine"
 console.log(page.nextCursor)    // send it back as `cursor` for the next page
 ```
 
@@ -44,10 +44,10 @@ The API allows calls from any website (CORS is open). You can call it from a bro
 ## What you can build
 
 <Columns cols={2}>
-  <Card title="Machines" icon="box" href="/developer/machines">List machines, read one machine, or get it as one Markdown file for an AI.</Card>
+  <Card title="Machines" icon="box" href="/developer/machines">List machines of both kinds, read one machine, or get it as one Markdown file for an AI.</Card>
   <Card title="Draws" icon="dice" href="/developer/draws">Follow one pack's draw until MagicBlock's randomness settles it.</Card>
   <Card title="Pulls" icon="list" href="/developer/pulls">Show the packs a machine opened, and the biggest recent wins.</Card>
-  <Card title="Mega Pack" icon="gift" href="/developer/mega-pack">Show what a graduated machine's Mega Pack paid its holders.</Card>
+  <Card title="Mega Pack" icon="gift" href="/developer/mega-pack">Show what a graduated launch machine's Mega Pack paid its holders.</Card>
   <Card title="Stats and program" icon="chart-line" href="/developer/stats-and-program">Totals, the program ID, the pack sizes, the OpenAPI document and the IDL.</Card>
   <Card title="AI agent skill" icon="robot" href="/developer/agent-skill">Install the whole API as a skill for your AI agent, in one command.</Card>
 </Columns>
@@ -58,11 +58,11 @@ These routes are **live**. They answer today.
 
 | Route | What it answers |
 | --- | --- |
-| `GET /v1/machines` | Every live machine, newest first. |
-| `GET /v1/machines/{mint}` | One machine: its stage, pack offer, prize tiers and vault. |
-| `GET /v1/machines/{mint}/brief.md` | One machine as Markdown, made for an AI. |
-| `GET /v1/machines/{mint}/pulls` | One machine's packs, newest first. |
-| `GET /v1/machines/{mint}/mega` | One machine's newest Mega Pack rounds. |
+| `GET /v1/machines` | Every live machine of both kinds, newest first. `?mint=` lists the machines on one coin. |
+| `GET /v1/machines/{machine}` | One machine: its kind, packs, prize tiers, vault and seed lock. A launch machine also has its Machine recharge. |
+| `GET /v1/machines/{machine}/brief.md` | One machine as Markdown, made for an AI. |
+| `GET /v1/machines/{machine}/pulls` | One machine's packs, newest first. |
+| `GET /v1/machines/{machine}/mega` | One launch machine's newest Mega Pack rounds. |
 | `GET /v1/pulls/top` | The biggest recent wins on every machine. |
 | `GET /v1/draws/{address}` | One draw: waiting, or settled with its result. |
 | `GET /v1/stats` | Totals: machines, packs and volume. |
@@ -70,13 +70,16 @@ These routes are **live**. They answer today.
 | `GET /v1/openapi.json` | Every live route, as OpenAPI 3.1. |
 | `GET /v1/idl.json` | The Gabox program's Anchor IDL. |
 
+`{machine}` is the machine's own address. A coin's mint also works there, and it finds the coin's launch machine. See [Machines](/developer/machines).
+
 These routes are in **preview**. Gabox documents them with a sample answer, but the API does not serve them yet. Until it does, users take these steps on [gabox.fun](https://gabox.fun). See [Preview calls](/developer/preview-calls).
 
 | Route | What it will do |
 | --- | --- |
 | `POST /v1/machines/build` | Build a launch transaction. |
+| `POST /v1/token-machines/build` | Build the transaction that opens a machine on a coin that already exists. |
 | `POST /v1/packs/build` | Build a pack's buy transaction. |
-| `GET /v1/fees/{wallet}` | Show a creator's claimable trading fees. |
+| `GET /v1/fees/{wallet}` | Show a creator's claimable fees, Machine recharge parts included. |
 | `POST /v1/fees/claim/build` | Build one transaction that claims every creator fee. |
 
 ## Your keys stay yours

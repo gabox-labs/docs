@@ -35,7 +35,7 @@ Three routes answer in their own standard format, with no `data` and no `meta`:
 
 - `GET /v1/openapi.json` answers a plain OpenAPI 3.1 document.
 - `GET /v1/idl.json` answers the program's plain Anchor IDL.
-- `GET /v1/machines/{mint}/brief.md` answers Markdown, not JSON.
+- `GET /v1/machines/{machine}/brief.md` answers Markdown, not JSON.
 
 ## Amounts are strings of base units
 
@@ -96,7 +96,7 @@ A cursor can expire. An expired or broken cursor answers `400 bad_request`. Star
 
 Each route accepts only its own query parameters. An unknown parameter, or a parameter sent twice, answers `400 bad_request`. The message names the parameters that the route accepts. So a typo fails at once and does not quietly do nothing.
 
-Only the two list routes, `/v1/machines` and `/v1/machines/{mint}/pulls`, take `limit` and `cursor`. Every other route takes no query parameters.
+Only the two list routes, `/v1/machines` and `/v1/machines/{machine}/pulls`, take `limit` and `cursor`. `/v1/machines` also takes `mint`. Every other route takes no query parameters.
 
 ## Headers
 

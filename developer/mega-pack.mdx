@@ -1,31 +1,31 @@
 ---
 title: "Mega Pack"
-description: "Read the Mega Pack rounds of a graduated machine"
+description: "Read the Mega Pack rounds of a graduated launch machine"
 icon: "gift"
 ---
 
-After graduation, pack fees fill a machine's [Mega Pack](/mega-pack). When it is full, Gabox pays it out to the coin's holders. Each payout is one **round**. A round starts with a credit in the quote token, and it completes when Gabox pays the coin's holders.
+After graduation, pack fees fill a launch machine's [Mega Pack](/mega-pack). A fan coin machine (`TokenMachine`) has no Mega Pack. When it is full, Gabox pays it out to the coin's holders. Each payout is one **round**. A round starts with a credit in the quote token, and it completes when Gabox pays the coin's holders.
 
 ## A machine's rounds
 
 ```http
-GET /v1/machines/{mint}/mega
+GET /v1/machines/{machine}/mega
 ```
 
-The machine's newest Mega Pack rounds: the credit each one started with and, once done, what it paid and to how many holders.
+The machine's newest Mega Pack rounds: the credit each one started with and, once done, what it paid and to how many holders. Only a launch machine has them. A `TokenMachine` answers `404 not_found`.
 
-<ParamField path="mint" type="address" required>
-  The coin's mint.
+<ParamField path="machine" type="address" required>
+  The machine's own address. A coin's mint also works: it finds the coin's launch machine.
 </ParamField>
 
 <CodeGroup>
 
 ```bash curl
-curl "https://actions.gabox.fun/v1/machines/MINT/mega"
+curl "https://actions.gabox.fun/v1/machines/MACHINE/mega"
 ```
 
 ```js JavaScript
-const res = await fetch(`https://actions.gabox.fun/v1/machines/${MINT}/mega`)
+const res = await fetch(`https://actions.gabox.fun/v1/machines/${MACHINE}/mega`)
 const { data: mega } = await res.json()
 
 if (!mega.graduated) {
@@ -76,7 +76,7 @@ The addresses below are made up. The amounts are in USDC base units (6 decimals)
 | Field | Type | Description |
 | --- | --- | --- |
 | `mint` | address | The coin's mint. |
-| `pool` | address | The machine's pool account. |
+| `pool` | address | The launch machine's address. |
 | `graduated` | boolean | `true` once the coin has graduated. Only a graduated machine runs Mega Pack rounds. |
 | `rounds` | array | The newest rounds, newest first. At most 8. |
 
