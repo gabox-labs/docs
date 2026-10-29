@@ -81,6 +81,7 @@
             "group": "Create machines",
             "pages": [
               "launch-a-machine",
+              "machine-recharge",
               "fan-coin-machines",
               "seed-and-jackpot",
               "hook-and-graduation",

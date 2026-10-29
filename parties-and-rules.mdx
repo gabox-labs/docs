@@ -8,13 +8,13 @@ A **machine** belongs to one new coin. These are the parties in its life:
 
 | Party | Can do | Cannot do |
 | --- | --- | --- |
-| Creator | Launch the coin and machine, pay the seed, fund more prize coins and withdraw what they funded, and claim their part of the trading fees from Meteora. The app uses a fixed prize table; SDK clients can pass another valid table. | Change the prize table after launch, withdraw the seed or more than they funded, withdraw while a pack is opening, or earn pack fees on their own machine (except as somebody's referrer). |
+| Creator | Launch the coin and machine, pay the seed, fund more prize coins and withdraw what they funded, and claim their part of the trading fees from Meteora, or send all or part of them to the prize pool with [Machine recharge](/machine-recharge). The app uses a fixed prize table; SDK clients can pass another valid table. | Change the prize table after launch, withdraw the seed or more than they funded, withdraw while a pack is opening, or earn pack fees on their own machine (except as somebody's referrer). |
 | Buyer | Open one pack per purchase, set price and prize limits, keep or sell the coins, retry a late draw, and claim an owed prize. | Change a draw's result or choose its random value. |
 | Referrer | Receive the whole 0.20% pack fee of every buyer bound to them, and claim it. | Bind a buyer to themselves, or change an existing link. |
 | Holder | After graduation, share each Mega Pack payout and claim it. | Claim another wallet's reward. |
 | Gabox admin | Register quote tokens for new machines, stop new machines or purchases on a quote, set the Mega Pack settings, claim Gabox's pack fees, and replace a machine's prize table with one that pays at least as much on average. | Lower a machine's average payout, change the table of a pack already bought, or change a machine's config or open draws through the program's instructions. |
 | Mega operator | A Gabox server wallet. It pays out Mega Packs to holders. | Change settings, upgrade the program, or move Mega Pack funds anywhere else. |
-| Anyone | Add prize coins, expire an overdue draw, pay an owed prize into the buyer's own coin account, and close a finished draw. | Redirect another buyer's prize. |
+| Anyone | Add prize coins, expire an overdue draw, pay an owed prize into the buyer's own coin account, close a finished draw, and start a Machine recharge refill. | Redirect another buyer's prize. |
 | Meteora DBC / DAMM v2 | Price every trade. DBC runs the curve; DAMM v2 runs the pool after graduation. | Choose a prize. |
 | MagicBlock VRF | Return random bytes through an authenticated callback. | Change the prize table or redirect a payment. |
 

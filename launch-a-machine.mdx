@@ -11,6 +11,7 @@ A machine can only open for a brand new coin. The creator launches the coin and 
 - **Name, symbol and image.** They go into the coin's own metadata.
 - **Quote token.** The token your coin trades against: USDC, SOL, a registered stock token or another registered Solana token. It cannot change later. Buyers still pay for packs in USDC. Your holders' Mega Pack rewards are paid in this token.
 - **Starting liquidity.** How many extra jackpots your seed funds. See [Seed and jackpot](/seed-and-jackpot).
+- **Machine recharge** (optional). Your creator fees buy the coin and refill the prize pool: all of them, or a part. See [Machine recharge](/machine-recharge).
 
 Everything else is fixed for every coin: 9 decimals, 1,000,000,000 coins, the app's prize table, the trading fees and the move to DAMM v2 at graduation. A client built on the SDK may pass another valid prize table.
 
@@ -28,6 +29,8 @@ flowchart LR
 2. The hook program creates the coin's account list. The hook needs it to run.
 3. `initialize_pool` checks the config, the coin, the hook and the prize table. It refuses a coin that has already traded.
 4. The seed buy is the coin's first trade. It buys the seed coins straight into the prize pool.
+
+With Machine recharge on, `enable_self_sustaining` runs right after `initialize_pool`. It makes the machine's fee address the coin's creator on Meteora.
 
 If any step fails, nothing happens.
 
@@ -52,6 +55,6 @@ The program checks that:
 
 The coin's market terms cannot change. The Gabox admin can later raise the prize table, but only to one that pays at least as much on average; a pack already bought keeps the table it was bought under. As creator, you can add more prize coins with `fund_prizes` (Fund prizes in the app). You can take them back later with `withdraw_reserve` (Withdraw prizes): never more than you added, never more than the free coins, and only while no pack is opening and no prize is owed. Only the creator can do either. The seed never comes back.
 
-As creator you earn part of every trade's fee: 0.495% on the curve and about 0.25% after graduation, through your locked share of the pool. You do not earn pack fees on your own machine. See [Referrals and earnings](/referrals-and-earnings).
+As creator you earn part of every trade's fee: 0.495% on the curve and about 0.25% after graduation, through your locked share of the pool. You do not earn pack fees on your own machine. See [Referrals and earnings](/referrals-and-earnings). With [Machine recharge](/machine-recharge), all or part of these fees refill your prize pool instead.
 
 When the curve reaches its target, the coin graduates. See [Transfer hook and graduation](/hook-and-graduation).
