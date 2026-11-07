@@ -98,6 +98,12 @@
             ]
           },
           {
+            "group": "Legal",
+            "pages": [
+              "terms"
+            ]
+          },
+          {
             "group": "Brand",
             "pages": [
               "brand-kit"
