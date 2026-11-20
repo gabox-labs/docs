@@ -4,7 +4,7 @@ description: "What the creator funds and what the first packs can pay"
 icon: "sprout"
 ---
 
-The prize a pack can pay is limited by the free coins in the prize pool. A new machine has only its **seed**: the coins the creator buys at launch. The seed decides how large the first jackpots can be.
+The prize a pack can pay is limited by the free coins in the machine reserve. A new machine has only its **seed**: the coins the creator buys into the machine reserve at launch. The seed decides how large the first jackpots can be.
 
 ## The mandatory seed
 
@@ -14,30 +14,34 @@ Every launch buys a mandatory seed. The program sizes it on a reference pack of 
 mandatory seed = min(top prize of the reference pack, 3 × reference pack) − reference pack
 ```
 
-For the app's table, whose top row is 8×, this is **2,000,000 coins**. With that seed, a 1,000,000-coin pack can pay up to 3,000,000 coins: its own coins plus the seed. A table whose top row is below 3× needs a smaller seed.
+For the app's default table, whose top row is 8×, this is **2,000,000 coins**. With that seed, a 1,000,000-coin pack can pay up to about 3,000,000 coins: its own coins plus the seed. A table whose top row is below 3× needs a smaller seed.
 
 The mandatory seed is always bought, whatever the creator chooses.
 
-## The backup seed
+## The dev buy
 
-On the create page, **Starting liquidity** sets how many full jackpots in a row the seed should fund. A jackpot is the table's top prize, 8× on the app's table, on the cheapest pack at the launch price.
+On the create page, the **Dev buy** sets how much USDC the creator spends at launch. The creator also picks how much of it is **starting liquidity**:
 
-| Choice | What the prize pool can pay |
-| --- | --- |
-| No backup seed | Only the mandatory seed. The cheapest pack's top prize is capped until more packs fill the prize pool. |
-| 1 jackpot | One full top prize on the cheapest pack. |
-| 2 to 5 jackpots | That many full top prizes in a row on the cheapest pack. |
+1. **Starting liquidity** buys seed coins for the machine reserve: the mandatory seed first, then extra seed.
+2. **The rest** buys coins for the creator's own wallet, in the same launch transaction.
 
-The app offers at most 5 jackpots. It also hides any step whose seed would cost more than 10% of the curve's graduation target.
+Good to know:
 
-The first jackpot needs the top prize, less the pack's own coins and the mandatory seed. Each further jackpot needs the top prize less the next pack's coins. Larger packs have larger prizes, so the same seed covers fewer of their top prizes.
+- The smallest dev buy is the cost of the mandatory seed. At that amount, all of it is starting liquidity.
+- Starting liquidity must always pay for the mandatory seed. So when the amount goes down, the lowest share goes up.
+- The whole dev buy is at most 20% of the curve's graduation target.
+- The app starts at the smallest amount, with all of it as starting liquidity. So by default the creator buys no coins for themselves.
 
-## The seed is a gift to the prize pool
+The app shows what the starting liquidity covers: how many top prizes in a row the smallest pack can win. A top prize is the table's top row, 8× on the default table. The first one needs the top prize, less the pack's own coins and the mandatory seed. Each further one needs the top prize less the next pack's coins. Larger packs have larger prizes, so the same seed covers fewer of their top prizes.
 
-All seed coins, mandatory and backup, belong to the prize pool for ever. The creator cannot withdraw them. Later packs and coins the creator funds add free coins. Large wins use them up. The app always shows the current **payable** prizes before a buyer signs.
+## The seed is a gift to the machine reserve
 
-## A seed moves the price
+All seed coins, mandatory and extra, belong to the machine reserve for ever. The creator cannot withdraw them. Later packs, transfer fees and coins the creator funds add free coins. Large wins use them up. The app always shows the current **payable** prizes before a buyer signs.
 
-The seed is bought on the curve, so a larger seed raises the coin's starting price. Later packs then buy a little fewer coins. The seed also counts toward the curve's graduation target.
+The coins the dev buy sends to the creator's wallet are the creator's own. The creator can keep them or sell them like any other coins.
 
-The seed buy pays the curve's trading fee, but no pack fee. See [Launch a machine](/launch-a-machine) and [Prizes and odds](/prizes-and-odds).
+## The dev buy moves the price
+
+The seed and the creator's own buy happen on the curve, so a larger dev buy raises the coin's starting price. Later packs then buy a little fewer coins. Both buys also count toward the curve's graduation target.
+
+Both buys pay the curve's trading fee, but no pack fee. Both also pay the 1% transfer fee, and that fee goes to the machine reserve. See [Launch a machine](/launch-a-machine) and [Prizes and odds](/prizes-and-odds).

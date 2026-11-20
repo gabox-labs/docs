@@ -6,29 +6,30 @@ icon: "book"
 
 | Term | Meaning |
 | --- | --- |
-| Machine | One Gabox prize game on one coin: a new coin launched with it, or a coin that already trades (a [Fan coin machine](/fan-coin-machines)). Each machine has its own address. |
-| Coin | The token a machine pays prizes in. A new coin is a Token-2022 token with 9 decimals and a fixed supply of 1,000,000,000. A Fan coin machine uses a coin that already exists. |
+| Machine | One Gabox prize game on one coin, launched together with that coin. Each machine has its own address. |
+| Coin | The token a machine pays prizes in. A new coin is a Token-2022 token with 9 decimals, a fixed supply of 1,000,000,000 and a 1% transfer fee. |
 | Pack | One purchase at a fixed USDC price, chosen from a fixed range. Its coins are what that price buys on the market. |
-| Pack coins | The coins one pack bought. Every prize is a multiple of them. |
+| Pack coins | The coins one pack bought, as they arrive in the machine reserve. Every prize is a multiple of them. |
 | Prize row | A fixed multiplier and a number of tickets, set at launch. The app calls the rows Common, Rare, Epic and Mythic. |
 | Ticket | One of 65,536 equally likely numbers. The random ticket picks a prize row. |
 | Draw | One pack, from purchase until its prize is paid or claimed. |
-| Prize pool | The coins a machine pays prizes from. On chain it is the machine's token account, called the vault. |
-| Free coins | Prize pool coins that no open draw or owed prize holds. |
-| Reservation | Coins held back in the prize pool: each open draw's own pack coins, and each owed prize. |
-| Seed | Coins the creator buys into the prize pool at launch. They cannot be taken back. |
-| Quote token | The token the coin trades against: USDC, SOL, a registered stock token or another registered Solana token. |
-| Pack fee | 0.50% of the pack price, already inside the price. On a Fan coin machine, 2%. |
+| Machine reserve | The coins a machine pays prizes from. On chain it is the machine's token account, called the vault. |
+| Free coins | Machine reserve coins that no open draw or owed prize holds. |
+| Reservation | Coins held back in the machine reserve: each open draw's own pack coins, and each owed prize. |
+| Seed | Coins the creator buys into the machine reserve at launch. They cannot be taken back. |
+| Dev buy | The USDC a creator spends at launch. Part of it is starting liquidity, and the rest buys coins for the creator's own wallet. |
+| Starting liquidity | The part of the dev buy that buys the seed. It always covers the mandatory seed. |
+| Quote token | The token the coin trades against. Every new coin trades against USDC. Some older machines use SOL, a stock token or another registered Solana token. |
+| Pack fee | 2% of the pack price, already inside the price. |
 | Trading fee | Meteora's fee inside every trade's price. |
+| Transfer fee | 1% of every transfer of a new coin. Token-2022 holds it in the receiving account until it is collected into the machine reserve. Nobody can change the rate. |
+| Sweep | Moving collected transfer fees into a coin's machine reserve. Anyone can start it. |
 | Referrer | The wallet a buyer named on their first referred purchase. The link is permanent. |
-| Machine recharge | A launch option. The creator's trading fees buy the coin and refill the machine's prize pool. See [Machine recharge](/machine-recharge). |
 | Gift | A pack bought in advance for one named wallet, on one machine. Only that wallet can open it, once. See [Gift packs](/gift-packs). |
 | Bonding curve | The Meteora DBC market a new coin trades on before graduation. Its price rises as coins are bought. |
 | Graduation | Meteora moves the coin from the bonding curve into a DAMM v2 pool. |
 | AMM | Automated market maker. DAMM v2 is the AMM a coin trades on after graduation. |
-| Transfer hook | A Token-2022 rule. While the coin is on the curve, coins leaving the curve may only go to the machine's prize pool. |
-| Mega Pack | A pot of pack fees after graduation. When it is full, it is paid out to the coin's holders. |
-| Snapshot | The list of holder balances that Gabox takes just before a Mega Pack payout. |
+| Transfer hook | A Token-2022 rule on older Gabox coins only. New coins have none. |
 | VRF | Verifiable random function. MagicBlock supplies the randomness for every draw. |
 | PDA | Program derived address: an address computed from fixed seeds and a program ID. Nobody holds a private key for it. |
 | ATA | Associated token account: a wallet's standard account for one token. |

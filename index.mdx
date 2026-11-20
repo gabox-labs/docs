@@ -4,28 +4,28 @@ description: "Open a token pack, or launch a machine"
 icon: "dice"
 ---
 
-Gabox is an onchain gacha for Solana coins. A creator launches a new coin and its **machine** together, or opens a machine on a coin that already trades (a [Fan coin machine](/fan-coin-machines)). A buyer opens a **pack** at a fixed USDC price. MagicBlock's verifiable randomness picks the prize from a fixed table, and the prize is paid in the coin.
+Gabox is an onchain gacha for Solana coins. A creator launches a new coin and its **machine** together. A buyer opens a **pack** at a fixed USDC price. MagicBlock's verifiable randomness picks the prize from a fixed table, and the prize is paid in the coin. Every transfer of the coin pays a 1% fee into the machine reserve, so trading keeps funding prizes.
 
 ## The short version
 
 | Question | Answer |
 | --- | --- |
 | What is a pack? | A purchase at a fixed USDC price, chosen from a fixed range of pack prices. The price buys coins on the market, and the prize is a multiple of those coins. |
-| What does it cost? | The pack price. It already includes the 0.50% pack fee and the market's trading fee. Network fees, rent and the randomness fee are paid in SOL. |
-| Where is the market? | A Meteora bonding curve until graduation, then a Meteora DAMM v2 pool. |
+| What does it cost? | The pack price. It already includes the 2% pack fee and the market's trading fee. Network fees, rent and the randomness fee are paid in SOL. |
+| Where is the market? | A Meteora bonding curve until graduation, then a Meteora DAMM v2 pool. Anyone can trade the coin on both. |
+| What is the transfer fee? | Every transfer of the coin pays 1%. The fee goes into the coin's machine reserve, where it pays future prizes. Nobody can change the rate. |
 | Who picks the prize? | MagicBlock VRF, against the machine's fixed prize table. |
-| How big can a prize be? | Up to 8× the coins your pack bought on the app's default table, if the prize pool holds enough. A creator can choose up to 20× on a new coin and up to 100× on a Fan coin machine. The program allows tables up to 100×. |
-| Can the creator take the prizes back? | Only the extra coins they funded after launch, and only while no pack is opening. The seed, the coins packs add and the coins Machine recharge adds stay in the prize pool. |
-| What is the Mega Pack? | After graduation, pack fees fill a shared pot. When it is full, it is paid out to the coin's holders. |
-| Can a machine use a coin that already trades? | Yes. That is a [Fan coin machine](/fan-coin-machines). Its packs are priced in USDC, and its pack fee is 2%. |
-| Is it an investment? | No. On average a pack pays back at most the coins it bought. The app's table pays about 95.5%. The coin price can also fall. |
+| How big can a prize be? | Up to 8× the coins your pack bought on the app's default table, if the machine reserve holds enough. A creator can choose a top prize of up to 20×. The program allows tables up to 100×. |
+| Do I get the full prize? | Yes. The machine reserve pays the transfer fee on top, so the full prize arrives in your wallet. |
+| Can the creator take the prizes back? | Only the extra coins they funded after launch, and only while no pack is opening. The seed, the coins packs add and the transfer fees stay in the machine reserve. |
+| Is it an investment? | No. On average a pack pays back at most the coins it bought. The app's default table pays about 96.5%. The coin price can also fall. |
 
 ## Choose a page
 
 <Columns cols={3}>
   <Card title="Open a pack" icon="box-open" href="/opening-a-pack">Prices, what you sign, and the draw.</Card>
   <Card title="Launch a machine" icon="rocket" href="/launch-a-machine">Creator steps, seed and graduation.</Card>
-  <Card title="Mega Pack" icon="gift" href="/mega-pack">How pack fees become a prize for holders.</Card>
+  <Card title="Transfer fee" icon="arrows-spin" href="/transfer-fee-and-graduation">How trading fills the machine reserve.</Card>
 </Columns>
 
 ## Who does what
@@ -33,8 +33,8 @@ Gabox is an onchain gacha for Solana coins. A creator launches a new coin and it
 - **Creator:** launches the coin and its machine, pays the seed, and earns part of the trading fees.
 - **Buyer:** pays a fixed pack price, signs price and prize limits, and gets the prize.
 - **Referrer:** gets 0.20% of the price of every pack a buyer they referred opens.
-- **Holder:** holds the coin after graduation and shares each Mega Pack payout.
-- **Gabox:** runs the program, holds the prize pool, checks every reservation and pays prizes.
+- **Trader:** buys, sells and sends the coin. Every transfer pays the 1% transfer fee into the machine reserve.
+- **Gabox:** runs the program, holds the machine reserve, checks every reservation and pays prizes.
 - **Meteora:** runs the market and charges a trading fee inside each trade.
 - **MagicBlock:** supplies the randomness.
 

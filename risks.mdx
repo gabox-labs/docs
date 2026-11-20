@@ -5,14 +5,15 @@ icon: "triangle-alert"
 ---
 
 - **Coins, not dollars.** A pack wins coins, not a fixed amount of USDC. The coin can fall in price or lose its market.
-- **Average payout.** A valid table pays at most one pack's coins on average. The app's tables pay about 95.5%. The trading fee and the pack fee come out of the price first. So on average a pack is worth less than you paid.
+- **Average payout.** A valid table pays at most one pack's coins on average. The app's default table pays about 96.5%. The trading fee and the pack fee come out of the price first. So on average a pack is worth less than you paid.
 - **Price movement.** The market sets the price. A pack buys fewer coins when the coin trades higher. Your signed limits protect you from a stale quote, but the purchase can then fail.
-- **Swap cost.** On a machine not quoted in USDC, your USDC is swapped first. That swap has its own price and fees.
-- **Selling.** A large prize can move the market when you sell it. A sale pays the trading fee. On a machine not quoted in USDC, you receive its quote token, not USDC.
-- **Low prize pool.** A top prize can pay less than its full multiplier when the prize pool's free coins are low. Your `min_maximum` protects the offer when you buy. If another win settles before yours, a large prize can still pay less than that offer, but a win never pays less than your pack coins.
+- **Transfer fee.** Every transfer of a new coin costs 1% of the coins, sales and wallet transfers included. Prizes arrive in full, because the machine reserve pays their fee.
+- **Selling.** A large prize can move the market when you sell it. A sale pays the trading fee and the transfer fee. On an older machine not quoted in USDC, you receive its quote token, not USDC.
+- **Swap cost.** On an older machine not quoted in USDC, your USDC is swapped first. That swap has its own price and fees.
+- **Low machine reserve.** A top prize can pay less than its full multiplier when the machine reserve's free coins are low. Your `min_maximum` protects the offer when you buy. If another win settles before yours, a large prize can still pay less than that offer, but a win never pays less than your pack coins, less the transfer fee.
 - **Late randomness.** Only the buyer can retry a draw, and nobody retries for you automatically. After the deadline, anyone can settle the pack at its smallest prize.
-- **Mega Pack rewards.** Only part of a reward is guaranteed. The rest is drawn, so your reward can be smaller or larger than your share. Rewards are paid in the quote token, so their value moves with that token's price.
-- **Creator fees.** Creator earnings and [Machine recharge](/machine-recharge) refills depend on trading that may never happen.
-- **Outside systems.** Meteora, MagicBlock, Jupiter, Irys, Solana, the quote token's issuer, the RPC and program upgrades can each affect you. A stock token issuer can pause or freeze its token.
+- **Older coins.** A machine whose coin launched before the transfer fee sells no packs while that coin is on its curve.
+- **Creator fees.** Creator earnings depend on trading that may never happen.
+- **Outside systems.** Meteora, MagicBlock, Jupiter, Solana, the quote token's issuer, the RPC and program upgrades can each affect you. A stock token issuer can pause or freeze its token.
 
 Read [People and rules](/parties-and-rules), [If the draw is late](/if-the-draw-is-late) and [Trust boundaries](/trust-boundaries) before you buy.

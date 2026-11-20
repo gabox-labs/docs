@@ -1,38 +1,42 @@
 ---
 title: "How prizes stay funded"
-description: "Prize pool coins, caps and reservations"
+description: "Machine reserve coins, caps and reservations"
 icon: "vault"
 ---
 
-The **prize pool** holds the machine's prize coins. The seed, every pack's bought coins and any coins the creator funds go in. Prizes take coins out. The only other way out is a creator withdrawal of coins the creator funded. See [After launch](/launch-a-machine#after-launch). On chain the prize pool is the machine's token account, called the vault.
+The **machine reserve** holds the machine's prize coins. The seed, every pack's bought coins, the collected transfer fees and any coins the creator funds go in. Prizes take coins out, together with their transfer fee. The only other way out is a creator withdrawal of coins the creator funded. See [After launch](/launch-a-machine#after-launch). On chain the machine reserve is the machine's token account, called the vault.
 
 ```text
-free coins   = prize pool balance − reserved coins
+free coins   = machine reserve balance − reserved coins
 pack's cap   = free coins + the pack's own coins
 ```
+
+On a new coin, the cap also leaves room for the 1% transfer fee that the machine reserve pays on top of each prize.
 
 ## One purchase, one reservation
 
 In the same transaction, a purchase:
 
-1. adds its bought coins to the prize pool;
+1. adds its bought coins to the machine reserve;
 2. takes a snapshot of the free coins, before its own coins;
 3. reserves its own coins;
 4. asks for randomness.
 
-The program keeps this rule at all times: `prize pool balance ≥ all reservations`. An open draw reserves only its own pack's coins. So packs that other buyers open at the same time do not lower your offer, and they do not make your purchase fail. A settled but owed draw reserves exactly what it owes. One draw can never spend another draw's reservation.
+The program keeps this rule at all times: `machine reserve balance ≥ all reservations`. An open draw reserves only its own pack's coins. So packs that other buyers open at the same time do not lower your offer, and they do not make your purchase fail. A settled but owed draw reserves exactly what it owes, transfer fee included. One draw can never spend another draw's reservation.
 
 When the draw settles, its reservation is released. The prize is paid, or it stays reserved as owed until a claim.
 
+## Transfer fees refill it
+
+Every transfer of a new coin pays 1%. The fees are collected regularly and moved into the coin's machine reserve, where they become free coins. So trading the coin keeps adding prize coins, even when nobody opens a pack. Nobody can withdraw them. See [Transfer fee and graduation](/transfer-fee-and-graduation).
+
 ## Caps
 
-Every prize row is capped at `free coins + the pack's own coins`. When the prize pool is low, the top rows pay less than their full multiplier. Their chances do not change. The app shows the capped amounts before you buy: they are the most the prize pool can pay at that moment.
+Every prize row is capped at `free coins + the pack's own coins`, less the transfer fee on a new coin. When the machine reserve is low, the top rows pay less than their full multiplier. Their chances do not change. The app shows the capped amounts before you buy: they are the most the machine reserve can pay at that moment.
 
-The cap is checked again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, and the smallest prize is never cut. The odds and the prize table do not change.
+The cap is checked again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, less the 1% transfer fee, and the smallest prize is never cut. The odds and the prize table do not change.
 
 The buyer signs `min_maximum`, so a purchase fails if the top prize fell below what the buyer saw before the purchase landed.
-
-The [Mega Pack](/mega-pack) never uses the prize pool.
 
 ## The table limit
 

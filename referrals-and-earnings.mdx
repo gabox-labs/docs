@@ -4,18 +4,18 @@ description: "Who receives the pack fee, and how fees are claimed"
 icon: "handshake"
 ---
 
-Refer friends and earn up to 20% of their Gabox fees.
+Refer friends and earn 0.20% of the price of every pack they open.
 
 ## Where the pack fee goes
 
-Every pack pays a 0.50% pack fee, inside its price. Where it goes depends on the buyer:
+Every pack pays a 2% pack fee, inside its price. Where it goes depends on the buyer:
 
-| Buyer | Before graduation | After graduation |
-| --- | --- | --- |
-| Has a referrer | 0.20% of the price to the referrer, the rest to Gabox | 0.20% of the price to the referrer, the rest to Gabox |
-| Has no referrer | Gabox | The machine's [Mega Pack](/mega-pack), when it is on for the quote token; otherwise Gabox |
+| Buyer | Pack fee |
+| --- | --- |
+| Has a referrer | 0.20% of the price to the referrer, the rest to Gabox |
+| Has no referrer | Gabox |
 
-The creator gets no pack fee on their own machine. A creator earns pack fees only as somebody else's referrer. A [Fan coin machine](/fan-coin-machines) is the exception: its 2% pack fee pays its creator 1.20%, the referrer 0.30% and Gabox 0.50%. With no referrer, the creator also gets the referrer's 0.30%.
+The creator gets no pack fee on their own machine. A creator earns pack fees only as somebody else's referrer.
 
 ## How a referral is bound
 
@@ -31,22 +31,21 @@ Pack fees collect per wallet and per quote token in an earnings account. The fee
 
 - `claim_earnings` pays **all** unclaimed fees of one quote token to the wallet. A wallet that earned in two quote tokens claims twice.
 - A SOL claim arrives as SOL.
-- Creator pack fees from the earlier fee model also stay claimable this way.
-- Nobody can claim a Mega Pack balance with `claim_earnings`. It is only paid out to the coin's holders.
+- Fees from earlier fee models, such as creator pack fees and fan coin machine fees, also stay claimable this way.
 
 ## Creator earnings
 
-On a new-coin machine, a creator earns from trading, not from packs:
+A creator earns from trading, not from packs:
 
 | Market | Creator's part of each trade | Where it is claimed |
 | --- | --- | --- |
-| Bonding curve | 0.96% (0.495% on older coins) | Meteora's creator fee for the coin |
-| DAMM v2 pool | about 0.72% (about 0.25% on older coins) | Fees of the creator's locked pool position |
+| Bonding curve | 0.60% | Meteora's creator fee for the coin |
+| DAMM v2 pool | 0.30% | Fees of the creator's locked pool position |
 
-Older coins are coins launched before 29 October 2026. A coin keeps the fees it launched with.
+Older coins keep the fees they launched with: 0.96% and about 0.72% for coins launched from 29 October 2026, and 0.495% and about 0.25% for coins launched before that.
 
 These fees are held by Meteora, outside Gabox's `claim_earnings`. The app's **Creator earnings** panel collects them for you. Trading fees depend on trading that may never happen.
 
-On a [Machine recharge](/machine-recharge) machine, the machine receives these fees. All or part of them refill its prize pool. The creator claims the rest on their profile.
+The transfer fee is not a creator earning. It goes to the machine reserve and pays prizes.
 
 See [What a pack costs](/what-a-pack-costs) for the full fee table.

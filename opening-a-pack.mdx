@@ -10,35 +10,32 @@ A pack has a fixed USDC price. You open one pack per purchase, and each pack get
 
 Gabox offers a fixed range of pack prices, from small to large. The app shows the current prices on every machine. The largest pack unlocks only after the coin graduates. All other packs are always available.
 
-The price includes the 0.50% pack fee and the market's trading fee. It does not include network fees, account rent or the randomness fee. You pay those in SOL.
+The price includes the 2% pack fee and the market's trading fee. It does not include network fees, account rent or the randomness fee. You pay those in SOL.
 
 The price buys coins on the market. So the number of coins in a pack changes with the coin's price. When the coin trades higher, a pack at the same price buys fewer coins.
 
+The bought coins pay the 1% transfer fee on their way to the machine reserve. Your pack coins are the coins that arrive. The fee goes into the same machine reserve.
+
 ## How you pay
 
-You always pay in USDC.
+You always pay in USDC. Every new coin trades against USDC, so the program takes the price straight from your USDC account.
 
-- **USDC machine.** The program takes the price straight from your USDC account.
-- **Any other machine** (SOL, a stock token or another Solana token). The same transaction first swaps your USDC into the machine's quote token. Then it buys the pack with that token. Quote tokens that the purchase did not use go back to you. On a SOL machine they come back as SOL.
-
-The swap is a separate trade with its own price and fees.
+A few older machines trade against another token, such as SOL or a stock token. On those, the same transaction first swaps your USDC into that token. Then it buys the pack with that token. Quote tokens that the purchase did not use go back to you. On a SOL machine they come back as SOL. The swap is a separate trade with its own price and fees.
 
 ## What you sign
 
 | Limit | What it protects |
 | --- | --- |
 | `max_quote_budget` | The most quote tokens the pack may spend, pack fee included. |
-| `min_net_tokens` | The fewest coins the prize pool must receive for your pack. |
-| `min_maximum` | The smallest top prize you accept when you buy. If the prize pool changed before your purchase landed and the top prize fell below this, the purchase fails. |
+| `min_net_tokens` | The fewest coins the machine reserve must receive for your pack. |
+| `min_maximum` | The smallest top prize you accept when you buy. If the machine reserve changed before your purchase landed and the top prize fell below this, the purchase fails. |
 | `max_native_debit` | The most SOL the program may spend inside the purchase: the randomness fee and some account rent. |
-
-Your first pack on a machine also creates a small account for your [Mega Pack](/mega-pack) rewards. You pay its rent once.
 
 Some accounts are created before the program runs, for example the draw account. Their rent and the network fee are outside `max_native_debit`. The app shows them before you sign. If the market moved and a limit no longer holds, the transaction fails and nothing is bought.
 
 ## The purchase
 
-The market sends the bought coins straight to the prize pool. Gabox records the draw, reserves your pack's own coins and asks MagicBlock for randomness. All of this happens in one transaction. Other packs opened at the same time do not lower your offer.
+The market sends the bought coins straight to the machine reserve. Gabox records the draw, reserves your pack's own coins and asks MagicBlock for randomness. All of this happens in one transaction. Other packs opened at the same time do not lower your offer.
 
 ```mermaid
 sequenceDiagram
@@ -48,7 +45,7 @@ sequenceDiagram
  participant V as VRF
  B->>G: Buy a pack
  G->>M: Buy coins
- M->>G: Coins to prize pool
+ M->>G: Coins to reserve
  G->>V: Request
  V-->>G: Random bytes
  G-->>B: Prize
@@ -56,11 +53,11 @@ sequenceDiagram
 
 ## The draw
 
-Your draw keeps its own copy of the prize table, your pack coins and the free coins in the prize pool. No one can change which prize row you land on. MagicBlock usually answers in a few seconds. The prize then goes to your coin account.
+Your draw keeps its own copy of the prize table, your pack coins and the free coins in the machine reserve. No one can change which prize row you land on. MagicBlock usually answers in a few seconds. The prize then goes to your coin account. It arrives in full: the machine reserve pays the 1% transfer fee on top.
 
-The prize is capped by what the prize pool can pay when your draw settles. If another win settles first, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, and the smallest prize is never cut.
+The prize is capped by what the machine reserve can pay when your draw settles. If another win settles first, a large prize can pay less than the amount you saw. A win never pays less than your pack's own coins, less the 1% transfer fee, and the smallest prize is never cut.
 
-If your coin account cannot receive the prize, the result is still fixed. The prize waits in the prize pool as owed. See [If the draw is late](/if-the-draw-is-late).
+If your coin account cannot receive the prize, the result is still fixed. The prize waits in the machine reserve as owed. See [If the draw is late](/if-the-draw-is-late).
 
 ## The last pack on the curve
 

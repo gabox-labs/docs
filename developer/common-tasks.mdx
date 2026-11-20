@@ -8,19 +8,18 @@ Every recipe uses only live routes and needs no key. `API` is `https://actions.g
 
 ## Find a machine
 
-List the machines and follow `page.nextCursor`. Then read one machine for its packs, prize tiers and vault. Read `account` first: a launch machine (`Pool`) and a fan coin machine (`TokenMachine`) have different fields.
+List the machines and follow `page.nextCursor`. Then read one machine for its packs, prize tiers and vault.
 
 ```js
 const API = "https://actions.gabox.fun/v1"
 
 const { data: machines } = await (await fetch(`${API}/machines?limit=50`)).json()
 const open = machines.filter((m) =>
-  m.purchasesOn &&
-  (m.account === "Pool" ? m.stage !== "migrating" && m.offer : m.packQuotes.length > 0),
+  m.purchasesOn && m.stage !== "migrating" && m.offer,
 )
 ```
 
-A machine's page on the website is `https://gabox.fun/<address>`, built from the machine's `address` field. Every machine route takes that `address` too. A coin's mint finds only the coin's launch machine. To list every machine on one coin, add `?mint=<mint>` to the list route. If a user pastes a page link, its last part is the machine's `address`.
+A machine's page on the website is `https://gabox.fun/<address>`, built from the machine's `address` field. Every machine route takes that `address` too. A coin's mint finds the coin's launch machine too. If a user pastes a page link, its last part is the machine's `address`.
 
 ## Show a machine card
 
@@ -46,13 +45,13 @@ const card = {
 }
 ```
 
-Only a launch machine has `offer`. On a `TokenMachine`, each entry of `packQuotes` is one pack price in USDC base units and the coins it buys now.
+`offer` is `null` when no pack is open, for example on an older coin that is still on its curve.
 
-The API sends the coin's decimals in `tokenDecimals`. It does not send the quote token's decimals. USDC has 6 and SOL has 9. For another quote token, read its mint's decimals from Solana, or show `offer.solAmount` in SOL.
+The API sends the coin's decimals in `tokenDecimals`. It does not send the quote token's decimals. Every new launch machine uses USDC, which has 6. Some older machines use SOL, which has 9, or another quote token. For those, read the mint's decimals from Solana, or show `offer.solAmount` in SOL.
 
 ## Show the odds
 
-The chance of each prize row is `tickets / 65536`. On a launch machine, the live prize amounts are in `offer.prizes`, in the same order as `tiers`. A `TokenMachine` has no `offer`, so show its chances and multipliers only. Skip rows with 0 tickets.
+The chance of each prize row is `tickets / 65536`. On a launch machine, the live prize amounts are in `offer.prizes`, in the same order as `tiers`. Skip rows with 0 tickets.
 
 ```js
 const rows = m.tiers
@@ -97,23 +96,7 @@ If many people use your app at once, read on your server and share the answer wi
 
 ## Check a seed lock
 
-`seedLocked` says whether the creator can take the seed back. `true` means nothing can withdraw it, and a launch machine is always `true`. On a `TokenMachine`, `false` means the seed is the creator's deposit, and `null` means the index has not read it yet. See [Seed and jackpot](/seed-and-jackpot).
-
-## Check Machine recharge
-
-On a launch machine, `recharge` is `null` when [Machine recharge](/machine-recharge) is off. Otherwise, `recharge.machineBps` is the machine's share of the creator trading fee, and `recharge.coinsAdded` is the coins it has bought for the prize pool so far.
-
-```js
-const { data: m } = await (await fetch(`${API}/machines/${MACHINE}`)).json()
-
-if (m.account === "Pool" && m.recharge) {
-  const share = `${m.recharge.machineBps / 100}%`
-  const added = formatUnits(m.recharge.coinsAdded, m.tokenDecimals)
-  console.log(`${share} of the creator fee refills the prize pool. ${added} coins so far.`)
-}
-```
-
-The [recharge object](/developer/machines#the-recharge-object) lists every field.
+`seedLocked` says whether the creator can take the seed back. A launch seed is always locked, so it is always `true`. See [Seed and jackpot](/seed-and-jackpot).
 
 ## Explain a machine with an AI
 
@@ -123,6 +106,6 @@ The [recharge object](/developer/machines#the-recharge-object) lists every field
 npx skills add gabox-labs/skills -g
 ```
 
-## Launch a coin, open a machine on a coin, open a pack, claim fees
+## Launch a coin, open a pack, claim fees
 
 These calls are [Preview](/developer/preview-calls). Until they are live, send your users to [gabox.fun](https://gabox.fun) for these steps.

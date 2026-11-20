@@ -10,8 +10,6 @@ Once the draw settles, the prize coins are yours. There is nothing to claim on t
 
 Do nothing. The coins stay in your coin account. If the prize was recorded as owed, claim it first. See [If the draw is late](/if-the-draw-is-late).
 
-After graduation, holding the coin also counts for the [Mega Pack](/mega-pack). It pays holders in the machine's quote token.
-
 ## Sell
 
 Sign `sell_tokens` with the amount of coins and your minimum output.
@@ -19,12 +17,14 @@ Sign `sell_tokens` with the amount of coins and your minimum output.
 1. The app quotes the current market: the DBC curve before graduation, the DAMM v2 pool after it.
 2. You sign `min_quote_output`, the least quote tokens you accept. The program checks it after the trade.
 3. The program sells through the machine's own market.
-4. The market takes its trading fee: 2% on the curve, 1.5% after graduation. A coin launched before 29 October 2026 keeps 1.875% and 0.94%. Gabox takes no pack fee on a sale.
+4. The market takes its trading fee: 1% on the curve, 0.5% after graduation. An older coin keeps the fees it launched with. The coins you sell also pay the 1% transfer fee, which goes to the machine reserve. Gabox takes no pack fee on a sale.
 
-You receive the machine's quote token. On a SOL machine the proceeds arrive as SOL. On a USDC machine you receive USDC. On any other machine you receive its quote token, for example a stock token. The app does not swap it back to USDC.
+You receive the machine's quote token. On a new coin, that is USDC. Some older machines use another quote token: on a SOL machine the proceeds arrive as SOL, and on any other machine you receive its quote token, for example a stock token. The app does not swap it back to USDC.
 
 You can sell part of your coins. A large prize can move the market price more than a small one, so check the quote before you sign. There is no Gabox buyback and no guaranteed price.
 
+You do not need Gabox to sell. Anyone can trade a new coin on its curve or its pool, through Meteora or a swap app. Every sale still pays the 1% transfer fee.
+
 ## At graduation
 
-When the curve completes, the market moves from DBC to DAMM v2. Your coins stay yours. While Meteora moves the liquidity, the app cannot sell for a short time. After that, you can trade the coin anywhere it is listed, not only through Gabox.
+When the curve completes, the market moves from DBC to DAMM v2. Your coins stay yours. While Meteora moves the liquidity, the app cannot sell for a short time. After that, you trade the coin in its DAMM v2 pool, or anywhere else it is listed.

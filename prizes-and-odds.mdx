@@ -6,18 +6,20 @@ icon: "table-list"
 
 A machine's prize table is set at launch. The Gabox admin can later replace it, but only with a table that pays at least as much on average as the one it replaces. A pack already bought keeps the table it was bought under, even after a later change. A prize is a multiple of the coins your own pack bought. So a large pack and a small pack have the same odds. A pack that costs 50 times more has prizes about 50 times larger.
 
-## The app's table
+## The app's tables
 
-The Gabox app launches every machine built from October 18, 2026 onward with this table:
+When a creator launches a machine in the Gabox app, they pick its top prize: 3×, 5×, 8×, 10× or 20× the pack coins. Each choice comes with its own table of Common, Rare, Epic and Mythic rows. 8× is the default:
 
 | Row | Chance | Prize |
 | --- | ---: | ---: |
 | Common | 75% | 0.7× your pack coins |
-| Rare | 20% | 1.25× |
+| Rare | 20% | 1.3× |
 | Epic | 4% | 2.5× |
 | Mythic | 1% | 8× |
 
-On average this table pays about 0.955× your pack coins. The $GABOX machine uses this table too. Older machines keep their own table unless the Gabox admin raises it. Machines launched from October 7 until this change use Common 75% at 0.5126×, Rare 20% at 1.5×, Epic 4% at 3.5×, Mythic 1% at 10× (average 0.9244×). Machines launched before October 7, 2026 use Common 80% at 0.5126×, Rare 15% at 2×, with the same Epic and Mythic rows. The row names are app labels. The program only knows multipliers and tickets.
+On average this table pays about 0.965× your pack coins. Every other choice pays about 0.96× on average, so no choice is a better deal. A higher top prize comes with smaller wins most of the time.
+
+Older machines keep their own table unless the Gabox admin raises it. Machines launched from October 18, 2026 until the transfer fee use the same rows with Rare at 1.25× (average about 0.955×). The \$GABOX machine uses that table too. Machines launched from October 7 until October 18 use Common 75% at 0.5126×, Rare 20% at 1.5×, Epic 4% at 3.5×, Mythic 1% at 10× (average 0.9244×). Machines launched before October 7, 2026 use Common 80% at 0.5126×, Rare 15% at 2×, with the same Epic and Mythic rows. The row names are app labels. The program only knows multipliers and tickets.
 
 ## The program's rules
 
@@ -40,19 +42,21 @@ The Gabox admin can later give a machine a new table through the same checks, pl
 
 ## Caps
 
-A prize can never be larger than what the prize pool can pay:
+A prize can never be larger than what the machine reserve can pay:
 
 ```text
 prize = min(row prize, free coins + your pack coins)
 ```
 
-The free coins are the prize pool coins that no open draw or owed prize holds. An open draw holds only its own pack coins, so packs that other buyers open at the same time do not lower your offer. The app shows each row's **payable** amount before you sign: the most the prize pool can pay at that moment. You sign `min_maximum`, the smallest top prize you accept.
+On a new coin, the machine reserve also pays the 1% transfer fee of the prize. So the cap is what free coins plus your pack coins can deliver after that fee: about 99% of them.
 
-When the prize pool is low, the top rows are capped. Their chances do not change. New packs and coins the creator funds add free coins over time. Large wins remove them. So the top prize can be capped for a while after a big win.
+The free coins are the machine reserve coins that no open draw or owed prize holds. An open draw holds only its own pack coins, so packs that other buyers open at the same time do not lower your offer. The app shows each row's **payable** amount before you sign: the most the machine reserve can pay at that moment. You sign `min_maximum`, the smallest top prize you accept.
 
-The cap applies again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack coins, and the smallest prize is never cut.
+When the machine reserve is low, the top rows are capped. Their chances do not change. New packs, transfer fees and coins the creator funds add free coins over time. Large wins remove them. So the top prize can be capped for a while after a big win.
 
-Example: your pack bought 1,000,000 coins, and the prize pool has 3,000,000 free coins. The Mythic row names 10,000,000 coins, but it can pay at most 4,000,000.
+The cap applies again when your draw settles. If another win settles first and uses free coins, a large prize can pay less than the amount you saw. A win never pays less than your pack coins, less the 1% transfer fee, and the smallest prize is never cut.
+
+Example: your pack bought 1,000,000 coins, and the machine reserve has 3,000,000 free coins. The Mythic row names 8,000,000 coins. The cap may use 4,000,000 coins. On a new coin, 1% of them pays the transfer fee, so the prize is at most 3,960,000 coins.
 
 ## Not a promise of value
 

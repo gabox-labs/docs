@@ -4,20 +4,34 @@ description: "Which Gabox rules run on each network"
 icon: "server"
 ---
 
-These pages explain the **current Gabox source**. Mainnet and devnet both run it.
+These pages explain the **current Gabox source**: the transfer fee release. Devnet runs it. Mainnet runs the earlier release until its upgrade.
 
 | Network | Last verified deployment |
 | --- | --- |
-| Mainnet | 3 November 2026, Gabox slot `464655006`; hook slot `450131931` |
-| Devnet | 2 November 2026, Gabox slot `517990731`; hook slot `503610147` |
+| Mainnet | 3 November 2026, Gabox slot `464655006`; hook slot `450131931`. The transfer fee release is not on mainnet yet. |
+| Devnet | 20 November 2026, Gabox slot `524294055`; hook slot `523765352` |
 
 Each deployed program was read back and matched its build.
 
-Mainnet has 37 quote tokens: USDC, SOL, 20 stock tokens, BP, CARDS, JTO, JUP, MET, PUMP, PYTH, RAY, STONK and W, and ETH, HYPE, WBTC, wNEAR and ZEC. Mega Pack payouts on mainnet have not started yet. Until they start, each Mega Pack keeps filling.
+Mainnet has 37 quote tokens today: USDC, SOL, 20 stock tokens, BP, CARDS, JTO, JUP, MET, PUMP, PYTH, RAY, STONK and W, and ETH, HYPE, WBTC, wNEAR and ZEC. With the transfer fee release, new coins trade against USDC only. The other quote tokens stay for older machines.
+
+## What changed
+
+The transfer fee release changes these things:
+
+- **Transfer fee.** Every new coin pays 1% on every transfer, and the fee goes into its machine reserve. See [Transfer fee and graduation](/transfer-fee-and-graduation).
+- **No transfer hook on new coins.** Anyone can buy a new coin on its curve.
+- **USDC only.** Every new coin trades against USDC.
+- **Dev buy.** A creator can buy coins for their own wallet at launch. Part of the amount is the machine's starting liquidity. See [Seed and jackpot](/seed-and-jackpot#the-dev-buy).
+- **New fees.** The pack fee is 2%. A new coin's trading fee is 1% on the curve and 0.5% after graduation. See [What a pack costs](/what-a-pack-costs).
+- **Mega Pack.** Retired. A pack fee with no referrer goes to Gabox.
+- **Machine recharge.** Retired. The coins it already added stay in their machine reserves.
+- **Fan coin machines.** Retired. They sell no packs. Their creators can still withdraw the prize coins they funded, from their profile.
+- **Older coins on the curve.** A machine whose coin launched with the transfer hook sells no packs while the coin is on its curve. Holders can still sell, and creators can still withdraw what they funded. After graduation the machine sells packs again.
 
 | Address | Value |
 | --- | --- |
 | Gabox program | `GaBoxR9nYcK1zeu8EvSJVHV3SrYpCFmvbh2MLgobMcUA` |
 | Gabox transfer hook | `GaHokC2ogWdrH8FZkq9qssUaRhWktF3uc4HPbfRtFqfL` |
 
-Both programs use the same addresses on devnet and mainnet.
+Both programs use the same addresses on devnet and mainnet. No new coin uses the transfer hook.

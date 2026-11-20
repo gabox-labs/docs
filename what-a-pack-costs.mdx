@@ -1,6 +1,6 @@
 ---
 title: "What a pack costs"
-description: "The pack price, the pack fee and the trading fee"
+description: "The pack price, the pack fee, the trading fee and the transfer fee"
 icon: "coins"
 ---
 
@@ -10,10 +10,11 @@ A pack costs its listed USDC price. The pack fee and the market's trading fee ar
 
 | Part | Rule | Paid to |
 | --- | --- | --- |
-| Pack fee | 0.50% of the amount charged. On a [Fan coin machine](/fan-coin-machines), 2%. | With a referrer: 0.20% to the referrer, the rest to Gabox. With no referrer: Gabox, or after graduation the machine's Mega Pack. A Fan coin machine splits it between its creator, the referrer and Gabox. |
-| Trading fee | 2% on the curve, 1.5% after graduation, inside the market price. Coins launched before 29 October 2026 keep 1.875% and 0.94%. | Meteora, Gabox and the creator |
-| Coins | Everything else buys coins for the prize pool | The machine's prize pool |
-| Swap | Only on a machine not quoted in USDC: the USDC to quote token swap | The swap route |
+| Pack fee | 2% of the amount charged | With a referrer: 0.20% to the referrer, the rest to Gabox. With no referrer: Gabox. |
+| Trading fee | 1% on the curve, 0.5% after graduation, inside the market price. Older coins keep the fees they launched with. | Meteora, Gabox and the creator |
+| Coins | Everything else buys coins | The machine reserve |
+| Transfer fee | 1% of the bought coins, taken on their way to the machine reserve | The same machine reserve |
+| Swap | Only on an older machine not quoted in USDC: the USDC to quote token swap | The swap route |
 | Network, rent, VRF | Variable costs, paid in SOL | Solana and MagicBlock |
 
 ## How the pack fee is taken
@@ -21,38 +22,52 @@ A pack costs its listed USDC price. The pack fee and the market's trading fee ar
 The pack fee is inclusive. The program takes it out of the pack's budget before it buys:
 
 ```text
-market budget = budget − floor(budget × 50 / 10,000)
-pack fee      = floor(amount charged × 50 / 10,000)
+market budget = budget − floor(budget × 200 / 10,000)
+pack fee      = floor(amount charged × 200 / 10,000)
 referrer part = floor(amount charged × 20 / 10,000)
 ```
 
-Example: a pack priced at 10 USDC on a USDC machine has a budget of 10,000,000 raw USDC units. The market may spend up to 9,950,000. If it spends all of it, the pack fee is 50,000 units, or 0.05 USDC, and the total is exactly 10 USDC. With a referrer, 20,000 units go to the referrer and 30,000 to Gabox. If the market spends less, for example on the last pack of the curve, the fee is smaller and the rest stays with the buyer.
+Example: a pack priced at 10 USDC has a budget of 10,000,000 raw USDC units. The market may spend up to 9,800,000. If it spends all of it, the pack fee is 200,000 units, or 0.20 USDC, and the total is exactly 10 USDC. With a referrer, 20,000 units go to the referrer and 180,000 to Gabox. If the market spends less, for example on the last pack of the curve, the fee is smaller and the rest stays with the buyer.
 
 ## Trading fees
 
-Every trade on a Gabox coin pays a trading fee inside the market price. Gabox only accepts market configs with these terms. Meteora fixes a coin's fees when it launches, so a coin keeps the terms it launched with. New coins pay the first two rows. Coins launched before 29 October 2026 keep the last two:
+Every trade on a Gabox coin pays a trading fee inside the market price. Gabox only accepts market configs with these terms. Meteora fixes a coin's fees when it launches, so a coin keeps the terms it launched with.
 
 | Market | Total | Meteora | Gabox | Creator |
 | --- | --- | --- | --- | --- |
-| Bonding curve (DBC) | 2% | 0.32% | 0.72% | 0.96% |
-| After graduation (DAMM v2) | 1.5% | 0.24% | 0.54% | 0.72% |
-| Older coins, bonding curve | 1.875% | 0.30% | 1.08% | 0.495% |
-| Older coins, after graduation | 0.94% | about 0.15% | about 0.54% | about 0.25% |
+| Bonding curve (DBC) | 1% | 0.16% | 0.24% | 0.60% |
+| After graduation (DAMM v2) | 0.5% | 0.08% | 0.12% | 0.30% |
 
-- **On the curve.** Meteora keeps 20% of the fee. Of the rest, the creator gets 60% and Gabox 40%. Meteora pays 20% of its own part back to the referral account that the trade names. Gabox names its own account there, so this 0.08% is part of Gabox's 0.72%. On older coins the creator gets 33% and Gabox 67%, and the 0.075% rebate is part of Gabox's 1.08%.
-- **After graduation.** Meteora keeps 20% of the pool fee, with the same rebate. The rest goes to the pool's liquidity, which is locked for ever: 60% is the creator's position and 40% is Gabox's. On older coins, 67% is Gabox's position and 33% is the creator's.
-- All fees are collected in the machine's quote token.
+- **On the curve.** Meteora keeps 20% of the fee. Of the rest, the creator gets 75% and Gabox 25%. Meteora pays 20% of its own part back to the referral account that the trade names. On trades through Gabox, Gabox names its own account there, so this 0.04% is part of Gabox's 0.24%.
+- **After graduation.** Meteora keeps 20% of the pool fee, with the same rebate. The rest goes to the pool's liquidity, which is locked for ever: 75% is the creator's position and 25% is Gabox's.
+- All trading fees are collected in the quote token. On a new coin, that is USDC.
+
+Older coins keep the trading fees they launched with:
+
+| Coins launched | On the curve | After graduation |
+| --- | --- | --- |
+| From 29 October 2026 until the transfer fee | 2% | 1.5% |
+| Before 29 October 2026 | 1.875% | 0.94% |
+
+## The transfer fee
+
+Every transfer of a new coin pays 1% of the coins that move. Token-2022 takes it as part of the transfer. The fee waits in the account that received the coins until it is collected. Then it goes into the coin's machine reserve, where it pays prizes. Nobody can change the rate. Older coins have no transfer fee.
+
+Your prize arrives in full. The machine reserve pays the transfer fee of every prize on top.
 
 ## Fee summary
 
-| Action | Pack fee | Trading fee |
-| --- | --- | --- |
-| Open a pack on the curve | 0.50% | 2% (older coins 1.875%) |
-| Open a pack after graduation | 0.50% | 1.5% (older coins 0.94%) |
-| Sell coins | None | 2% on the curve, 1.5% after graduation (older coins 1.875% and 0.94%) |
-| Seed buy at launch | None | 2% |
+The rows show a new coin. Older coins pay their own trading fee and no transfer fee.
 
-A Mega Pack payout does not trade, so it pays no fee.
+| Action | Pack fee | Trading fee | Transfer fee |
+| --- | --- | --- | --- |
+| Open a pack on the curve | 2% | 1% | 1% of the bought coins, kept in the machine reserve |
+| Open a pack after graduation | 2% | 0.5% | 1% of the bought coins, kept in the machine reserve |
+| Receive a prize | None | None | Paid by the machine reserve |
+| Sell coins | None | 1% on the curve, 0.5% after graduation | 1% of the coins sold |
+| Send coins to another wallet | None | None | 1% of the coins sent |
+| Seed buy at launch | None | 1% | 1% of the bought coins, kept in the machine reserve |
+| Creator's own buy at launch (dev buy) | None | 1% | 1% of the bought coins, to the machine reserve |
 
 ## Before and after graduation
 
